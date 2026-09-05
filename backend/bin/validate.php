@@ -9,7 +9,8 @@ declare(strict_types=1);
  *   1. Marcadores de conflito   instantâneo, e pega o que tipo nenhum vê
  *   2. Sintaxe (php -l)         rápido, e erro de sintaxe invalida o resto
  *   3. Fronteiras de camada     estático
- *   4. Testes                   o mais caro
+ *   4. Placeholders de SQL      estático, e pega defeito invisível até a execução
+ *   5. Testes                   o mais caro
  *
  * Se a regra depende de alguém lembrar, ela não existe. Este script é o que
  * torna as regras deste repositório verificáveis por comando, e não por
@@ -119,7 +120,15 @@ $steps[] = ['fronteiras de camada', static function () use ($binDirectory): bool
     return $status === 0;
 }];
 
-// --- 4. Testes ----------------------------------------------------------------
+// --- 4. Placeholders de SQL ---------------------------------------------------
+
+$steps[] = ['placeholders de SQL', static function () use ($binDirectory): bool {
+    passthru('php ' . escapeshellarg($binDirectory . '/check-sql-placeholders.php'), $status);
+
+    return $status === 0;
+}];
+
+// --- 5. Testes ----------------------------------------------------------------
 
 $steps[] = ['testes', static function () use ($binDirectory): bool {
     passthru('php ' . escapeshellarg($binDirectory . '/test.php'), $status);

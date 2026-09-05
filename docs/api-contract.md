@@ -227,6 +227,44 @@ Mesma forma, na ordem natural do jogo (comum → mítica), não alfabética.
 
 | Método | Rota | Efeito |
 |---|---|---|
+| `POST` | `/api/games/{gameId}/editions` | Cria edição. Corpo: `{ "code", "name", "sortOrder"? }` |
+| `PUT` | `/api/editions/{editionId}` | Atualiza `name`, `sortOrder`, `active`. **`code` é imutável** |
+| `DELETE` | `/api/editions/{editionId}` | **Desativa** — ver abaixo |
+| `POST` | `/api/games/{gameId}/rarities` | Cria raridade. Mesmo corpo |
+| `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` |
+| `DELETE` | `/api/rarities/{rarityId}` | **Desativa** |
+
+O `code` aceita letras minúsculas, números e hífen, até 32 caracteres — ele vira parte da
+URL pública. É único **dentro do jogo**: criar `sv3` em Pokémon não impede criar `sv3` em
+Magic. Código repetido no mesmo jogo devolve `409`.
+
+`code` não é alterável no `PUT`. Ele é o identificador público: aparece na URL, no contrato
+e em qualquer filtro que alguém tenha salvo. Trocá-lo quebraria tudo isso em silêncio, e o
+ganho seria corrigir um erro de digitação que o `name` já resolve.
+
+#### `DELETE` desativa, e nunca falha
+
+```jsonc
+// 200
+{ "data": { "deactivated": true, "wasInUse": true } }
+```
+
+O verbo é `DELETE` porque é o que o cliente entende por "remover da lista", mas a operação
+é desativação (RF-43). Apagar de verdade levaria junto todas as cartas do item — e um
+portal administrativo não pode ter um botão cuja consequência real o usuário não consegue
+prever. O que ele espera ao clicar é "some da lista", não "apaga quatrocentas cartas".
+
+`wasInUse` informa se havia cartas usando o item, para a interface poder dizer *"esta
+edição é usada por cartas cadastradas; elas continuam como estão"*. Avisar depois de agir é
+honesto quando a ação é reversível — e reativar é um `PUT` com `active: true`.
+
+> **Gestão de jogos não existe nesta API, e é decisão consciente.** Criar um jogo sem
+> raridades cadastradas deixaria o sistema num estado pior do que não ter o botão: o
+> primeiro cadastro de carta naquele jogo travaria, sem raridade para escolher. Abrir um
+> TCG novo é operação estrutural e rara, melhor atendida por uma migration que traga o
+> catálogo completo de uma vez.
+
+---|---|---|
 | `POST` | `/api/games` | Cria jogo. Corpo: `{ "slug", "name", "sortOrder"? }` |
 | `PUT` | `/api/games/{gameId}` | Atualiza `name`, `active`, `sortOrder`. **`slug` é imutável** — é o identificador público |
 | `DELETE` | `/api/games/{gameId}` | Desativa. `409` se houver carta usando o jogo (RF-43) |
@@ -451,33 +489,38 @@ guard é achado `CRITICAL`.
 Esta tabela é a superfície de ataque do sistema. Ela é conferida na auditoria de segurança:
 toda rota precisa aparecer aqui **e** estar registrada com o guard correspondente.
 
-| Método | Rota | Nível | Escrita? |
-|---|---|---|---|
-| `POST` | `/api/auth/login` | **pública** | sim (sem CSRF: cria a sessão) |
-| `GET` | `/api/auth/session` | `VIEWER` | não |
-| `DELETE` | `/api/auth/session` | `VIEWER` | sim |
-| `PUT` | `/api/auth/password` | `VIEWER` | sim |
-| `GET` | `/api/games` | `VIEWER` | não |
-| `GET` | `/api/games/{gameId}/editions` | `VIEWER` | não |
-| `GET` | `/api/games/{gameId}/rarities` | `VIEWER` | não |
-| `POST` | `/api/games` | `ADMIN` | sim |
-| `PUT` | `/api/games/{gameId}` | `ADMIN` | sim |
-| `DELETE` | `/api/games/{gameId}` | `ADMIN` | sim |
-| `POST` | `/api/games/{gameId}/editions` | `ADMIN` | sim |
-| `PUT` | `/api/editions/{editionId}` | `ADMIN` | sim |
-| `DELETE` | `/api/editions/{editionId}` | `ADMIN` | sim |
-| `POST` | `/api/games/{gameId}/rarities` | `ADMIN` | sim |
-| `PUT` | `/api/rarities/{rarityId}` | `ADMIN` | sim |
-| `DELETE` | `/api/rarities/{rarityId}` | `ADMIN` | sim |
-| `GET` | `/api/cards` | `VIEWER` | não |
-| `GET` | `/api/cards/{id}` | `VIEWER` | não |
-| `POST` | `/api/cards` | `EDITOR` | sim |
-| `PUT` | `/api/cards/{id}` | `EDITOR` | sim |
-| `DELETE` | `/api/cards/{id}` | `EDITOR` | sim |
-| `POST` | `/api/cards/{id}/restore` | `EDITOR` | sim |
-| `GET` | `/api/cards/{id}/history` | `EDITOR` | não |
-| `POST` | `/api/uploads/card-image` | `EDITOR` | sim |
-| `GET` | `/api/media/{reference}` | `VIEWER` | não |
+| Método | Rota | Nível |
+|---|---|---|
+| `POST` | `/api/auth/login` | **pública** |
+| `PUT` | `/api/auth/password` | `VIEWER` |
+| `GET` | `/api/auth/session` | `VIEWER` |
+| `DELETE` | `/api/auth/session` | `VIEWER` |
+| `GET` | `/api/cards` | `VIEWER` |
+| `POST` | `/api/cards` | `EDITOR` |
+| `GET` | `/api/cards/{id}` | `VIEWER` |
+| `PUT` | `/api/cards/{id}` | `EDITOR` |
+| `DELETE` | `/api/cards/{id}` | `EDITOR` |
+| `GET` | `/api/cards/{id}/history` | `EDITOR` |
+| `POST` | `/api/cards/{id}/restore` | `EDITOR` |
+| `PUT` | `/api/editions/{id}` | `ADMIN` |
+| `DELETE` | `/api/editions/{id}` | `ADMIN` |
+| `GET` | `/api/games` | `VIEWER` |
+| `GET` | `/api/games/{gameId}/editions` | `VIEWER` |
+| `POST` | `/api/games/{gameId}/editions` | `ADMIN` |
+| `GET` | `/api/games/{gameId}/rarities` | `VIEWER` |
+| `POST` | `/api/games/{gameId}/rarities` | `ADMIN` |
+| `GET` | `/api/media/{reference}` | `VIEWER` |
+| `PUT` | `/api/rarities/{id}` | `ADMIN` |
+| `DELETE` | `/api/rarities/{id}` | `ADMIN` |
+| `POST` | `/api/uploads/card-image` | `EDITOR` |
 
-**25 rotas. 1 pública, justificada.** Qualquer rota nova entra nesta tabela no mesmo commit
-que a cria.
+**22 rotas. 1 pública, justificada.**
+
+Toda escrita (`POST`, `PUT`, `DELETE`) exige o cabeçalho `X-CSRF-Token`, exceto o login —
+que é a rota que emite o token.
+
+> **Esta tabela não é mantida à mão.** Ela é a saída de `php bin/routes.php`, que lê os
+> composition roots e imprime o que existe de fato. Um mapa de rotas mantido manualmente
+> fica desatualizado no primeiro commit apressado — que é justamente o commit em que
+> alguém esquece um `guard`. O comando também falha se aparecer uma segunda rota pública,
+> porque rota pública é exceção que precisa de justificativa escrita (`PADROES.md` §5.1).
