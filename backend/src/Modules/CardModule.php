@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules;
 
+use App\Domain\Card\Event\CardChanged;
 use App\Domain\Card\Validation\CardValidationChain;
+use App\Infra\EventHandlers\WriteCardAuditHandler;
 use App\Infra\Http\Guard;
 use App\Infra\Http\Route;
+use App\Infra\Http\Routes\Card\CardHistoryRoute;
 use App\Infra\Http\Routes\Card\CreateCardRoute;
 use App\Infra\Http\Routes\Card\DeleteCardRoute;
 use App\Infra\Http\Routes\Card\GetCardRoute;
@@ -15,6 +18,7 @@ use App\Infra\Http\Routes\Card\RestoreCardRoute;
 use App\Infra\Http\Routes\Card\ServeCardImageRoute;
 use App\Infra\Http\Routes\Card\UpdateCardRoute;
 use App\Infra\Http\Routes\Card\UploadCardImageRoute;
+use App\Infra\Repository\Card\CardAuditRepositoryPdo;
 use App\Infra\Repository\Card\CardRepositoryPdo;
 use App\Infra\Repository\Catalog\EditionRepositoryPdo;
 use App\Infra\Repository\Catalog\GameRepositoryPdo;
@@ -29,6 +33,7 @@ use App\Shared\Event\EventDispatcher;
 use App\Shared\Observability\Logger;
 use App\UseCases\Card\CreateCardUseCase;
 use App\UseCases\Card\DeleteCardUseCase;
+use App\UseCases\Card\GetCardHistoryUseCase;
 use App\UseCases\Card\GetCardUseCase;
 use App\UseCases\Card\ListCardsUseCase;
 use App\UseCases\Card\RestoreCardUseCase;
@@ -60,6 +65,11 @@ final class CardModule
         $games = new GameRepositoryPdo($pdo);
         $editions = new EditionRepositoryPdo($pdo);
         $rarities = new RarityRepositoryPdo($pdo);
+        $audit = new CardAuditRepositoryPdo($pdo);
+
+        // O único ouvinte do projeto, ligado num lugar só. Os casos de uso
+        // despacham o evento e não sabem que ele existe (docs/decisions/ADR-005).
+        $events->on(CardChanged::class, new WriteCardAuditHandler($audit, $clock, $logger));
 
         $storage = new LocalImageStorage($uploadDirectory);
         $remote = new RemoteUrlImageSource();
@@ -82,6 +92,7 @@ final class CardModule
         $updateCard = UpdateCardUseCase::create($cards, $validation, $events, $clock, $logger);
         $deleteCard = DeleteCardUseCase::create($cards, $events, $clock, $logger);
         $restoreCard = RestoreCardUseCase::create($cards, $events, $clock, $logger);
+        $cardHistory = GetCardHistoryUseCase::create($cards, $audit);
 
         return [
             // Consulta: lê e pesquisa, e não alcança nenhuma escrita.
@@ -94,6 +105,7 @@ final class CardModule
             Guard::protect(UpdateCardRoute::create($updateCard), PermissionLevel::EDITOR),
             Guard::protect(DeleteCardRoute::create($deleteCard), PermissionLevel::EDITOR),
             Guard::protect(RestoreCardRoute::create($restoreCard), PermissionLevel::EDITOR),
+            Guard::protect(CardHistoryRoute::create($cardHistory), PermissionLevel::EDITOR),
             Guard::protect(UploadCardImageRoute::create($receiveUpload), PermissionLevel::EDITOR),
         ];
     }
