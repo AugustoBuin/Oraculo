@@ -67,7 +67,7 @@ try {
 
     $router = new Router([
         ...AuthModule::routes($pdo, $clock, $logger, $sessionTtl, $secureCookie),
-        ...CatalogModule::routes($pdo),
+        ...CatalogModule::routes($pdo, $logger),
         ...CardModule::routes(
             pdo: $pdo,
             events: $events,
