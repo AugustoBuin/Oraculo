@@ -118,9 +118,18 @@ verificador é sugestão.
 - **`401` é sessão ausente/expirada; `403` é sessão válida sem nível suficiente.** Isto
   corrige a tabela do `PADROES.md` §4.2 — ver ADR-007.
 - **Nunca edite uma migration já aplicada.** Corrija com uma nova (§7.5).
-- **O seed não cria senha administrativa fixa em produção.** Em `APP_ENV=local` ele cria
-  os usuários de demonstração documentados no README; em qualquer outro ambiente, gera
-  senha aleatória e força a troca (`PADROES.md` §16.3).
+- **O seed não cria senha administrativa fixa fora do ambiente local.** Em `APP_ENV=local`
+  ele cria os três usuários de demonstração documentados no README. Em qualquer outro
+  ambiente, cria um único administrador — **e só se ainda não houver nenhum usuário** — com
+  senha vinda de `random_bytes`, exibida uma única vez na saída do boot e nunca gravada.
+  Forçar a troca no primeiro acesso exigiria coluna nova e um fluxo de redefinição, que
+  está fora de escopo (PRD §3.2).
+- **O seed nunca reescreve a senha de um usuário que já existe.** O `ON DUPLICATE KEY
+  UPDATE` toca apenas o nome. Um seed que redefine senha e permissão de administrador a
+  cada deploy é uma porta dos fundos que se auto-restaura (`PADROES.md` §16.3). Há
+  verificação disso no roteiro de integração.
+- **Carta não tem chave natural**, então o seed de cartas roda uma vez só: se a tabela já
+  tem linha, ele não mexe. Isso preserva o que for cadastrado entre reinícios do contêiner.
 - **O JSON de edições do desafio é reproduzido literalmente**, inclusive as edições que
   não existem no mundo real (`The Hobbit`, `Marvel Super Heroes`, `Chaos Rising`,
   `Blazing Dominion`). Não "corrija" a massa de dados — ela é o contrato.
