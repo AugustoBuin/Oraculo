@@ -1,0 +1,39 @@
+# --- Ferramental local de IA (decisão registrada em docs/decisions/ADR-009) ---
+/.claude/
+/CLAUDE.md
+
+# --- Padrões de engenharia de referência: NÃO versionados (ADR-011).
+#     Contêm o nome do empregador atual e o histórico de incidentes de segurança
+#     dele. Servem de referência local para a construção; o que este projeto
+#     precisa expor está em docs/ENGENHARIA.md e docs/decisions/. ---
+/backend/PADROES.md
+/frontend/PADROES-ENGENHARIA.md
+
+# --- Segredos: nunca versionados; só o exemplo entra ---
+.env
+.env.*
+!.env.example
+
+# --- Artefatos de execução ---
+/backend/storage/uploads/*
+!/backend/storage/uploads/.gitkeep
+/backend/storage/sessions/*
+!/backend/storage/sessions/.gitkeep
+*.log
+
+# --- Evidência bruta: relatórios de auditoria e investigação ficam fora do Git.
+#     O que precisa chegar ao time (o ledger) vive em docs/audits/. ---
+/reports/
+/docs/investigations/
+/docs/security_reports/
+
+# --- Dependências: não usamos Composer (ADR-001). A regra fica como guarda
+#     para que um vendor/ acidental nunca seja commitado. ---
+/vendor/
+/node_modules/
+
+# --- Sistema operacional / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
