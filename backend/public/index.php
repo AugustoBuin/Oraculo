@@ -10,15 +10,23 @@ declare(strict_types=1);
  * `migrations/` e `storage/` não têm caminho servido.
  */
 
+use App\Infra\Database\Connection;
 use App\Infra\Http\ErrorHandler;
+use App\Infra\Http\Middleware\Csrf;
 use App\Infra\Http\Middleware\ErrorBoundary;
 use App\Infra\Http\Middleware\JsonBody;
 use App\Infra\Http\Middleware\SecurityHeaders;
+use App\Infra\Http\Middleware\SessionMiddleware;
 use App\Infra\Http\Middleware\TraceId;
 use App\Infra\Http\Pipeline;
 use App\Infra\Http\Request;
 use App\Infra\Http\Response;
 use App\Infra\Http\Router;
+use App\Infra\Repository\Session\SessionRepositoryPdo;
+use App\Infra\Repository\User\UserRepositoryPdo;
+use App\Modules\AuthModule;
+use App\Shared\Clock\SystemClock;
+use App\Shared\Config\Env;
 use App\Shared\Observability\RequestContext;
 use App\Shared\Observability\StderrLogger;
 
@@ -44,18 +52,40 @@ $logger = new StderrLogger(channel: 'http', traceId: RequestContext::traceId());
 $errorHandler = new ErrorHandler($logger);
 
 try {
+    $pdo = Connection::shared();
+    $clock = new SystemClock();
+    $sessionTtl = Env::requiredInt('SESSION_TTL_SECONDS');
+
+    // Cookie Secure só sob https: em http local o navegador simplesmente não
+    // grava um cookie Secure, e o login pararia de funcionar sem mensagem.
+    $secureCookie = str_starts_with(Env::required('APP_URL'), 'https://');
+
     $router = new Router([
-        // As rotas entram aqui pelos composition roots das features, já
-        // protegidas pelo guard. Nenhuma ainda: os módulos chegam no Épico 1.
+        ...AuthModule::routes($pdo, $clock, $logger, $sessionTtl, $secureCookie),
     ]);
 
-    // A ordem importa. Segurança primeiro, para que a resposta de erro
-    // produzida pelo ErrorBoundary também receba os cabeçalhos.
+    /**
+     * A ordem da cadeia é a parte que mais importa deste arquivo.
+     *
+     * SecurityHeaders vem PRIMEIRO para que a resposta de erro produzida pelo
+     * ErrorBoundary também receba os cabeçalhos — invertido, todo erro sairia
+     * sem CSP, que é justamente o caminho menos exercitado do sistema.
+     *
+     * Session vem antes de Csrf porque o token vive na sessão; e o guard, que
+     * decide acesso, é aplicado no registro de cada rota, dentro do módulo.
+     */
     $pipeline = new Pipeline([
         new SecurityHeaders(),
         new ErrorBoundary($errorHandler),
         new TraceId(),
         new JsonBody(),
+        new SessionMiddleware(
+            sessions: new SessionRepositoryPdo($pdo),
+            users: new UserRepositoryPdo($pdo),
+            clock: $clock,
+            ttlSeconds: $sessionTtl,
+        ),
+        new Csrf(exemptPaths: ['/api/auth/login']),
     ]);
 
     $response = $pipeline->process(
@@ -63,8 +93,8 @@ try {
         static fn(Request $request): Response => $router->dispatch($request)
     );
 } catch (\Throwable $error) {
-    // Rede de proteção para o que falha antes de o pipeline existir — montar a
-    // requisição a partir das superglobais, por exemplo.
+    // Rede de proteção para o que falha antes de o pipeline existir — conexão
+    // com o banco, variável de ambiente ausente, montagem da requisição.
     $response = $errorHandler->toResponse($error);
 }
 

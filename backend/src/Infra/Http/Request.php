@@ -35,6 +35,7 @@ final class Request
         public readonly string $rawBody,
         private readonly array $query,
         private readonly array $headers,
+        private readonly array $cookies,
         private readonly array $body,
         private readonly array $routeParams,
         private readonly array $attributes,
@@ -54,6 +55,7 @@ final class Request
         array $headers = [],
         string $rawBody = '',
         array $server = [],
+        array $cookies = [],
     ): self {
         return new self(
             method: $method,
@@ -61,6 +63,7 @@ final class Request
             rawBody: $rawBody,
             query: $query,
             headers: self::normalizeHeaders($headers),
+            cookies: $cookies,
             body: [],
             routeParams: [],
             attributes: [],
@@ -85,11 +88,23 @@ final class Request
             rawBody: (string) file_get_contents('php://input'),
             query: array_map('strval', $_GET),
             headers: self::normalizeHeaders(self::headersFromServer($_SERVER)),
+            cookies: array_map('strval', $_COOKIE),
             body: [],
             routeParams: [],
             attributes: [],
             server: $_SERVER,
         );
+    }
+
+    /**
+     * Um cookie por nome.
+     *
+     * O cookie de sessão é HttpOnly, então o JavaScript nunca o lê — só o
+     * servidor, por aqui.
+     */
+    public function cookie(string $name): ?string
+    {
+        return $this->cookies[$name] ?? null;
     }
 
     public function query(string $key): ?string
@@ -189,6 +204,7 @@ final class Request
             rawBody: $this->rawBody,
             query: $this->query,
             headers: $this->headers,
+            cookies: $this->cookies,
             body: $body ?? $this->body,
             routeParams: $routeParams ?? $this->routeParams,
             attributes: $attributes ?? $this->attributes,

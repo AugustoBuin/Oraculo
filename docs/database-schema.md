@@ -111,7 +111,6 @@ CREATE TABLE users (
 CREATE TABLE sessions (
     id               VARCHAR(128)  NOT NULL,   -- id gerado pelo PHP
     user_id          INT UNSIGNED  NOT NULL,
-    payload          TEXT          NOT NULL,   -- serializado pelo handler nativo
     csrf_token       CHAR(64)      NOT NULL,   -- por sessão, emitido no login
     ip_address       VARCHAR(45)   NULL,       -- 45 = IPv6 completo
     user_agent       VARCHAR(255)  NULL,
@@ -133,6 +132,10 @@ CREATE TABLE sessions (
 > senha invalida todas as sessões do usuário"* — ambos viram um `DELETE`. Com sessão em
 > arquivo, revogar a sessão de outro dispositivo é praticamente impossível. Detalhes e
 > alternativas descartadas em `docs/decisions/ADR-003`.
+
+> **Sem coluna `payload`.** O desenho original previa a serialização nativa do PHP; a
+> sessão passou a ser explícita e a coluna foi removida pela migration `0010`. O histórico
+> está no ADR-003.
 
 > **A cascata aqui é deliberada:** excluir um usuário deve encerrar as sessões dele
 > imediatamente. É o único `ON DELETE CASCADE` do schema.
