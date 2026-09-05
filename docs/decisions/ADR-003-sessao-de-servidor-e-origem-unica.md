@@ -53,8 +53,29 @@ mutação. Funciona — e são seis pontos onde um erro em qualquer um quebra si
 
 ### A sessão vive no MySQL
 
-Implementando a interface **nativa** `SessionHandlerInterface` — zero dependências, ~60
-linhas — sobre a tabela `sessions`.
+Sobre a tabela `sessions`, com id e token gerados por `random_bytes`.
+
+> **Revisão de 05/09/2026 — como isto foi implementado, e por que mudou.**
+>
+> A versão original deste ADR previa implementar a interface nativa
+> `SessionHandlerInterface`. Na implementação, o desenho não fechou: essa interface trata o
+> conteúdo da sessão como um **blob opaco** (`payload`), e este projeto precisa de
+> `user_id` numa coluna indexada — é o que torna `deleteAllForUser` um `DELETE` em vez de
+> uma varredura impossível, e essa operação é a razão principal de a sessão estar no banco.
+>
+> Cumprir as duas coisas obrigaria o handler a desserializar e inspecionar o payload que
+> ele deveria tratar como opaco, ou a escrever `user_id` por fora da interface. As duas
+> saídas são o mesmo defeito: uma abstração que só funciona se quem a usa violar o contrato
+> dela.
+>
+> A sessão passou a ser explícita — entidade `Session` no domínio, `SessionGateway` como
+> porta, `SessionRepositoryPdo` na borda. Isso **entrega mais** do que a versão anterior,
+> não menos: expiração e renovação viram regra de domínio testável com relógio congelado,
+> `session_regenerate_id` deixa de ser necessário porque cada login gera um id novo por
+> construção, e não há dependência da serialização nem do ciclo de vida de `session_start()`.
+>
+> A migration `0010` removeu a coluna `payload`, que existia só para o desenho anterior.
+> A `0003` não foi editada: migration aplicada nunca é.
 
 O que isso entrega:
 

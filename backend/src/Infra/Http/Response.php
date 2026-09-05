@@ -26,7 +26,20 @@ final class Response
         public readonly HttpStatus $status,
         public readonly array $body,
         public readonly array $headers,
+        /** @var list<Cookie> */
+        public readonly array $cookies = [],
     ) {
+    }
+
+    /**
+     * Acrescenta um cookie à resposta.
+     *
+     * Lista e não mapa: uma resposta pode precisar emitir mais de um Set-Cookie,
+     * e cabeçalho repetido é legítimo neste caso específico.
+     */
+    public function withCookie(Cookie $cookie): self
+    {
+        return new self($this->status, $this->body, $this->headers, [...$this->cookies, $cookie]);
     }
 
     /**
@@ -57,7 +70,7 @@ final class Response
 
     public function withHeader(string $name, string $value): self
     {
-        return new self($this->status, $this->body, [$name => $value] + $this->headers);
+        return new self($this->status, $this->body, [$name => $value] + $this->headers, $this->cookies);
     }
 
     /**
@@ -67,7 +80,7 @@ final class Response
      */
     public function withHeaders(array $headers): self
     {
-        return new self($this->status, $this->body, $headers + $this->headers);
+        return new self($this->status, $this->body, $headers + $this->headers, $this->cookies);
     }
 
     /**
@@ -81,7 +94,7 @@ final class Response
      */
     public function withDefaultHeaders(array $headers): self
     {
-        return new self($this->status, $this->body, $this->headers + $headers);
+        return new self($this->status, $this->body, $this->headers + $headers, $this->cookies);
     }
 
     public function send(): void
@@ -94,6 +107,12 @@ final class Response
 
             foreach ($this->headers as $name => $value) {
                 header("{$name}: {$value}");
+            }
+
+            // `false` no segundo argumento: Set-Cookie é o caso legítimo de
+            // cabeçalho repetido, e substituir apagaria o cookie anterior.
+            foreach ($this->cookies as $cookie) {
+                header('Set-Cookie: ' . $cookie->toHeaderValue(), false);
             }
         }
 
