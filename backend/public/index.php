@@ -25,6 +25,7 @@ use App\Infra\Http\Router;
 use App\Infra\Repository\Session\SessionRepositoryPdo;
 use App\Infra\Repository\User\UserRepositoryPdo;
 use App\Modules\AuthModule;
+use App\Modules\CatalogModule;
 use App\Shared\Clock\SystemClock;
 use App\Shared\Config\Env;
 use App\Shared\Observability\RequestContext;
@@ -62,6 +63,7 @@ try {
 
     $router = new Router([
         ...AuthModule::routes($pdo, $clock, $logger, $sessionTtl, $secureCookie),
+        ...CatalogModule::routes($pdo),
     ]);
 
     /**
