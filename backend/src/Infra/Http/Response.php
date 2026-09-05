@@ -61,11 +61,27 @@ final class Response
     }
 
     /**
+     * Acrescenta cabeçalhos, sobrescrevendo os existentes.
+     *
      * @param array<string,string> $headers
      */
     public function withHeaders(array $headers): self
     {
         return new self($this->status, $this->body, $headers + $this->headers);
+    }
+
+    /**
+     * Acrescenta cabeçalhos apenas onde ainda não há valor.
+     *
+     * É o que o middleware de segurança usa: ele estabelece a linha de base,
+     * mas quem conhece o recurso é a rota. Sobrescrever aqui apagaria, por
+     * exemplo, o `Content-Type` de uma imagem servida por rota.
+     *
+     * @param array<string,string> $headers
+     */
+    public function withDefaultHeaders(array $headers): self
+    {
+        return new self($this->status, $this->body, $this->headers + $headers);
     }
 
     public function send(): void
