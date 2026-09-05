@@ -8,7 +8,7 @@ use App\Domain\Card\Validation\CardDraft;
 use App\Domain\Card\Validation\CardValidationChain;
 use App\Domain\Errors\ValidationError;
 use App\Infra\Storage\RemoteUrlImageSource;
-use App\Infra\Storage\UploadedFileImageSource;
+use App\Infra\Storage\StoredUploadImageSource;
 use App\Shared\Enum\ImageType;
 use Tests\Doubles\InMemoryEditionGateway;
 use Tests\Doubles\InMemoryGameGateway;
@@ -28,17 +28,24 @@ final class CardValidationChainTest extends TestCase
     private InMemoryEditionGateway $editions;
     private InMemoryRarityGateway $rarities;
 
+    private InMemoryImageStorage $storage;
+
     private function makeSut(): CardValidationChain
     {
         $this->games = InMemoryGameGateway::seeded();
         $this->editions = InMemoryEditionGateway::seeded();
         $this->rarities = InMemoryRarityGateway::seeded();
+        $this->storage = new InMemoryImageStorage();
+        $this->storage->store('a1b2c3d4e5f60718293a4b5c6d7e8f90.png', 'bytes-de-uma-imagem');
 
         return CardValidationChain::default(
             games: $this->games,
             editions: $this->editions,
             rarities: $this->rarities,
-            upload: new UploadedFileImageSource(new InMemoryImageStorage(), 3145728),
+            // No SALVAMENTO da carta a imagem já foi enviada: o que chega é a
+            // referência, não os bytes. Quem recebe bytes é o endpoint de
+            // upload, com outra estratégia.
+            upload: new StoredUploadImageSource($this->storage),
             remote: new RemoteUrlImageSource(),
         );
     }
@@ -229,6 +236,36 @@ final class CardValidationChainTest extends TestCase
         );
 
         $this->assertTrue(array_key_exists('image', $erro->fieldErrors()));
+    }
+
+    public function testAceitaReferenciaDeImagemJaEnviada(): void
+    {
+        $validada = $this->makeSut()->validate($this->draft(image: [
+            'type' => 'upload',
+            'reference' => 'a1b2c3d4e5f60718293a4b5c6d7e8f90.png',
+        ]));
+
+        $this->assertSame(ImageType::UPLOAD, $validada->image->type);
+    }
+
+    public function testRecusaReferenciaDeImagemInexistente(): void
+    {
+        // Sem esta checagem, uma requisição montada à mão gravaria a carta
+        // apontando para um arquivo que não existe, e o defeito só apareceria
+        // na listagem, como imagem quebrada, muito depois.
+        $erro = $this->assertThrows(
+            ValidationError::class,
+            fn() => $this->makeSut()->validate($this->draft(image: [
+                'type' => 'upload',
+                'reference' => '00000000000000000000000000000000.png',
+            ]))
+        );
+
+        $mensagem = $erro->fieldErrors()['image'];
+
+        // A mensagem precisa dizer o que houve, e não repetir o resumo genérico
+        // "Verifique os campos destacados" — que não informa nada.
+        $this->assertTrue(str_contains($mensagem, 'não foi encontrada'));
     }
 
     public function testRecusaTipoDeImagemDesconhecido(): void

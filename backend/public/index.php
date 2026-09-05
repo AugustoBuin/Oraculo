@@ -25,9 +25,11 @@ use App\Infra\Http\Router;
 use App\Infra\Repository\Session\SessionRepositoryPdo;
 use App\Infra\Repository\User\UserRepositoryPdo;
 use App\Modules\AuthModule;
+use App\Modules\CardModule;
 use App\Modules\CatalogModule;
 use App\Shared\Clock\SystemClock;
 use App\Shared\Config\Env;
+use App\Shared\Event\EventDispatcher;
 use App\Shared\Observability\RequestContext;
 use App\Shared\Observability\StderrLogger;
 
@@ -61,9 +63,21 @@ try {
     // grava um cookie Secure, e o login pararia de funcionar sem mensagem.
     $secureCookie = str_starts_with(Env::required('APP_URL'), 'https://');
 
+    $events = new EventDispatcher($logger);
+
     $router = new Router([
         ...AuthModule::routes($pdo, $clock, $logger, $sessionTtl, $secureCookie),
         ...CatalogModule::routes($pdo),
+        ...CardModule::routes(
+            pdo: $pdo,
+            events: $events,
+            clock: $clock,
+            logger: $logger,
+            // Fora do document root: arquivo enviado dentro de pasta pública é
+            // execução remota esperando acontecer (docs/decisions/ADR-008).
+            uploadDirectory: dirname(__DIR__) . '/storage/uploads',
+            uploadMaxBytes: Env::requiredInt('UPLOAD_MAX_BYTES'),
+        ),
     ]);
 
     /**

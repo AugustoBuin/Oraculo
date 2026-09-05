@@ -19,6 +19,12 @@ final class Response
     private const JSON_CONTENT_TYPE = 'application/json; charset=utf-8';
 
     /**
+     * Corpo bruto, quando a resposta não é JSON — uma imagem servida por rota.
+     * Nulo em todo o resto, que é a esmagadora maioria.
+     */
+    private ?string $rawBody = null;
+
+    /**
      * @param array<string,mixed>  $body
      * @param array<string,string> $headers
      */
@@ -39,7 +45,7 @@ final class Response
      */
     public function withCookie(Cookie $cookie): self
     {
-        return new self($this->status, $this->body, $this->headers, [...$this->cookies, $cookie]);
+        return $this->carryRawBody(new self($this->status, $this->body, $this->headers, [...$this->cookies, $cookie]));
     }
 
     /**
@@ -68,9 +74,25 @@ final class Response
         return new self(HttpStatus::NO_CONTENT, [], []);
     }
 
+    /**
+     * Resposta com corpo bruto — uma imagem, por exemplo.
+     *
+     * O Content-Type vem de quem chama, e precisa ser o tipo **verificado na
+     * gravação**, nunca um adivinhado a partir da extensão do arquivo.
+     *
+     * @param array<string,string> $headers
+     */
+    public static function binary(string $contents, string $contentType, array $headers = []): self
+    {
+        $response = new self(HttpStatus::OK, [], ['Content-Type' => $contentType] + $headers);
+        $response->rawBody = $contents;
+
+        return $response;
+    }
+
     public function withHeader(string $name, string $value): self
     {
-        return new self($this->status, $this->body, [$name => $value] + $this->headers, $this->cookies);
+        return $this->carryRawBody(new self($this->status, $this->body, [$name => $value] + $this->headers, $this->cookies));
     }
 
     /**
@@ -80,7 +102,7 @@ final class Response
      */
     public function withHeaders(array $headers): self
     {
-        return new self($this->status, $this->body, $headers + $this->headers, $this->cookies);
+        return $this->carryRawBody(new self($this->status, $this->body, $headers + $this->headers, $this->cookies));
     }
 
     /**
@@ -94,7 +116,7 @@ final class Response
      */
     public function withDefaultHeaders(array $headers): self
     {
-        return new self($this->status, $this->body, $this->headers + $headers, $this->cookies);
+        return $this->carryRawBody(new self($this->status, $this->body, $this->headers + $headers, $this->cookies));
     }
 
     public function send(): void
@@ -120,9 +142,28 @@ final class Response
             return;
         }
 
+        if ($this->rawBody !== null) {
+            echo $this->rawBody;
+
+            return;
+        }
+
         echo json_encode(
             $this->body,
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
+    }
+
+    /**
+     * Copia o corpo bruto para a resposta derivada.
+     *
+     * Sem isto, passar uma imagem pelo middleware de cabeçalhos de segurança —
+     * que deriva a resposta — devolveria um corpo vazio.
+     */
+    private function carryRawBody(self $derived): self
+    {
+        $derived->rawBody = $this->rawBody;
+
+        return $derived;
     }
 }

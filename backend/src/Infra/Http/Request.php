@@ -107,6 +107,34 @@ final class Request
         return $this->cookies[$name] ?? null;
     }
 
+    /**
+     * O CONTEÚDO de um arquivo enviado, por nome de campo.
+     *
+     * Devolve os bytes, e não o registro de `$_FILES`: o nome original e o tipo
+     * declarado pelo cliente são dados hostis, e nada aqui deve tornar fácil
+     * usá-los por engano. Quem valida o tipo olha o conteúdo (ADR-008).
+     */
+    public function uploadedFileContents(string $field): ?string
+    {
+        $file = $_FILES[$field] ?? null;
+
+        if (!is_array($file) || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $temporaryPath = $file['tmp_name'] ?? null;
+
+        // is_uploaded_file garante que o caminho veio de um upload HTTP desta
+        // requisição, e não de um valor forjado apontando para outro arquivo.
+        if (!is_string($temporaryPath) || !is_uploaded_file($temporaryPath)) {
+            return null;
+        }
+
+        $contents = file_get_contents($temporaryPath);
+
+        return $contents === false ? null : $contents;
+    }
+
     public function query(string $key): ?string
     {
         return $this->query[$key] ?? null;

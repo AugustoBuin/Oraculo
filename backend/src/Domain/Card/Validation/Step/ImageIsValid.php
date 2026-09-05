@@ -9,6 +9,7 @@ use App\Domain\Card\Validation\CardDraft;
 use App\Domain\Card\Validation\CardValidation;
 use App\Domain\Card\Validation\CardValidationStep;
 use App\Domain\Errors\DomainError;
+use App\Domain\Errors\ValidationError;
 use App\Shared\Enum\ImageType;
 
 /**
@@ -48,10 +49,15 @@ final class ImageIsValid implements CardValidationStep
 
         try {
             $validation->resolveImage($source->resolve($draft->image));
+        } catch (ValidationError $error) {
+            // A mensagem útil é a DO CAMPO, não a de resumo do erro. Usar
+            // getMessage() aqui devolvia "Verifique os campos destacados" como
+            // se fosse o problema da imagem — um erro que não diz nada.
+            $validation->addError('image', $error->fieldErrors()['image'] ?? $error->getMessage());
         } catch (DomainError $error) {
-            // A estratégia já produziu uma mensagem em português adequada ao
-            // usuário; ela vira o erro do campo `image` no mapa da resposta.
-            $validation->addError('image', $error->getMessage());
+            // Tamanho excedido e tipo não permitido não são ValidationError:
+            // têm status próprio (413 e 415) e sobem sem virar erro de campo.
+            throw $error;
         }
     }
 
