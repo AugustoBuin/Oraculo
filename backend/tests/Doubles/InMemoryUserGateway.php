@@ -53,6 +53,11 @@ final class InMemoryUserGateway implements UserGateway
         return null;
     }
 
+    public function findCredentialsById(int $id): ?UserCredentials
+    {
+        return $this->users[$id] ?? null;
+    }
+
     public function updatePasswordHash(int $userId, string $passwordHash): void
     {
         if (!isset($this->users[$userId])) {

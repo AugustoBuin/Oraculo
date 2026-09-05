@@ -151,6 +151,29 @@ login e a aplicação.
 Encerra a sessão **no servidor** (`DELETE` na tabela `sessions`), não apenas no cookie.
 Resposta `204`.
 
+#### `PUT /api/auth/password` — `VIEWER`
+
+Troca a **própria** senha. O `userId` vem da sessão; o corpo carrega apenas as duas senhas.
+Aceitar um `userId` do cliente transformaria a rota em "troque a senha de quem eu quiser".
+
+```jsonc
+{ "currentPassword": "...", "newPassword": "..." }
+```
+
+Resposta `204`, **com o cookie de sessão já expirado**: a operação encerra todas as sessões
+do usuário (RF-05), inclusive a de quem pediu, e sem limpar o cookie o navegador seguiria
+mandando um id morto.
+
+| Falha | Status | Observação |
+|---|---|---|
+| Senha atual incorreta | `401` | Mesma mensagem para usuário inexistente |
+| Nova senha com menos de 8 caracteres | `400` | Campo `newPassword` |
+| Nova senha igual à atual | `400` | Trocar por ela mesma revogaria as sessões sem trocar nada |
+
+> **Por que revogar tudo.** Quem troca a senha quase sempre o faz porque desconfia de acesso
+> indevido. Trocar sem revogar deixaria o invasor logado — e daria ao usuário a sensação de
+> estar protegido justamente quando não está (`PADROES.md` §5.4).
+
 ---
 
 ## 4. Catálogos
@@ -433,6 +456,7 @@ toda rota precisa aparecer aqui **e** estar registrada com o guard correspondent
 | `POST` | `/api/auth/login` | **pública** | sim (sem CSRF: cria a sessão) |
 | `GET` | `/api/auth/session` | `VIEWER` | não |
 | `DELETE` | `/api/auth/session` | `VIEWER` | sim |
+| `PUT` | `/api/auth/password` | `VIEWER` | sim |
 | `GET` | `/api/games` | `VIEWER` | não |
 | `GET` | `/api/games/{gameId}/editions` | `VIEWER` | não |
 | `GET` | `/api/games/{gameId}/rarities` | `VIEWER` | não |
@@ -455,5 +479,5 @@ toda rota precisa aparecer aqui **e** estar registrada com o guard correspondent
 | `POST` | `/api/uploads/card-image` | `EDITOR` | sim |
 | `GET` | `/api/media/{reference}` | `VIEWER` | não |
 
-**24 rotas. 1 pública, justificada.** Qualquer rota nova entra nesta tabela no mesmo commit
+**25 rotas. 1 pública, justificada.** Qualquer rota nova entra nesta tabela no mesmo commit
 que a cria.

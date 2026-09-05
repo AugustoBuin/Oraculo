@@ -22,5 +22,11 @@ interface UserGateway
      */
     public function findCredentialsByEmail(string $email): ?UserCredentials;
 
+    /**
+     * O mesmo, por id. Usado pela troca de senha, que identifica o usuario pela
+     * sessao e nao por e-mail digitado.
+     */
+    public function findCredentialsById(int $id): ?UserCredentials;
+
     public function updatePasswordHash(int $userId, string $passwordHash): void;
 }

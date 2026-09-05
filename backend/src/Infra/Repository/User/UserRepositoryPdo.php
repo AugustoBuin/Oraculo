@@ -61,6 +61,25 @@ final class UserRepositoryPdo implements UserGateway
         return new UserCredentials($this->toEntity($row), (string) $row['password_hash']);
     }
 
+    public function findCredentialsById(int $id): ?UserCredentials
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT ' . self::PUBLIC_COLUMNS . ', password_hash
+             FROM users
+             WHERE id = :id AND deleted_at IS NULL
+             LIMIT 1'
+        );
+        $statement->execute(['id' => $id]);
+
+        $row = $statement->fetch();
+
+        if ($row === false) {
+            return null;
+        }
+
+        return new UserCredentials($this->toEntity($row), (string) $row['password_hash']);
+    }
+
     public function updatePasswordHash(int $userId, string $passwordHash): void
     {
         $statement = $this->pdo->prepare(
