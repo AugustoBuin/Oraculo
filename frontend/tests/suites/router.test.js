@@ -151,6 +151,31 @@ suite("shared/router · limpeza entre telas", () => {
     );
   });
 
+  test("navegar com query string ainda casa a rota", async () => {
+    // Defeito real, achado no navegador e não pelos testes: os meus só usavam
+    // caminhos sem query, e `/?page=2` caía em "página não encontrada" porque
+    // a query ia junto para o casamento de rota.
+    const eventos = [];
+
+    await withRouter(
+      [
+        {
+          path: "/rota-a",
+          page: () => {
+            eventos.push("montou");
+            return null;
+          },
+        },
+      ],
+      async (router) => {
+        await router.navigate("/rota-a?page=2&busca=Ilha");
+
+        assertSame(eventos.join(","), "montou", "a rota deveria ter casado");
+        assertSame(window.location.search, "?page=2&busca=Ilha", "a query fica na URL");
+      },
+    );
+  });
+
   test("rota inexistente cai no notFound sem lançar", async () => {
     let caiu = false;
     const root = document.createElement("div");

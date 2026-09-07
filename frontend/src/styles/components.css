@@ -394,3 +394,107 @@
     grid-template-columns: 1fr 1.5fr;
   }
 }
+
+/* --- Galeria de cartas --------------------------------------------------- */
+
+/*
+ * Mobile-first: uma coluna na base, e a grade adensa sozinha conforme cabe.
+ * `auto-fill` com `minmax` evita breakpoint escrito à mão para cada largura —
+ * e nenhuma regra depende de pixel fixo (§10.5).
+ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--space-4);
+}
+
+/* Cartão em repouso não tem sombra: profundidade vem de tom e borda (§10.4). */
+.card-tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.card-tile:hover {
+  border-color: var(--color-muted);
+}
+
+/*
+ * A proporção é reservada ANTES de a imagem chegar. Junto com os atributos
+ * width/height do `img`, é o que impede a grade de dar um salto a cada imagem
+ * que carrega (§12.2).
+ */
+.card-media {
+  aspect-ratio: 488 / 680;
+  background-color: var(--color-bg);
+}
+
+.card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * O espaço reservado do RF-34: legível, com o nome da carta — nunca o ícone de
+ * imagem quebrada do navegador.
+ */
+.card-image-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.card-image-empty-text {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.card-name {
+  font-size: var(--text-md);
+}
+
+.card-name-pt {
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.card-meta {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.card-body .badge {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
+
+/* --- Paginação ----------------------------------------------------------- */
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.pagination-status {
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}

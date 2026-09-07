@@ -18,6 +18,7 @@ import { createRouter } from "@/shared/router/router.js";
 import { hasLevel } from "@/shared/session/session.js";
 import { logout } from "@/features/auth/api/auth-api.js";
 import { accountPage } from "@/pages/account/account-page.js";
+import { cardsPage } from "@/pages/cards/cards-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 
 /**
@@ -58,7 +59,13 @@ export function appShell(root, { onSignedOut }) {
   });
 
   const routes = [
-    { path: ROUTES.cards, requires: "VIEWER", page: placeholder("Catálogo de cartas") },
+    {
+      path: ROUTES.cards,
+      requires: "VIEWER",
+      // `router` já está atribuído quando a página é montada — a rota só é
+      // chamada depois de `start()`.
+      page: (target) => cardsPage(target, { navigate: (path) => router.navigate(path) }),
+    },
     { path: ROUTES.catalogs, requires: "ADMIN", page: placeholder("Administração de catálogos") },
     {
       path: ROUTES.account,

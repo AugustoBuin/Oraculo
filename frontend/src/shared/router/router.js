@@ -80,7 +80,18 @@ export function createRouter({ routes, root, notFound, onNavigate }) {
    */
   let navigationId = 0;
 
-  async function render(path) {
+  /**
+   * Desenha a rota que a URL corrente indica.
+   *
+   * **Lê `location` em vez de receber o caminho por parâmetro.** Receber o
+   * caminho era a fonte de um defeito real: `navigate("/?page=2")` passava a
+   * query string adiante, e o casamento de rota — que compara segmento a
+   * segmento — não reconhecia `/?page=2` como `/`. Com uma fonte de verdade
+   * só, a classe inteira do erro some: quem empurra o estado é o `navigate`, e
+   * quem desenha sempre pergunta ao navegador onde está.
+   */
+  async function render() {
+    const path = currentPath();
     const id = ++navigationId;
 
     // Limpa ANTES de montar a próxima: se a montagem falhar, a tela anterior
@@ -128,13 +139,15 @@ export function createRouter({ routes, root, notFound, onNavigate }) {
 
   /** Navega sem recarregar a página. */
   function navigate(path, { replace = false } = {}) {
-    if (path === currentPath() && !replace) {
+    const target = new URL(path, window.location.origin);
+
+    if (target.pathname + target.search === currentPath() + window.location.search && !replace) {
       return;
     }
 
     window.history[replace ? "replaceState" : "pushState"]({}, "", path);
 
-    return render(path);
+    return render();
   }
 
   const currentPath = () => window.location.pathname;
@@ -174,9 +187,9 @@ export function createRouter({ routes, root, notFound, onNavigate }) {
      */
     start() {
       const offClick = on(document, "click", handleClick);
-      const offPop = on(window, "popstate", () => render(currentPath()));
+      const offPop = on(window, "popstate", () => render());
 
-      render(currentPath());
+      render();
 
       return () => {
         offClick();
