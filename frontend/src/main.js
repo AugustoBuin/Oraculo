@@ -7,7 +7,9 @@
  * com o produto.
  */
 
+import { setSessionExpiredHandler } from "@/shared/api/client.js";
 import { userMessage } from "@/shared/api/errors.js";
+import { clearSession } from "@/shared/session/session.js";
 import { ConfigError, loadConfig } from "@/shared/config/env.js";
 import { failure, loading } from "@/shared/components/feedback.js";
 import { initTheme } from "@/shared/theme/theme.js";
@@ -82,9 +84,26 @@ async function boot() {
     dispose = render(root) ?? null;
   };
 
-  const showLogin = () => show((target) => loginPage(target, { onAuthenticated: showPortal }));
+  const showLogin = (notice) =>
+    show((target) => loginPage(target, { onAuthenticated: showPortal, notice }));
 
-  const showPortal = () => show((target) => appShell(target, { onSignedOut: showLogin }));
+  const showPortal = () => show((target) => appShell(target, { onSignedOut: (notice) => showLogin(notice) }));
+
+  /*
+   * A sessão venceu durante o uso (RF-08).
+   *
+   * **A intenção é preservada sem guardar nada:** a URL não é tocada. Quem
+   * estava em `/conta` vê o login com a URL ainda em `/conta`, e ao entrar o
+   * roteador do shell desenha exatamente aquela tela. Guardar o caminho num
+   * lugar à parte criaria uma segunda verdade sobre onde a pessoa está.
+   *
+   * A limpeza é total, não parcial: `clearSession()` derruba usuário, token e
+   * cache. Logout parcial é vazamento entre usuários no mesmo navegador.
+   */
+  setSessionExpiredHandler(() => {
+    clearSession();
+    showLogin("Sua sessão expirou. Entre novamente para continuar de onde parou.");
+  });
 
   show(() => {
     root.replaceChildren(loading("Carregando o Oráculo…"));

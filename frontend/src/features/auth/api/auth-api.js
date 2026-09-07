@@ -13,6 +13,22 @@ import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
 import { clearSession, setSession } from "@/shared/session/session.js";
 
 /**
+ * "Eu trato o meu próprio erro."
+ *
+ * **Isto não é preferência de apresentação: é correção.** O contrato usa `401`
+ * para três coisas diferentes (`docs/api-contract.md` §2): sessão ausente,
+ * sessão expirada, e credencial recusada — tanto no login quanto na conferência
+ * da senha atual na troca.
+ *
+ * O tratador central de sessão expirada não tem como distinguir os três, então
+ * quem sabe a diferença precisa dizer. Sem esta marca, errar a senha na tela de
+ * entrada expulsaria a pessoa com o aviso "sua sessão expirou" — um erro que
+ * acusa o sistema de um problema que não existe e esconde o que de fato
+ * aconteceu.
+ */
+const SELF_HANDLED = { silent: true };
+
+/**
  * Confere o contrato da sessão e devolve o dado normalizado.
  *
  * O `level` é o que decide o que aparece na tela; se ele vier ausente ou como
@@ -50,7 +66,7 @@ function parseSession(payload) {
  * mensagem, e engolir a exceção aqui tiraria essa escolha da tela.
  */
 export async function login({ email, password }) {
-  const payload = await api.post(API_ENDPOINTS.auth.login, { email, password });
+  const payload = await api.post(API_ENDPOINTS.auth.login, { email, password }, SELF_HANDLED);
 
   return setSession(parseSession(payload));
 }
@@ -65,7 +81,7 @@ export async function login({ email, password }) {
  */
 export async function loadSession() {
   try {
-    const payload = await api.get(API_ENDPOINTS.auth.session, { silent: true });
+    const payload = await api.get(API_ENDPOINTS.auth.session, SELF_HANDLED);
 
     return setSession(parseSession(payload));
   } catch (error) {
@@ -89,7 +105,10 @@ export async function loadSession() {
  */
 export async function logout() {
   try {
-    await api.delete(API_ENDPOINTS.auth.session);
+    // Também autossuficiente: um 401 aqui significa que a sessão já tinha
+    // morrido, e avisar "sua sessão expirou" a quem acabou de clicar em "Sair"
+    // seria informar o óbvio como se fosse problema.
+    await api.delete(API_ENDPOINTS.auth.session, SELF_HANDLED);
   } finally {
     clearSession();
   }
@@ -107,7 +126,11 @@ export async function logout() {
  * consequência esquecida.
  */
 export async function changePassword({ currentPassword, newPassword }) {
-  await api.put(API_ENDPOINTS.auth.password, { currentPassword, newPassword });
+  await api.put(
+    API_ENDPOINTS.auth.password,
+    { currentPassword, newPassword },
+    SELF_HANDLED,
+  );
 
   clearSession();
 }

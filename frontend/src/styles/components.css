@@ -370,3 +370,27 @@
     transform: translateY(0);
   }
 }
+
+/* --- Cartão e a tela de conta -------------------------------------------- */
+
+/* Profundidade por tom e borda. Cartão em repouso NÃO tem sombra — ela fica
+   reservada ao que flutua de verdade (§10.4). */
+.card {
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.account-layout {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* Densidade a partir do breakpoint maior; a base é a tela pequena (§10.5). */
+@media (min-width: 48rem) {
+  .account-layout {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}

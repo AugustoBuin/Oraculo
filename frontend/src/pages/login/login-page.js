@@ -12,15 +12,16 @@ import { scope } from "@/shared/dom/events.js";
 
 /**
  * @param {HTMLElement} root
- * @param {{ onAuthenticated: (user: object) => void }} config
+ * @param {{ onAuthenticated: (user: object) => void, notice?: string }} config
  * @returns {() => void} a limpeza da tela
  */
-export function loginPage(root, { onAuthenticated }) {
+export function loginPage(root, { onAuthenticated, notice }) {
   const life = scope();
 
   const form = loginForm({
     scope: life,
     onSuccess: onAuthenticated,
+    notice,
   });
 
   root.replaceChildren(

@@ -17,6 +17,7 @@ import { scope } from "@/shared/dom/events.js";
 import { createRouter } from "@/shared/router/router.js";
 import { hasLevel } from "@/shared/session/session.js";
 import { logout } from "@/features/auth/api/auth-api.js";
+import { accountPage } from "@/pages/account/account-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 
 /**
@@ -33,7 +34,7 @@ const placeholder = (title) => (outlet) => {
 
 /**
  * @param {HTMLElement} root
- * @param {{ onSignedOut: () => void }} config
+ * @param {{ onSignedOut: (notice?: string) => void }} config
  * @returns {() => void}
  */
 export function appShell(root, { onSignedOut }) {
@@ -59,7 +60,19 @@ export function appShell(root, { onSignedOut }) {
   const routes = [
     { path: ROUTES.cards, requires: "VIEWER", page: placeholder("Catálogo de cartas") },
     { path: ROUTES.catalogs, requires: "ADMIN", page: placeholder("Administração de catálogos") },
-    { path: ROUTES.account, requires: "VIEWER", page: placeholder("Minha conta") },
+    {
+      path: ROUTES.account,
+      requires: "VIEWER",
+      page: (target) =>
+        accountPage(target, {
+          onPasswordChanged: () => {
+            // O servidor já revogou todas as sessões (RF-05). A tela acompanha
+            // em vez de esperar o próximo 401 — que viria, mas depois de a
+            // pessoa clicar em algo e ver a operação falhar.
+            onSignedOut("Senha trocada. Entre novamente com a nova senha.");
+          },
+        }),
+    },
   ];
 
   /**
@@ -107,9 +120,20 @@ export function appShell(root, { onSignedOut }) {
     },
   });
 
+  /**
+   * A vida do cabeçalho corrente.
+   *
+   * `renderChrome()` roda a cada navegação, e o cabeçalho anterior precisa
+   * morrer antes de o novo nascer. Acumular um escopo por rota faria os
+   * listeners de `matchMedia` do botão de tema se empilharem — o vazamento do
+   * §12.4 na sua forma mais discreta, porque nada quebra: a aplicação só fica
+   * mais lenta a cada tela visitada.
+   */
+  let chromeLife = null;
+
   function renderChrome() {
-    const chromeLife = scope();
-    life.add(() => chromeLife.dispose());
+    chromeLife?.dispose();
+    chromeLife = scope();
 
     const theme = themeToggle({ scope: chromeLife });
 
@@ -150,6 +174,7 @@ export function appShell(root, { onSignedOut }) {
 
   life.add(router.start());
   life.add(() => notifications.dispose());
+  life.add(() => chromeLife?.dispose());
 
   return () => life.dispose();
 }

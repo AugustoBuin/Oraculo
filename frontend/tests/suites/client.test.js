@@ -1,4 +1,9 @@
-import { api, buildUrl, request } from "@/shared/api/client.js";
+import {
+  api,
+  buildUrl,
+  request,
+  setSessionExpiredHandler,
+} from "@/shared/api/client.js";
 import { clearCsrfToken, setCsrfToken } from "@/shared/api/csrf.js";
 import {
   ApiError,
@@ -284,5 +289,94 @@ suite("shared/api/errors · mensagem para o usuário", () => {
   test("mensagem construída por nós passa", () => {
     assertSame(userMessage(new ApiError(409, "Já existe uma carta com este nome nesta edição.")),
       "Já existe uma carta com este nome nesta edição.");
+  });
+});
+
+suite("shared/api/client · sessão expirada", () => {
+  /**
+   * Instala o tratador e o REMOVE num finally.
+   *
+   * Sem o finally, uma asserção que falha deixa o tratador registrado e o
+   * vaza para os testes seguintes — que passariam a contar avisos que não são
+   * deles. Teste que interfere no outro é dívida, não proteção (§13.4).
+   */
+  async function comTratadorDeSessao(body) {
+    let avisos = 0;
+    setSessionExpiredHandler(() => avisos++);
+
+    try {
+      await body(() => avisos);
+    } finally {
+      setSessionExpiredHandler(null);
+    }
+
+    return avisos;
+  }
+  test("um 401 avisa uma vez, mesmo com várias requisições em voo", async () => {
+    // Uma tela que dispara três buscas em paralelo recebe três 401 quando a
+    // sessão vence. Sem a trava seriam três redirecionamentos e três avisos
+    // empilhados, para um único acontecimento (RF-08).
+    const avisos = await comTratadorDeSessao(async () => {
+      await withFetch(async (double) => {
+        double.on("GET", "/api/cards", { status: 401, body: "" });
+        double.on("GET", "/api/games", { status: 401, body: "" });
+        double.on("GET", "/api/auth/session", { status: 401, body: "" });
+
+        await Promise.allSettled([
+          api.get("/cards"),
+          api.get("/games"),
+          api.get("/auth/session"),
+        ]);
+      });
+    });
+
+    assertSame(avisos, 1);
+  });
+
+  test("registrar um tratador novo destrava, porque é sessão nova", async () => {
+    let avisos = 0;
+
+    try {
+      await withFetch(async (double) => {
+        double.on("GET", "/api/cards", { status: 401, body: "" });
+
+        setSessionExpiredHandler(() => avisos++);
+        await api.get("/cards").catch(() => {});
+
+        setSessionExpiredHandler(() => avisos++);
+        await api.get("/cards").catch(() => {});
+      });
+    } finally {
+      setSessionExpiredHandler(null);
+    }
+
+    assertSame(avisos, 2, "o segundo vencimento da vida da aba passaria despercebido");
+  });
+
+  test("chamada silenciosa NÃO dispara o aviso de sessão expirada", async () => {
+    // É a leitura de sessão no boot: 401 ali significa "ainda não entrou", e
+    // mandar essa pessoa ao login dizendo que a sessão expirou seria mentir.
+    const avisos = await comTratadorDeSessao(async () => {
+      await withFetch(async (double) => {
+        double.on("GET", "/api/auth/session", { status: 401, body: "" });
+        await api.get("/auth/session", { silent: true }).catch(() => {});
+      });
+    });
+
+    assertSame(avisos, 0);
+  });
+
+  test("403 NÃO dispara o aviso: sessão válida não desloga ninguém", async () => {
+    let forbidden = null;
+
+    const avisos = await comTratadorDeSessao(async () => {
+      await withFetch(async (double) => {
+        double.on("PUT", "/api/editions/1", { status: 403, body: "" });
+        forbidden = await assertRejects(api.put("/editions/1", {}), ApiError);
+      });
+    });
+
+    assertSame(avisos, 0, "403 é nível insuficiente, não sessão morta (ADR-007)");
+    assertTrue(forbidden.isForbidden);
   });
 });

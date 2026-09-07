@@ -18,9 +18,9 @@ import { login } from "@/features/auth/api/auth-api.js";
 const MIN_PASSWORD_LENGTH = 8;
 
 /**
- * @param {{ scope: object, onSuccess: (user: object) => void }} config
+ * @param {{ scope: object, onSuccess: (user: object) => void, notice?: string }} config
  */
-export function loginForm({ scope, onSuccess }) {
+export function loginForm({ scope, onSuccess, notice }) {
   const email = field({
     id: "email",
     label: "E-mail",
@@ -59,6 +59,18 @@ export function loginForm({ scope, onSuccess }) {
       submit.node,
     ],
   });
+
+  /*
+   * O aviso de por que a pessoa está aqui.
+   *
+   * Sessão vencida no meio do uso não é falha dela, e o tom reflete isso:
+   * "atenção", não "perigo". Chegar ao login sem explicação, depois de estar
+   * trabalhando, parece bug — e a pessoa refaz o caminho achando que perdeu o
+   * que fez (RF-08).
+   */
+  if (notice !== undefined) {
+    alertSlot.replaceChildren(inlineMessage({ message: notice, tone: "attention" }));
+  }
 
   let submitting = false;
 

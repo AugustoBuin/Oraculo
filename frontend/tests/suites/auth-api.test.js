@@ -1,3 +1,4 @@
+import { api, setSessionExpiredHandler } from "@/shared/api/client.js";
 import { getCsrfToken } from "@/shared/api/csrf.js";
 import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
 import {
@@ -185,5 +186,79 @@ suite("features/auth/api · saída e troca de senha", () => {
       assertSame(Object.keys(enviado).sort().join(","), "currentPassword,newPassword");
       assertFalse(isAuthenticated(), "o servidor revogou tudo; a tela precisa acompanhar");
     });
+  });
+});
+
+suite("features/auth/api · o 401 ambíguo", () => {
+  /**
+   * O contrato usa 401 para três coisas: sessão ausente, sessão expirada e
+   * credencial recusada. O tratador central não distingue as três, então as
+   * rotas que apresentam o próprio erro precisam se declarar autossuficientes.
+   * Sem isso, errar a senha expulsa a pessoa dizendo que a sessão expirou.
+   */
+  async function comTratador(body) {
+    let avisos = 0;
+    setSessionExpiredHandler(() => avisos++);
+
+    try {
+      await withFetch((double) => body(double, () => avisos));
+    } finally {
+      setSessionExpiredHandler(null);
+    }
+
+    return avisos;
+  }
+
+  test("senha errada no login NÃO dispara o aviso de sessão expirada", async () => {
+    const avisos = await comTratador(async (double) => {
+      double.on("POST", "/api/auth/login", {
+        status: 401,
+        body: JSON.stringify({ message: "E-mail ou senha inválidos." }),
+      });
+
+      const error = await assertRejects(login({ email: "a@b.c", password: "x" }), ApiError);
+      assertSame(error.message, "E-mail ou senha inválidos.");
+    });
+
+    assertSame(avisos, 0, "o formulário mostra o próprio erro; o sistema não é o culpado");
+  });
+
+  test("senha atual errada na troca NÃO expulsa para o login", async () => {
+    const avisos = await comTratador(async (double) => {
+      double.on("PUT", "/api/auth/password", {
+        status: 401,
+        body: JSON.stringify({ message: "Senha atual incorreta." }),
+      });
+
+      await assertRejects(
+        changePassword({ currentPassword: "errada", newPassword: "novaSenha123" }),
+        ApiError,
+      );
+    });
+
+    assertSame(avisos, 0);
+  });
+
+  test("401 numa leitura comum DISPARA o aviso, que é o caso de verdade", async () => {
+    const avisos = await comTratador(async (double) => {
+      double.on("GET", "/api/cards", { status: 401, body: "" });
+      await assertRejects(api.get("/cards"), ApiError);
+    });
+
+    assertSame(avisos, 1);
+  });
+
+  test("401 no logout não avisa: a sessão já tinha morrido", async () => {
+    const avisos = await comTratador(async (double) => {
+      double.on("DELETE", "/api/auth/session", { status: 401, body: "" });
+
+      try {
+        await logout();
+      } catch {
+        // sobe, e tudo bem
+      }
+    });
+
+    assertSame(avisos, 0);
   });
 });
