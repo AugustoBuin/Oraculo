@@ -1,0 +1,22 @@
+/**
+ * Ponto de entrada da página de testes.
+ *
+ * As suítes se registram no momento do import — por isso elas vêm antes da
+ * chamada de `run()`. Acrescentar uma suíte é acrescentar uma linha aqui.
+ */
+
+import { run } from "~/runner.js";
+
+import "~/suites/safe-url.test.js";
+import "~/suites/elements.test.js";
+import "~/suites/events.test.js";
+import "~/suites/config.test.js";
+import "~/suites/theme.test.js";
+
+const root = document.getElementById("results");
+
+if (root === null) {
+  console.error("[testes] o elemento de resultados não existe");
+} else {
+  await run(root);
+}

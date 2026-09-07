@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Testes — Oráculo</title>
+
+  <!--
+    Dois prefixos: "@/" para o código da aplicação, que é o mesmo que roda em
+    produção, e "~/" para a infraestrutura de teste. O runner importa os
+    módulos REAIS — substituir um deles por um dublê testaria o dublê
+    (PADROES-ENGENHARIA.md §13.3).
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@/": "/src/",
+        "~/": "/tests/"
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/base.css">
+  <link rel="stylesheet" href="/src/styles/utilities.css">
+  <link rel="stylesheet" href="/tests/tests.css">
+</head>
+<body>
+  <main class="container">
+    <h1>Testes do frontend</h1>
+    <p class="text-muted">
+      Lógica pura: validação, formatação, montagem de requisição e limpeza.
+      Renderização de DOM fica no roteiro manual, por decisão do ADR-004.
+    </p>
+    <p class="text-muted">
+      Alguns testes exercitam de propósito os caminhos que registram aviso ou
+      erro no console — URL recusada e limpeza que falha. Console sujo
+      <strong>nesta página</strong> é esperado; na aplicação, não.
+    </p>
+
+    <div id="results">
+      <p role="status">Executando…</p>
+    </div>
+  </main>
+
+  <script type="module" src="/tests/main.js"></script>
+</body>
+</html>

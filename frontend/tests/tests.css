@@ -1,0 +1,54 @@
+/*
+ * Estilo da página de testes.
+ *
+ * Consome os mesmos tokens da aplicação: um placar que não respeita o design
+ * system seria a primeira exceção, e exceção em regra de estilo se multiplica.
+ */
+
+body {
+  padding: var(--space-5) var(--space-4);
+}
+
+h1 {
+  margin-bottom: var(--space-2);
+}
+
+h2 {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-1);
+  border-bottom: 1px solid var(--color-line);
+  font-size: var(--text-md);
+  color: var(--color-muted);
+  font-weight: var(--weight-medium);
+}
+
+.result {
+  padding: var(--space-1) 0;
+  font-size: var(--text-md);
+}
+
+/* A regra dos dois sinais: o ✓ e o ✗ carregam a informação junto da cor, para
+   quem não distingue verde de vermelho ler igual (§9.4). */
+.passed {
+  color: var(--color-success);
+}
+
+.failed {
+  color: var(--color-danger);
+}
+
+.detail {
+  display: block;
+  padding-left: var(--space-3);
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.summary {
+  margin-top: var(--space-5);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-bold);
+}
