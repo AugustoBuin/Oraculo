@@ -56,6 +56,22 @@ export const CARD_SORT_OPTIONS = ["recent", "name", "game"];
 
 export const DEFAULT_CARD_SORT = "recent";
 
+/** Rótulos das ordenações, em português (§3.1). */
+export const CARD_SORT_LABELS = {
+  recent: "Mais recentes",
+  name: "Nome",
+  game: "Jogo",
+};
+
+/**
+ * Espera antes de a busca virar requisição.
+ *
+ * Cada tecla digitada não pode virar uma ida ao servidor. O valor é o suficiente
+ * para uma palavra inteira ser digitada sem disparar nada, e curto o bastante
+ * para o resultado parecer imediato quando a pessoa para.
+ */
+export const SEARCH_DEBOUNCE_MS = 350;
+
 /**
  * Por quanto tempo cada tipo de leitura serve.
  *
@@ -103,4 +119,20 @@ export const THEME_PREFERENCES = {
  */
 export const STORAGE_KEYS = {
   themePreference: "oraculo:theme",
+  cardsView: "oraculo:cards-view",
 };
+
+/**
+ * As duas visões da listagem.
+ *
+ * A galeria é o padrão porque carta é objeto visual: quem opera o catálogo
+ * reconhece pela arte antes de ler o nome. A tabela existe porque quem
+ * trabalha em volume precisa comparar campos lado a lado — a escolha fica com
+ * o usuário e é lembrada (Decisão de UX nº 3 do PRD).
+ */
+export const CARD_VIEWS = {
+  GALLERY: "gallery",
+  TABLE: "table",
+};
+
+export const DEFAULT_CARD_VIEW = CARD_VIEWS.GALLERY;

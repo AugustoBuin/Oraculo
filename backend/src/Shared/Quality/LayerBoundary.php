@@ -51,6 +51,13 @@ final class LayerBoundary
             ['#(?:from|import)\s*\(?\s*["\']@?/?(?:\.\./)*(?:src/)?features/#', 'compartilhado não pode importar de feature'],
             ['#(?:from|import)\s*\(?\s*["\']@?/?(?:\.\./)*(?:src/)?pages/#', 'compartilhado não pode importar de página'],
         ],
+        // A seta aponta para dentro: a página compõe a feature, não o
+        // contrário. Uma feature que importa de `pages/` deixa de ser
+        // reutilizável em qualquer outra tela — e a regra existia só na
+        // prosa do §2.1 até aqui, o que é o mesmo que não existir.
+        'frontend/src/features/' => [
+            ['#(?:from|import)\s*\(?\s*["\']@?/?(?:\.\./)*(?:src/)?pages/#', 'feature não pode importar de página'],
+        ],
     ];
 
     /**

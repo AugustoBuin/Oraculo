@@ -117,6 +117,21 @@ final class LayerBoundaryTest extends TestCase
         $this->assertCount(1, $violations);
     }
 
+    public function testAcusaFeatureImportandoDePagina(): void
+    {
+        // A regra de dependência do PADROES-ENGENHARIA.md §2.1 diz que uma
+        // feature conhece a camada compartilhada e ela mesma — nada mais.
+        // Importar de `pages/` inverte a seta: a página compõe a feature, não
+        // o contrário, e o import cruzado torna a feature inutilizável em
+        // qualquer outra tela.
+        $violations = LayerBoundary::violations(
+            'frontend/src/features/cards/utils/card-query.js',
+            'import { ROUTES } from "@/pages/app-shell/navigation.js";'
+        );
+
+        $this->assertCount(1, $violations);
+    }
+
     public function testAceitaFeatureImportandoDoCompartilhado(): void
     {
         $violations = LayerBoundary::violations(
