@@ -22,5 +22,6 @@ Enquanto isso, a documentação do projeto está em [`docs/`](docs/):
 | [Contrato da API](docs/api-contract.md) | Endpoints, envelopes e códigos de erro |
 | [Schema do banco](docs/database-schema.md) | Tabelas, índices e massa inicial |
 | [Backlog do backend](docs/backlog-backend.md) | Tarefas com critérios de aceite |
+| [Backlog do frontend](docs/backlog-frontend.md) | Tarefas com critérios de aceite |
 | [Guia de engenharia](docs/ENGENHARIA.md) | Como rodar, fronteiras e convenções |
 | [Decisões (ADRs)](docs/decisions/) | Por que não foi feito do jeito óbvio |
