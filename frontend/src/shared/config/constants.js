@@ -1,0 +1,57 @@
+/**
+ * Os valores que carregam significado de negócio, agrupados por contexto.
+ *
+ * Nenhum deles é escrito solto no meio de um componente. A regra do
+ * `PADROES-ENGENHARIA.md` §4.3 é direta: comparar contra literal espalhado
+ * (`user.role === "ADMIN"`, `perPage = 20`) é achado CRÍTICO, porque o dia em
+ * que o valor muda ninguém encontra todas as cópias.
+ */
+
+/** Tamanho de página do contrato (`docs/api-contract.md` §5). */
+export const DEFAULT_PAGE_SIZE = 20;
+
+/**
+ * O servidor **trunca** acima disto em vez de recusar, mas mandar 500 e
+ * receber 100 de volta faria a paginação da tela mentir sobre o que pediu.
+ */
+export const MAX_PAGE_SIZE = 100;
+
+/**
+ * Teto de espera de uma requisição antes do cancelamento.
+ *
+ * Existe para que uma rede ruim vire mensagem de erro acionável em vez de uma
+ * tela girando para sempre (§5.1).
+ */
+export const REQUEST_TIMEOUT_MS = 15_000;
+
+/**
+ * Os três níveis, hierárquicos, com os mesmos inteiros de `users.role_level`.
+ *
+ * Espelham `App\Shared\Enum\PermissionLevel` (docs/decisions/ADR-006). São
+ * usados **apenas** para mostrar ou esconder elemento: a decisão de autorização
+ * é do servidor, a cada requisição (§8.1). Esconder um botão é conveniência
+ * visual; quem chamar a rota direto recebe 403 do mesmo jeito.
+ */
+export const PERMISSION_LEVELS = {
+  VIEWER: 1,
+  EDITOR: 2,
+  ADMIN: 3,
+};
+
+/** Rótulos em português, como todo texto de interface (§3.1). */
+export const PERMISSION_LABELS = {
+  VIEWER: "Consulta",
+  EDITOR: "Editor",
+  ADMIN: "Administrador",
+};
+
+/**
+ * A allowlist de ordenação do contrato.
+ *
+ * É o único ponto do sistema onde algo do cliente chega perto de um nome de
+ * coluna. O servidor recusa valor fora dela com 400; o cliente não deve nem
+ * oferecer o que seria recusado.
+ */
+export const CARD_SORT_OPTIONS = ["recent", "name", "game"];
+
+export const DEFAULT_CARD_SORT = "recent";
