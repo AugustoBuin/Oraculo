@@ -20,6 +20,7 @@ import { listCards } from "@/features/cards/api/cards-api.js";
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { readCardQuery, writeCardQuery } from "@/features/cards/utils/card-query.js";
 import { ROUTES } from "@/pages/app-shell/navigation.js";
+import { cardsFilters } from "@/pages/cards/cards-filters.js";
 
 /**
  * @param {HTMLElement} root
@@ -31,19 +32,25 @@ export function cardsPage(root, { navigate }) {
 
   const results = el("div", { classes: ["cards-results"] });
 
+  const filters = cardsFilters({
+    query: readCardQuery(window.location.search),
+    scope: life,
+    onChange: (partial) => updateQuery(partial),
+  });
+
   root.replaceChildren(
     el("div", {
       classes: ["stack-loose"],
-      children: [el("h1", { text: "Catálogo de cartas" }), results],
+      children: [el("h1", { text: "Catálogo de cartas" }), filters.node, results],
     }),
   );
 
   /**
    * A requisição no ar.
    *
-   * Trocar de página aborta a anterior: sem isso, a resposta atrasada da
-   * página 1 pode chegar depois da página 2 e sobrescrever a tela certa — a
-   * mesma corrida que o RF-25 descreve na cascata, aqui na paginação.
+   * Trocar de página ou de filtro aborta a anterior: sem isso, a resposta
+   * atrasada de uma busca pode chegar depois da seguinte e sobrescrever a tela
+   * certa — a mesma corrida que o RF-25 descreve na cascata.
    */
   let inFlight = null;
 
@@ -60,13 +67,38 @@ export function cardsPage(root, { navigate }) {
 
   life.add(() => renderLife?.dispose());
 
-  function goToPage(page) {
-    // A URL carrega o estado: recarregar em `?page=2` volta para a página 2, e
-    // o botão "voltar" do navegador funciona sem código nenhum a mais.
-    // A página compõe caminho + consulta: a feature devolve só o sufixo,
-    // porque ela não conhece as rotas da aplicação.
-    navigate(ROUTES.cards + writeCardQuery({ ...readCardQuery(window.location.search), page }));
+  /**
+   * Atualiza a consulta na URL **sem remontar a tela**.
+   *
+   * Filtro não é troca de rota: é estado dentro da mesma rota. Passar por
+   * `navigate()` remontaria a página inteira, e a caixa de busca perderia o
+   * foco no meio da digitação — a pessoa digitaria três letras e o cursor
+   * sumiria.
+   *
+   * O histórico continua funcionando: o "voltar" do navegador dispara
+   * `popstate`, o roteador remonta a página, e ela lê a URL de novo.
+   */
+  function updateQuery(partial, { syncFilters = false } = {}) {
+    const next = { ...readCardQuery(window.location.search), ...partial };
+    const url = ROUTES.cards + writeCardQuery(next);
+
+    if (url === window.location.pathname + window.location.search) {
+      return;
+    }
+
+    window.history.pushState({}, "", url);
+
+    // Quando a mudança veio de FORA da barra de filtros, ela precisa se
+    // reescrever — senão a listagem mostra uma coisa e os controles dizem
+    // outra (§6.2).
+    if (syncFilters) {
+      filters.sync(next);
+    }
+
+    load();
   }
+
+  const goToPage = (page) => updateQuery({ page });
 
   async function load() {
     inFlight?.abort();
@@ -93,24 +125,7 @@ export function cardsPage(root, { navigate }) {
       }
 
       if (cards.length === 0) {
-        renderInto((scoped) =>
-          meta.total === 0 && query.page === 1
-            ? empty({
-                title: "Nenhuma carta cadastrada ainda",
-                description: "Quando o catálogo receber a primeira carta, ela aparece aqui.",
-              })
-            : empty({
-                title: "Nada nesta página",
-                description: "A listagem tem menos páginas do que a que você pediu.",
-                action: button({
-                  label: "Voltar ao início",
-                  variant: "secondary",
-                  scope: scoped,
-                  onClick: () => goToPage(1),
-                }).node,
-              }),
-        );
-
+        renderInto((scoped) => emptyStateFor(query, meta, scoped));
         return;
       }
 
@@ -157,6 +172,52 @@ export function cardsPage(root, { navigate }) {
         }),
       );
     }
+  }
+
+  /**
+   * O estado vazio diz **por que** está vazio.
+   *
+   * "Nenhum resultado" sozinho deixa a pessoa sem saber se o catálogo está
+   * vazio, se o filtro é restritivo demais, ou se ela errou a busca (§7.4).
+   */
+  function emptyStateFor(query, meta, scoped) {
+    const filtering =
+      query.search !== "" || query.game !== null || query.edition !== null || query.rarity !== null;
+
+    if (filtering) {
+      return empty({
+        title: "Nenhuma carta encontrada",
+        description: "Nenhuma carta corresponde à busca e aos filtros escolhidos.",
+        action: button({
+          label: "Limpar busca e filtros",
+          variant: "secondary",
+          scope: scoped,
+          onClick: () =>
+            updateQuery(
+              { page: 1, search: "", game: null, edition: null, rarity: null },
+              { syncFilters: true },
+            ),
+        }).node,
+      });
+    }
+
+    if (meta.total === 0) {
+      return empty({
+        title: "Nenhuma carta cadastrada ainda",
+        description: "Quando o catálogo receber a primeira carta, ela aparece aqui.",
+      });
+    }
+
+    return empty({
+      title: "Nada nesta página",
+      description: "A listagem tem menos páginas do que a que você pediu.",
+      action: button({
+        label: "Voltar ao início",
+        variant: "secondary",
+        scope: scoped,
+        onClick: () => goToPage(1),
+      }).node,
+    });
   }
 
   load();

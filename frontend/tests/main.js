@@ -19,6 +19,7 @@ import "~/suites/router.test.js";
 import "~/suites/auth-api.test.js";
 import "~/suites/navigation.test.js";
 import "~/suites/cards-api.test.js";
+import "~/suites/cascade-select.test.js";
 
 const root = document.getElementById("results");
 

@@ -498,3 +498,52 @@
   color: var(--color-body);
   font-size: var(--text-sm);
 }
+
+/* --- Busca e filtros ----------------------------------------------------- */
+
+/*
+ * Mobile-first: uma coluna na base, e os campos se acomodam conforme cabe.
+ * Sem breakpoint escrito à mão e sem largura fixa em pixel (§10.5).
+ */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+/* A busca ocupa a linha inteira em tela pequena: é o campo mais usado. */
+.filters .field:first-child {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 48rem) {
+  .filters .field:first-child {
+    grid-column: span 2;
+  }
+}
+
+/*
+ * Campo em cascata desabilitado precisa PARECER desabilitado. Um select
+ * habilitado e vazio convida ao clique e não explica nada (RF-20, RF-22).
+ */
+.field-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estado de falha da cascata: dois sinais — a borda e o texto do status. */
+.field[data-error="true"] .field-input {
+  border-color: var(--color-danger);
+}
+
+.field[data-state="failed"] .field-hint {
+  color: var(--color-danger);
+}
+
+.field[data-state="loading"] .field-hint {
+  color: var(--color-body);
+}

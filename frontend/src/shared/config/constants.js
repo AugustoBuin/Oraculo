@@ -56,6 +56,22 @@ export const CARD_SORT_OPTIONS = ["recent", "name", "game"];
 
 export const DEFAULT_CARD_SORT = "recent";
 
+/** Rótulos das ordenações, em português (§3.1). */
+export const CARD_SORT_LABELS = {
+  recent: "Mais recentes",
+  name: "Nome",
+  game: "Jogo",
+};
+
+/**
+ * Espera antes de a busca virar requisição.
+ *
+ * Cada tecla digitada não pode virar uma ida ao servidor. O valor é o suficiente
+ * para uma palavra inteira ser digitada sem disparar nada, e curto o bastante
+ * para o resultado parecer imediato quando a pessoa para.
+ */
+export const SEARCH_DEBOUNCE_MS = 350;
+
 /**
  * Por quanto tempo cada tipo de leitura serve.
  *
