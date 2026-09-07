@@ -9,11 +9,11 @@
 
 import { userMessage } from "@/shared/api/errors.js";
 import { ConfigError, loadConfig } from "@/shared/config/env.js";
-import { el } from "@/shared/dom/elements.js";
 import { failure, loading } from "@/shared/components/feedback.js";
 import { initTheme } from "@/shared/theme/theme.js";
 import { loadSession } from "@/features/auth/api/auth-api.js";
 import { loginPage } from "@/pages/login/login-page.js";
+import { appShell } from "@/pages/app-shell/app-shell.js";
 
 const APP_ROOT_ID = "app";
 
@@ -84,23 +84,7 @@ async function boot() {
 
   const showLogin = () => show((target) => loginPage(target, { onAuthenticated: showPortal }));
 
-  // F-011 substitui isto pelo shell, que compõe cabeçalho, navegação por nível
-  // e roteador. Até lá, confirma que a sessão foi criada.
-  const showPortal = (user) =>
-    show((target) => {
-      target.replaceChildren(
-        el("main", {
-          classes: ["container", "stack"],
-          attrs: { id: "conteudo" },
-          children: [
-            el("h1", { text: "Oráculo" }),
-            el("p", { text: `Sessão iniciada como ${user.name} (${user.role}).` }),
-          ],
-        }),
-      );
-
-      return null;
-    });
+  const showPortal = () => show((target) => appShell(target, { onSignedOut: showLogin }));
 
   show(() => {
     root.replaceChildren(loading("Carregando o Oráculo…"));
@@ -117,7 +101,7 @@ async function boot() {
       return;
     }
 
-    showPortal(user);
+    showPortal();
   } catch (error) {
     console.error("[boot] falha ao ler a sessão", { error });
 

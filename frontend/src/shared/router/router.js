@@ -63,9 +63,10 @@ export function matchRoute(pattern, path) {
  *   routes: Array<{ path: string, page: Function }>,
  *   root: HTMLElement,
  *   notFound: Function,
+ *   onNavigate?: (path: string) => void,
  * }} config
  */
-export function createRouter({ routes, root, notFound }) {
+export function createRouter({ routes, root, notFound, onNavigate }) {
   /** A limpeza da tela que está no ar. */
   let disposeCurrent = null;
 
@@ -86,6 +87,10 @@ export function createRouter({ routes, root, notFound }) {
     // já saiu e não fica com listeners pendurados sobre um DOM substituído.
     disposeCurrent?.();
     disposeCurrent = null;
+
+    // Avisa antes de montar, para que o que depende da rota — o "você está
+    // aqui" da navegação — já esteja correto quando a tela aparecer.
+    onNavigate?.(path);
 
     const match = resolve(path);
 
