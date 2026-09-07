@@ -1,0 +1,224 @@
+/*
+ * O design system inteiro começa aqui.
+ *
+ * Nenhum valor visual é escrito fora deste arquivo (PADROES-ENGENHARIA.md
+ * §10.1). Cor, tipografia, espaço, raio, sombra, duração e curva só existem
+ * como token, consumidos por nome.
+ *
+ * TODO CONTRASTE FOI MEDIDO, NÃO ESTIMADO. A tabela par a par, nos dois temas,
+ * está em `docs/design.md` (RNF-05). A paleta do Anexo D do documento de
+ * padrões foi o ponto de partida e reprovou em seis pares — as correções estão
+ * anotadas em cada token abaixo e explicadas no design.md.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * Cor — papel semântico, nunca aparência.
+   *
+   * O tema claro é o padrão do arquivo. O escuro sobrescreve as MESMAS
+   * variáveis mais abaixo: todo token de cor existe nos dois temas ou não
+   * existe (§10.5).
+   * ------------------------------------------------------------------- */
+
+  --color-bg: #f6f1ea;
+  --color-surface: #ffffff;
+
+  --color-ink: #26201e;    /* texto primário  — 14,29:1 no fundo */
+  --color-body: #5c504a;   /* texto corrente  —  6,92:1 no fundo */
+  --color-muted: #6d5d52;  /* metadado        —  5,60:1 no fundo */
+
+  --color-line: #e8e0d6;
+
+  /*
+   * A voz única de ação. Ocupa no máximo ~10% da tela e marca UMA ação
+   * primária por contexto — a raridade é o mecanismo que faz o usuário saber
+   * onde apertar sem ler (§10.2).
+   *
+   * O coral do Anexo D (#f1543f) virou este tom mais fechado porque tinta
+   * branca sobre ele dava 3,45:1. Este aceita branco a 5,61:1 e ainda serve
+   * como texto sobre o fundo, a 4,99:1.
+   */
+  --color-accent: #bf3520;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #fbe7e2;
+
+  /*
+   * Estados. Cada matiz tem um significado registrado e não é reaproveitado
+   * fora dele (§10.2). Todos são a versão TINTA: passam sobre o fundo e sobre
+   * a superfície. O par `-soft` é o preenchimento de etiqueta, medido com a
+   * própria tinta em cima.
+   *
+   * Os tons crus do Anexo D (#16a34a, #ca8a04) reprovavam no tema claro —
+   * verde a 2,93:1 e âmbar a 2,61:1. Foram fechados até passarem.
+   */
+  --color-success: #166534;
+  --color-success-soft: #e3f2e7;
+  --color-attention: #854d0e;
+  --color-attention-soft: #f7eddb;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fbe6e6;
+  --color-info: #1d4ed8;
+  --color-info-soft: #e4eafb;
+
+  /* O anel de foco nunca é removido; só substituído por um visível (§9.2). */
+  --color-focus: #1d4ed8;
+
+  /* ---------------------------------------------------------------------
+   * Tipografia — escala fechada. Não se inventa valor intermediário (§10.3).
+   *
+   * Sem fonte remota: nenhum CDN, nenhum Google Fonts (RNF-01). A pilha do
+   * sistema é o que o navegador já tem, e não custa uma requisição.
+   * ------------------------------------------------------------------- */
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+
+  --text-xs: 0.75rem;    /* 12px — piso absoluto (§9.5) */
+  --text-sm: 0.8125rem;  /* 13px */
+  --text-md: 0.875rem;   /* 14px */
+  --text-lg: 1rem;       /* 16px */
+  --text-xl: 1.125rem;   /* 18px */
+  --text-2xl: 1.5625rem; /* 25px */
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* ---------------------------------------------------------------------
+   * Espaço, raio, profundidade
+   * ------------------------------------------------------------------- */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-pill: 999px;
+
+  /*
+   * Profundidade vem de tom e borda. Sombra é reservada ao que flutua de
+   * verdade — modal, popover, menu. Cartão em repouso não tem sombra (§10.4).
+   */
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.12);
+
+  /* Alvo de toque mínimo na base mobile (§9.5). */
+  --target-min: 2.75rem; /* 44px */
+
+  /* ---------------------------------------------------------------------
+   * Movimento — nada acima de 400ms, exceto progresso (§11.2)
+   * ------------------------------------------------------------------- */
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Diz ao navegador quais esquemas a página sabe pintar. */
+  color-scheme: light dark;
+}
+
+/*
+ * Tema escuro.
+ *
+ * Aplicado por dois caminhos, e a ordem importa:
+ *
+ *   1. Preferência do sistema, sem atributo nenhum. É o padrão, e não depende
+ *      de JavaScript — por isso não existe piscada de tema no carregamento
+ *      para quem não escolheu nada, que é a maioria.
+ *   2. Escolha explícita do usuário, por `[data-theme]`, que vence a
+ *      preferência do sistema nos dois sentidos.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg: #14100e;
+    --color-surface: #1f1a17;
+
+    --color-ink: #f3ece4;   /* 16,15:1 no fundo */
+    --color-body: #c9bdb2;  /* 10,27:1 no fundo */
+    --color-muted: #9e9189; /*  5,63:1 na superfície */
+
+    --color-line: #2a2420;
+
+    /*
+     * ESTE É O PAR QUE O §10.2 DESCREVE E QUE MAIS REPROVA.
+     *
+     * A superfície de acento clareia no tema escuro, e branco fixo em cima
+     * dela cai para 2,87:1. A tinta troca junto com a superfície: aqui ela é
+     * escura, a 6,60:1. Branco não é tinta — é uma cor como outra qualquer.
+     */
+    --color-accent: #f4705e;
+    --color-on-accent: #14100e;
+    --color-accent-soft: #2b1512;
+
+    --color-success: #4ade80;
+    --color-success-soft: #12251a;
+    --color-attention: #fbbf24;
+    --color-attention-soft: #2a2009;
+    --color-danger: #f87171;
+    --color-danger-soft: #2b1414;
+    --color-info: #60a5fa;
+    --color-info-soft: #141d2e;
+
+    --color-focus: #93c5fd;
+
+    /* A sombra precisa ser mais densa para existir sobre fundo escuro. */
+    --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-bg: #14100e;
+  --color-surface: #1f1a17;
+
+  --color-ink: #f3ece4;
+  --color-body: #c9bdb2;
+  --color-muted: #9e9189;
+
+  --color-line: #2a2420;
+
+  --color-accent: #f4705e;
+  --color-on-accent: #14100e;
+  --color-accent-soft: #2b1512;
+
+  --color-success: #4ade80;
+  --color-success-soft: #12251a;
+  --color-attention: #fbbf24;
+  --color-attention-soft: #2a2009;
+  --color-danger: #f87171;
+  --color-danger-soft: #2b1414;
+  --color-info: #60a5fa;
+  --color-info-soft: #141d2e;
+
+  --color-focus: #93c5fd;
+
+  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+}
+
+/*
+ * Movimento reduzido pede MENOS MOVIMENTO, NÃO MENOS INFORMAÇÃO (§11.3).
+ *
+ * Mudança de cor, opacidade e sombra não é movimento: é o retorno que confirma
+ * o clique. Matá-la trocaria um problema de acessibilidade por outro. O que se
+ * desliga é deslocamento, escala e altura.
+ *
+ * `animation-duration: 1ms` e não `0`: o evento de fim de animação ainda
+ * dispara, então quem espera por ele não trava.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: color, background-color, border-color, outline-color,
+      opacity, box-shadow !important;
+    transition-duration: var(--duration-fast) !important;
+  }
+}

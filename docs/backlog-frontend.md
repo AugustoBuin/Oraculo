@@ -76,7 +76,9 @@ que nomeia a chave ausente.
 - [ ] `php bin/validate.php` passa a varrer `frontend/src` e reporta a contagem de arquivos.
 - [ ] Todo import usa o prefixo `@/`; `grep -rn "\.\./\.\./" frontend/src` volta vazio.
 - [ ] Nenhuma URL de API escrita fora de `API_ENDPOINTS`.
-- [ ] Nenhum `<script>` inline e nenhum `style=` inline no HTML — a CSP de F-051 depende disso.
+- [ ] O único `<script>` inline é o mapa de importação: o §2.7 o prescreve, ele não carrega
+      comportamento e não existe versão externa suportada pelos navegadores. Entra na CSP de
+      F-051 por hash. Nenhum outro script inline, nenhum `style=` inline.
 - [ ] `shared/` não importa de `features/` nem de `pages/`; nenhuma `feature` importa de outra.
 - [ ] Nenhum segredo no cliente. O que está no config é público de verdade (§8.2).
 

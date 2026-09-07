@@ -4,10 +4,44 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Oráculo</title>
+
+  <!--
+    O mapa de importação é o único script inline da página, e não carrega
+    comportamento: ele só ensina ao navegador que "@/" é a raiz de src/.
+
+    É o que o PADROES-ENGENHARIA.md §2.7 prescreve para projeto sem build, e
+    o que permite escrever `@/shared/api/client.js` em vez de `../../../`.
+    Caminho relativo esconde violação de camada; com prefixo absoluto, a
+    fronteira fica visível na própria linha do import — que é justamente o
+    que o bin/check-boundaries.php lê.
+
+    Precisa ser inline: mapa de importação externo não é suportado pelos
+    navegadores. Ele entra na Content-Security-Policy por hash (F-051).
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@/": "/src/"
+      }
+    }
+  </script>
+
+  <!--
+    A ordem é a do cascata e não é arbitrária: os tokens precisam existir
+    antes de qualquer regra que os consuma, e os utilitários vêm por último
+    para vencerem o padrão de elemento sem precisar de !important.
+
+    Nenhuma fonte remota e nenhum CSS de CDN (RNF-01).
+  -->
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/base.css">
+  <link rel="stylesheet" href="/src/styles/utilities.css">
 </head>
 <body>
   <noscript>O Oráculo precisa de JavaScript habilitado.</noscript>
-  <!-- A aplicação é montada aqui. Frontend em construção. -->
+
   <div id="app"></div>
+
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
