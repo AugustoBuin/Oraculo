@@ -13,6 +13,9 @@ import "~/suites/events.test.js";
 import "~/suites/config.test.js";
 import "~/suites/theme.test.js";
 import "~/suites/client.test.js";
+import "~/suites/store.test.js";
+import "~/suites/session.test.js";
+import "~/suites/router.test.js";
 
 const root = document.getElementById("results");
 

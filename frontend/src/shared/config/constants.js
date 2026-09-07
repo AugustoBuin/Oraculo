@@ -57,6 +57,31 @@ export const CARD_SORT_OPTIONS = ["recent", "name", "game"];
 export const DEFAULT_CARD_SORT = "recent";
 
 /**
+ * Por quanto tempo cada tipo de leitura serve.
+ *
+ * Toda leitura remota declara isto **explicitamente**: leitura sem política de
+ * validade é achado ALTO em auditoria (§5.4 e §17.1). Os valores seguem a
+ * tabela do §5.4 — catálogo é quase estático, listagem de domínio é curta e
+ * revalidada ao voltar à tela, e a sessão vale até o logout ou um 401.
+ */
+export const CACHE_TTL_MS = {
+  /** Jogos, edições e raridades: mudam por operação de ADMIN, e raramente. */
+  catalogs: 60 * 60 * 1000,
+
+  /** Listagem de cartas: curta, porque um editor ao lado pode ter alterado. */
+  cards: 60 * 1000,
+
+  /** Uma carta específica, aberta para ver ou editar. */
+  card: 30 * 1000,
+
+  /**
+   * A sessão não vence por tempo: vence por evento — logout ou 401. Um prazo
+   * aqui provocaria uma releitura inútil no meio do uso.
+   */
+  session: Infinity,
+};
+
+/**
  * As três preferências de tema.
  *
  * `SYSTEM` é o padrão e não é a mesma coisa que `LIGHT`: ele acompanha o
