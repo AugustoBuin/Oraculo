@@ -14,6 +14,7 @@
  */
 
 import { STORAGE_KEYS, THEME_PREFERENCES } from "@/shared/config/constants.js";
+import { readPreference as readStored, writePreference } from "@/shared/storage/preference.js";
 
 const THEME_ATTRIBUTE = "data-theme";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
@@ -22,41 +23,14 @@ const DARK_QUERY = "(prefers-color-scheme: dark)";
 const VALID_PREFERENCES = Object.values(THEME_PREFERENCES);
 
 /**
- * O armazenamento pode simplesmente não existir.
- *
- * Em janela anônima, com dados do site bloqueados ou em alguns contextos de
- * captura, o próprio acesso a `localStorage` **lança** — não devolve nulo. Ler
- * e gravar sem proteção aqui derruba o boot inteiro por causa de uma
- * preferência de cor (§8.5).
- */
-function readStoredPreference() {
-  try {
-    return window.localStorage.getItem(STORAGE_KEYS.themePreference);
-  } catch {
-    return null;
-  }
-}
-
-function writeStoredPreference(preference) {
-  try {
-    window.localStorage.setItem(STORAGE_KEYS.themePreference, preference);
-  } catch {
-    // Preferência não persistida não é falha de fluxo: a sessão corrente
-    // continua com o tema certo, e a próxima volta ao padrão do sistema.
-  }
-}
-
-/**
  * A preferência guardada, ou o padrão.
  *
- * O valor vem do armazenamento, que é dado de fora e não é confiável nem por
- * formato: qualquer coisa fora da allowlist vira `SYSTEM` em vez de virar um
- * `data-theme="<lixo>"` no `<html>` (§8.5).
+ * A leitura protegida e a allowlist moram em `shared/storage/preference.js`,
+ * que a visão da listagem também usa: o acesso a `localStorage` pode LANÇAR, e
+ * duplicar esse try/catch por preferência é como um deles acaba sem ele.
  */
 export function readPreference() {
-  const stored = readStoredPreference();
-
-  return VALID_PREFERENCES.includes(stored) ? stored : THEME_PREFERENCES.SYSTEM;
+  return readStored(STORAGE_KEYS.themePreference, VALID_PREFERENCES, THEME_PREFERENCES.SYSTEM);
 }
 
 /**
@@ -99,7 +73,7 @@ export function setPreference(preference) {
     : THEME_PREFERENCES.SYSTEM;
 
   applyPreference(safe);
-  writeStoredPreference(safe);
+  writePreference(STORAGE_KEYS.themePreference, safe, VALID_PREFERENCES);
 
   return safe;
 }

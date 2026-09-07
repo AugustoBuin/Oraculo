@@ -119,4 +119,20 @@ export const THEME_PREFERENCES = {
  */
 export const STORAGE_KEYS = {
   themePreference: "oraculo:theme",
+  cardsView: "oraculo:cards-view",
 };
+
+/**
+ * As duas visões da listagem.
+ *
+ * A galeria é o padrão porque carta é objeto visual: quem opera o catálogo
+ * reconhece pela arte antes de ler o nome. A tabela existe porque quem
+ * trabalha em volume precisa comparar campos lado a lado — a escolha fica com
+ * o usuário e é lembrada (Decisão de UX nº 3 do PRD).
+ */
+export const CARD_VIEWS = {
+  GALLERY: "gallery",
+  TABLE: "table",
+};
+
+export const DEFAULT_CARD_VIEW = CARD_VIEWS.GALLERY;

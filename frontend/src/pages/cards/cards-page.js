@@ -14,10 +14,18 @@ import { ApiError, userMessage } from "@/shared/api/errors.js";
 import { button } from "@/shared/components/button.js";
 import { empty, failure, forbidden, loading } from "@/shared/components/feedback.js";
 import { pagination } from "@/shared/components/pagination.js";
+import { segmentedControl } from "@/shared/components/segmented-control.js";
+import {
+  CARD_VIEWS,
+  DEFAULT_CARD_VIEW,
+  STORAGE_KEYS,
+} from "@/shared/config/constants.js";
 import { el } from "@/shared/dom/elements.js";
 import { scope } from "@/shared/dom/events.js";
+import { readPreference, writePreference } from "@/shared/storage/preference.js";
 import { listCards } from "@/features/cards/api/cards-api.js";
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
+import { cardTable } from "@/features/cards/components/card-table.js";
 import { readCardQuery, writeCardQuery } from "@/features/cards/utils/card-query.js";
 import { ROUTES } from "@/pages/app-shell/navigation.js";
 import { cardsFilters } from "@/pages/cards/cards-filters.js";
@@ -32,6 +40,44 @@ export function cardsPage(root, { navigate }) {
 
   const results = el("div", { classes: ["cards-results"] });
 
+  const VIEW_VALUES = Object.values(CARD_VIEWS);
+
+  /**
+   * A visão escolhida, lembrada no navegador (RF-13).
+   *
+   * Valor inválido no armazenamento cai no padrão sem quebrar — ele é dado de
+   * fora como qualquer outro (§8.5). E só a preferência vai para lá: nenhum
+   * dado de carta, nenhum dado pessoal (§8.7).
+   */
+  let view = readPreference(STORAGE_KEYS.cardsView, VIEW_VALUES, DEFAULT_CARD_VIEW);
+
+  /**
+   * O último resultado carregado.
+   *
+   * Guardado para que **alternar a visão não refaça a requisição**: é o mesmo
+   * dado, outra apresentação. Rebuscar aqui seria pagar uma ida ao servidor
+   * para redesenhar o que já está na memória.
+   */
+  let lastResult = null;
+
+  const viewToggle = segmentedControl({
+    label: "Visualização",
+    options: [
+      { value: CARD_VIEWS.GALLERY, label: "Galeria" },
+      { value: CARD_VIEWS.TABLE, label: "Tabela" },
+    ],
+    value: view,
+    scope: life,
+    onChange: (next) => {
+      view = next;
+      writePreference(STORAGE_KEYS.cardsView, next, VIEW_VALUES);
+
+      if (lastResult !== null) {
+        renderResults(lastResult);
+      }
+    },
+  });
+
   const filters = cardsFilters({
     query: readCardQuery(window.location.search),
     scope: life,
@@ -41,7 +87,14 @@ export function cardsPage(root, { navigate }) {
   root.replaceChildren(
     el("div", {
       classes: ["stack-loose"],
-      children: [el("h1", { text: "Catálogo de cartas" }), filters.node, results],
+      children: [
+        el("div", {
+          classes: ["page-header"],
+          children: [el("h1", { text: "Catálogo de cartas" }), viewToggle.node],
+        }),
+        filters.node,
+        results,
+      ],
     }),
   );
 
@@ -125,29 +178,13 @@ export function cardsPage(root, { navigate }) {
       }
 
       if (cards.length === 0) {
+        lastResult = null;
         renderInto((scoped) => emptyStateFor(query, meta, scoped));
         return;
       }
 
-      renderInto((scoped) =>
-        el("div", {
-          classes: ["stack-loose"],
-          children: [
-            cardGallery({
-              cards,
-              scope: scoped,
-              onOpen: (id) => navigate(`/cartas/${id}`),
-            }),
-            pagination({
-              page: meta.page,
-              totalPages: meta.totalPages,
-              total: meta.total,
-              scope: scoped,
-              onChange: goToPage,
-            }),
-          ],
-        }),
-      );
+      lastResult = { cards, meta };
+      renderResults(lastResult);
     } catch (error) {
       // Cancelamento deliberado não é erro e não vira tela: quem abortou foi a
       // própria navegação.
@@ -172,6 +209,32 @@ export function cardsPage(root, { navigate }) {
         }),
       );
     }
+  }
+
+  /** Desenha a listagem na visão corrente, a partir de dado já carregado. */
+  function renderResults({ cards, meta }) {
+    renderInto((scoped) => {
+      const onOpen = (id) => navigate(`/cartas/${id}`);
+
+      const listing =
+        view === CARD_VIEWS.TABLE
+          ? cardTable({ cards, scope: scoped, onOpen })
+          : cardGallery({ cards, scope: scoped, onOpen });
+
+      return el("div", {
+        classes: ["stack-loose"],
+        children: [
+          listing,
+          pagination({
+            page: meta.page,
+            totalPages: meta.totalPages,
+            total: meta.total,
+            scope: scoped,
+            onChange: goToPage,
+          }),
+        ],
+      });
+    });
   }
 
   /**
