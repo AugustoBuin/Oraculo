@@ -30,14 +30,14 @@ clara que o fundo. **A superfície difícil é sempre a outra.**
 O Anexo D do `frontend/PADROES-ENGENHARIA.md` foi o ponto de partida. Medido par a par,
 **reprovou em seis**:
 
-| Par | Medido | Problema |
-|---|---|---|
-| Branco sobre o acento `#f1543f` | 3,45:1 | O coral é claro demais para receber tinta branca |
-| Acento como texto, tema claro | 3,07:1 | Mesmo tom, agora como tinta sobre o creme |
-| Sucesso `#16a34a`, tema claro | 3,30:1 | Verde de etiqueta usado como texto |
-| Atenção `#ca8a04`, tema claro | 2,94:1 | O pior de todos — âmbar sobre branco |
-| Perigo `#dc2626`, tema escuro | 3,57:1 | Vermelho não redefinido para o tema escuro |
-| Informativo `#2563eb`, tema escuro | 3,33:1 | Azul não redefinido para o tema escuro |
+| Par                                | Medido | Problema                                         |
+| ---------------------------------- | ------ | ------------------------------------------------ |
+| Branco sobre o acento `#f1543f`    | 3,45:1 | O coral é claro demais para receber tinta branca |
+| Acento como texto, tema claro      | 3,07:1 | Mesmo tom, agora como tinta sobre o creme        |
+| Sucesso `#16a34a`, tema claro      | 3,30:1 | Verde de etiqueta usado como texto               |
+| Atenção `#ca8a04`, tema claro      | 2,94:1 | O pior de todos — âmbar sobre branco             |
+| Perigo `#dc2626`, tema escuro      | 3,57:1 | Vermelho não redefinido para o tema escuro       |
+| Informativo `#2563eb`, tema escuro | 3,33:1 | Azul não redefinido para o tema escuro           |
 
 As três causas, e o que foi feito:
 
@@ -66,57 +66,57 @@ cima.
 
 ### Tema claro
 
-| Papel | Tinta | Sobre | Medido |
-|---|---|---|---|
-| Texto primário | `#26201e` | fundo `#f6f1ea` | **14,29:1** |
-| Texto primário | `#26201e` | superfície `#ffffff` | **16,06:1** |
-| Texto corrente | `#5c504a` | fundo `#f6f1ea` | **6,92:1** |
-| Texto corrente | `#5c504a` | superfície `#ffffff` | **7,77:1** |
-| Metadado | `#6d5d52` | fundo `#f6f1ea` | **5,60:1** |
-| Metadado | `#6d5d52` | superfície `#ffffff` | **6,29:1** |
-| Acento como texto | `#bf3520` | fundo `#f6f1ea` | **4,99:1** |
-| Acento como texto | `#bf3520` | superfície `#ffffff` | **5,61:1** |
-| Tinta sobre o acento | `#ffffff` | acento `#bf3520` | **5,61:1** |
-| Sucesso | `#166534` | fundo `#f6f1ea` | **6,35:1** |
-| Sucesso | `#166534` | superfície `#ffffff` | **7,13:1** |
-| Sucesso | `#166534` | sucesso suave `#e3f2e7` | **6,15:1** |
-| Atenção | `#854d0e` | fundo `#f6f1ea` | **6,10:1** |
-| Atenção | `#854d0e` | superfície `#ffffff` | **6,85:1** |
-| Atenção | `#854d0e` | atenção suave `#f7eddb` | **5,90:1** |
-| Perigo | `#b91c1c` | fundo `#f6f1ea` | **5,76:1** |
-| Perigo | `#b91c1c` | superfície `#ffffff` | **6,47:1** |
-| Perigo | `#b91c1c` | perigo suave `#fbe6e6` | **5,41:1** |
-| Informativo | `#1d4ed8` | fundo `#f6f1ea` | **5,96:1** |
-| Informativo | `#1d4ed8` | superfície `#ffffff` | **6,70:1** |
-| Informativo | `#1d4ed8` | informativo suave `#e4eafb` | **5,57:1** |
-| Acento em etiqueta | `#bf3520` | acento suave `#fbe7e2` | **4,71:1** |
+| Papel                | Tinta     | Sobre                       | Medido      |
+| -------------------- | --------- | --------------------------- | ----------- |
+| Texto primário       | `#26201e` | fundo `#f6f1ea`             | **14,29:1** |
+| Texto primário       | `#26201e` | superfície `#ffffff`        | **16,06:1** |
+| Texto corrente       | `#5c504a` | fundo `#f6f1ea`             | **6,92:1**  |
+| Texto corrente       | `#5c504a` | superfície `#ffffff`        | **7,77:1**  |
+| Metadado             | `#6d5d52` | fundo `#f6f1ea`             | **5,60:1**  |
+| Metadado             | `#6d5d52` | superfície `#ffffff`        | **6,29:1**  |
+| Acento como texto    | `#bf3520` | fundo `#f6f1ea`             | **4,99:1**  |
+| Acento como texto    | `#bf3520` | superfície `#ffffff`        | **5,61:1**  |
+| Tinta sobre o acento | `#ffffff` | acento `#bf3520`            | **5,61:1**  |
+| Sucesso              | `#166534` | fundo `#f6f1ea`             | **6,35:1**  |
+| Sucesso              | `#166534` | superfície `#ffffff`        | **7,13:1**  |
+| Sucesso              | `#166534` | sucesso suave `#e3f2e7`     | **6,15:1**  |
+| Atenção              | `#854d0e` | fundo `#f6f1ea`             | **6,10:1**  |
+| Atenção              | `#854d0e` | superfície `#ffffff`        | **6,85:1**  |
+| Atenção              | `#854d0e` | atenção suave `#f7eddb`     | **5,90:1**  |
+| Perigo               | `#b91c1c` | fundo `#f6f1ea`             | **5,76:1**  |
+| Perigo               | `#b91c1c` | superfície `#ffffff`        | **6,47:1**  |
+| Perigo               | `#b91c1c` | perigo suave `#fbe6e6`      | **5,41:1**  |
+| Informativo          | `#1d4ed8` | fundo `#f6f1ea`             | **5,96:1**  |
+| Informativo          | `#1d4ed8` | superfície `#ffffff`        | **6,70:1**  |
+| Informativo          | `#1d4ed8` | informativo suave `#e4eafb` | **5,57:1**  |
+| Acento em etiqueta   | `#bf3520` | acento suave `#fbe7e2`      | **4,71:1**  |
 
 ### Tema escuro
 
-| Papel | Tinta | Sobre | Medido |
-|---|---|---|---|
-| Texto primário | `#f3ece4` | fundo `#14100e` | **16,15:1** |
-| Texto primário | `#f3ece4` | superfície `#1f1a17` | **14,72:1** |
-| Texto corrente | `#c9bdb2` | fundo `#14100e` | **10,27:1** |
-| Texto corrente | `#c9bdb2` | superfície `#1f1a17` | **9,36:1** |
-| Metadado | `#9e9189` | fundo `#14100e` | **6,18:1** |
-| Metadado | `#9e9189` | superfície `#1f1a17` | **5,63:1** |
-| Acento como texto | `#f4705e` | fundo `#14100e` | **6,60:1** |
-| Acento como texto | `#f4705e` | superfície `#1f1a17` | **6,01:1** |
-| Tinta sobre o acento | `#14100e` | acento `#f4705e` | **6,60:1** |
-| Sucesso | `#4ade80` | fundo `#14100e` | **10,86:1** |
-| Sucesso | `#4ade80` | superfície `#1f1a17` | **9,89:1** |
-| Sucesso | `#4ade80` | sucesso suave `#12251a` | **9,23:1** |
-| Atenção | `#fbbf24` | fundo `#14100e` | **11,33:1** |
-| Atenção | `#fbbf24` | superfície `#1f1a17` | **10,32:1** |
-| Atenção | `#fbbf24` | atenção suave `#2a2009` | **9,61:1** |
-| Perigo | `#f87171` | fundo `#14100e` | **6,84:1** |
-| Perigo | `#f87171` | superfície `#1f1a17` | **6,23:1** |
-| Perigo | `#f87171` | perigo suave `#2b1414` | **6,26:1** |
-| Informativo | `#60a5fa` | fundo `#14100e` | **7,44:1** |
-| Informativo | `#60a5fa` | superfície `#1f1a17` | **6,78:1** |
-| Informativo | `#60a5fa` | informativo suave `#141d2e` | **6,63:1** |
-| Acento em etiqueta | `#f4705e` | acento suave `#2b1512` | **6,01:1** |
+| Papel                | Tinta     | Sobre                       | Medido      |
+| -------------------- | --------- | --------------------------- | ----------- |
+| Texto primário       | `#f3ece4` | fundo `#14100e`             | **16,15:1** |
+| Texto primário       | `#f3ece4` | superfície `#1f1a17`        | **14,72:1** |
+| Texto corrente       | `#c9bdb2` | fundo `#14100e`             | **10,27:1** |
+| Texto corrente       | `#c9bdb2` | superfície `#1f1a17`        | **9,36:1**  |
+| Metadado             | `#9e9189` | fundo `#14100e`             | **6,18:1**  |
+| Metadado             | `#9e9189` | superfície `#1f1a17`        | **5,63:1**  |
+| Acento como texto    | `#f4705e` | fundo `#14100e`             | **6,60:1**  |
+| Acento como texto    | `#f4705e` | superfície `#1f1a17`        | **6,01:1**  |
+| Tinta sobre o acento | `#14100e` | acento `#f4705e`            | **6,60:1**  |
+| Sucesso              | `#4ade80` | fundo `#14100e`             | **10,86:1** |
+| Sucesso              | `#4ade80` | superfície `#1f1a17`        | **9,89:1**  |
+| Sucesso              | `#4ade80` | sucesso suave `#12251a`     | **9,23:1**  |
+| Atenção              | `#fbbf24` | fundo `#14100e`             | **11,33:1** |
+| Atenção              | `#fbbf24` | superfície `#1f1a17`        | **10,32:1** |
+| Atenção              | `#fbbf24` | atenção suave `#2a2009`     | **9,61:1**  |
+| Perigo               | `#f87171` | fundo `#14100e`             | **6,84:1**  |
+| Perigo               | `#f87171` | superfície `#1f1a17`        | **6,23:1**  |
+| Perigo               | `#f87171` | perigo suave `#2b1414`      | **6,26:1**  |
+| Informativo          | `#60a5fa` | fundo `#14100e`             | **7,44:1**  |
+| Informativo          | `#60a5fa` | superfície `#1f1a17`        | **6,78:1**  |
+| Informativo          | `#60a5fa` | informativo suave `#141d2e` | **6,63:1**  |
+| Acento em etiqueta   | `#f4705e` | acento suave `#2b1512`      | **6,01:1**  |
 
 ---
 
@@ -125,21 +125,21 @@ cima.
 Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. Usar verde
 "porque ficou bonito" quebra a leitura de quem já aprendeu o código.
 
-| Token | Papel |
-|---|---|
-| `--color-bg` | O fundo da página |
-| `--color-surface` | Cartão, painel, modal — o que se levanta do fundo |
-| `--color-ink` | Texto primário: título, nome de carta |
-| `--color-body` | Texto corrente |
-| `--color-muted` | Metadado: data, contagem, rótulo secundário |
-| `--color-line` | Borda e divisória |
-| `--color-accent` | **A voz única de ação.** Uma ação primária por contexto |
+| Token               | Papel                                                       |
+| ------------------- | ----------------------------------------------------------- |
+| `--color-bg`        | O fundo da página                                           |
+| `--color-surface`   | Cartão, painel, modal — o que se levanta do fundo           |
+| `--color-ink`       | Texto primário: título, nome de carta                       |
+| `--color-body`      | Texto corrente                                              |
+| `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
+| `--color-line`      | Borda e divisória                                           |
+| `--color-accent`    | **A voz única de ação.** Uma ação primária por contexto     |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
-| `--color-success` | Operação concluída |
-| `--color-attention` | Aviso que não impede — duplicidade de nome (RN-04) |
-| `--color-danger` | Exclusão e erro que bloqueia |
-| `--color-info` | Informação neutra |
-| `--color-focus` | O anel de foco |
+| `--color-success`   | Operação concluída                                          |
+| `--color-attention` | Aviso que não impede — duplicidade de nome (RN-04)          |
+| `--color-danger`    | Exclusão e erro que bloqueia                                |
+| `--color-info`      | Informação neutra                                           |
+| `--color-focus`     | O anel de foco                                              |
 
 **A cor de acento ocupa no máximo ~10% da tela.** Se duas coisas clicáveis estão com a cor de
 acento na mesma tela, uma está errada — a raridade é o mecanismo que faz o usuário saber onde
@@ -176,11 +176,11 @@ exceto indicador de progresso.
 
 Três estados, e o padrão não é "claro" — é **acompanhar o sistema**.
 
-| Preferência | `data-theme` no `<html>` | Quem decide |
-|---|---|---|
-| `system` (padrão) | ausente | A media query `prefers-color-scheme`, sem JavaScript |
-| `light` | `"light"` | O usuário, vencendo o sistema |
-| `dark` | `"dark"` | O usuário, vencendo o sistema |
+| Preferência       | `data-theme` no `<html>` | Quem decide                                          |
+| ----------------- | ------------------------ | ---------------------------------------------------- |
+| `system` (padrão) | ausente                  | A media query `prefers-color-scheme`, sem JavaScript |
+| `light`           | `"light"`                | O usuário, vencendo o sistema                        |
+| `dark`            | `"dark"`                 | O usuário, vencendo o sistema                        |
 
 `system` **remove** o atributo em vez de escrever um valor. Escrever `data-theme="system"`
 deixaria as duas regras do CSS sem efeito e travaria a página no tema claro.
