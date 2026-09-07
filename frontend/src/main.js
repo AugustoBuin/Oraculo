@@ -1,13 +1,19 @@
 /**
  * O ponto de entrada da aplicação.
  *
- * Responsabilidade única: validar a configuração e entregar o controle. Toda
- * composição de tela mora em `pages/` (PADROES-ENGENHARIA.md §2.2) — este
- * arquivo não deve crescer junto com o produto.
+ * Responsabilidade única: validar a configuração, aplicar o tema e decidir
+ * entre a tela de entrada e o portal. Toda composição de tela mora em
+ * `pages/` (PADROES-ENGENHARIA.md §2.2) — este arquivo não deve crescer junto
+ * com o produto.
  */
 
+import { userMessage } from "@/shared/api/errors.js";
 import { ConfigError, loadConfig } from "@/shared/config/env.js";
+import { el } from "@/shared/dom/elements.js";
+import { failure, loading } from "@/shared/components/feedback.js";
 import { initTheme } from "@/shared/theme/theme.js";
+import { loadSession } from "@/features/auth/api/auth-api.js";
+import { loginPage } from "@/pages/login/login-page.js";
 
 const APP_ROOT_ID = "app";
 
@@ -31,23 +37,12 @@ function renderBootFailure(root) {
 
   const notice = document.createElement("p");
   notice.setAttribute("role", "alert");
-  // Dado nenhum entra aqui, mas a regra vale sempre: texto é texto (§8.3).
   notice.textContent = BOOT_FAILURE_MESSAGE;
 
   root.append(notice);
 }
 
-function renderBootPlaceholder(root) {
-  root.replaceChildren();
-
-  const status = document.createElement("p");
-  status.setAttribute("role", "status");
-  status.textContent = "Carregando o Oráculo…";
-
-  root.append(status);
-}
-
-function boot() {
+async function boot() {
   const root = document.getElementById(APP_ROOT_ID);
 
   if (root === null) {
@@ -73,9 +68,64 @@ function boot() {
   // evitar (shared/theme/theme.js).
   initTheme();
 
-  // A partir daqui entra o shell da aplicação (F-011), que decide entre a tela
-  // de login e o portal pelo resultado de GET /api/auth/session.
-  renderBootPlaceholder(root);
+  /**
+   * A tela no ar, e a limpeza dela.
+   *
+   * Trocar de tela **sempre** passa por aqui, para que nenhuma consiga
+   * substituir a anterior sem encerrá-la (§12.4, RNF-07). É o mesmo contrato
+   * que o roteador de F-011 vai assumir.
+   */
+  let dispose = null;
+
+  const show = (render) => {
+    dispose?.();
+    dispose = render(root) ?? null;
+  };
+
+  const showLogin = () => show((target) => loginPage(target, { onAuthenticated: showPortal }));
+
+  // F-011 substitui isto pelo shell, que compõe cabeçalho, navegação por nível
+  // e roteador. Até lá, confirma que a sessão foi criada.
+  const showPortal = (user) =>
+    show((target) => {
+      target.replaceChildren(
+        el("main", {
+          classes: ["container", "stack"],
+          attrs: { id: "conteudo" },
+          children: [
+            el("h1", { text: "Oráculo" }),
+            el("p", { text: `Sessão iniciada como ${user.name} (${user.role}).` }),
+          ],
+        }),
+      );
+
+      return null;
+    });
+
+  show(() => {
+    root.replaceChildren(loading("Carregando o Oráculo…"));
+    return null;
+  });
+
+  try {
+    const user = await loadSession();
+
+    // `null` é o caminho normal de quem ainda não entrou, não um erro
+    // (`docs/api-contract.md` §3.2).
+    if (user === null) {
+      showLogin();
+      return;
+    }
+
+    showPortal(user);
+  } catch (error) {
+    console.error("[boot] falha ao ler a sessão", { error });
+
+    show((target) => {
+      target.replaceChildren(failure({ message: userMessage(error) }));
+      return null;
+    });
+  }
 }
 
 boot();

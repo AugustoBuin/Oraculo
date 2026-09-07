@@ -16,6 +16,7 @@ import "~/suites/client.test.js";
 import "~/suites/store.test.js";
 import "~/suites/session.test.js";
 import "~/suites/router.test.js";
+import "~/suites/auth-api.test.js";
 
 const root = document.getElementById("results");
 
