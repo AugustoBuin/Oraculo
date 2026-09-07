@@ -1,0 +1,396 @@
+/*
+ * Estilo dos componentes globais.
+ *
+ * Todo valor vem de `tokens.css`. Nenhuma cor, tamanho, raio ou duração é
+ * escrito cru aqui — se algo falta, a discussão é sobre mudar a escala, não
+ * sobre um valor arbitrário neste arquivo (§10.1, §10.3).
+ */
+
+/* --- Botão --------------------------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-default);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  transition: background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/*
+ * A voz única de ação. UMA por contexto: se duas coisas clicáveis na mesma
+ * tela estão assim, uma está errada (§10.2).
+ *
+ * A tinta vem do token que troca de tema junto com a superfície — branco fixo
+ * aqui reprovaria no contraste do tema escuro, que é o erro documentado em
+ * docs/design.md §2.
+ */
+.button-primary {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button-secondary {
+  background-color: var(--color-surface);
+  border-color: var(--color-line);
+  color: var(--color-ink);
+}
+
+.button-ghost {
+  background-color: transparent;
+  color: var(--color-body);
+}
+
+.button-danger {
+  background-color: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.button-secondary:hover:not(:disabled),
+.button-ghost:hover:not(:disabled) {
+  background-color: var(--color-bg);
+}
+
+.button-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-soft);
+}
+
+/* --- Campo --------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field-label {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.field-hint {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.field-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  color: var(--color-ink);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.field-input:hover:not(:disabled) {
+  border-color: var(--color-muted);
+}
+
+/*
+ * Erro por DOIS SINAIS: a borda muda de cor e a mensagem aparece em texto
+ * (§9.4). Só a borda vermelha excluiria daltônicos e não anunciaria nada para
+ * leitor de tela — é por isso que `aria-invalid` acompanha, em field.js.
+ */
+.field-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+/* --- Estados obrigatórios ------------------------------------------------ */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.state-title {
+  color: var(--color-ink);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+}
+
+.state-icon {
+  margin-right: var(--space-2);
+}
+
+.state-failure .state-title {
+  color: var(--color-danger);
+}
+
+/*
+ * O indicador de progresso é a exceção prevista para movimento infinito
+ * (§11.2, WCAG 2.2.2). A animação anima só transformação, que é barata, e
+ * termina em estado visível — uma que terminasse oculta desapareceria de vez
+ * com o movimento reduzido ligado (§11.3).
+ */
+.spinner {
+  width: var(--space-5);
+  height: var(--space-5);
+  border: 2px solid var(--color-line);
+  border-top-color: var(--color-accent);
+  border-radius: var(--radius-pill);
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Mensagem inline ----------------------------------------------------- */
+
+.inline-message {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-default);
+  font-size: var(--text-sm);
+}
+
+.inline-message-danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.inline-message-success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.inline-message-attention {
+  background-color: var(--color-attention-soft);
+  color: var(--color-attention);
+}
+
+/* --- Tela de entrada ----------------------------------------------------- */
+
+.login-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--space-4);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.login-form .button {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* Vazio quando não há aviso: sem altura reservada, o formulário não desloca
+   ao aparecer e sumir a mensagem. */
+.form-alert:empty {
+  display: none;
+}
+
+/* --- Cabeçalho e navegação ----------------------------------------------- */
+
+.app-header {
+  border-bottom: 1px solid var(--color-line);
+  background-color: var(--color-surface);
+}
+
+.app-header-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+}
+
+.app-brand {
+  color: var(--color-ink);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+}
+
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.nav-link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-default);
+  color: var(--color-body);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/*
+ * "Você está aqui" por DOIS SINAIS: o tom de fundo mais o `aria-current="page"`
+ * que o app-header.js escreve. Só a cor deixaria a informação invisível para
+ * quem usa leitor de tela e para quem não distingue os tons (§9.4).
+ */
+.nav-link-current {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+/* As ações vão para a direita; em tela pequena, quebram para a linha de baixo
+   em vez de espremer a navegação. */
+.app-actions {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+
+.app-main {
+  padding-block: var(--space-5);
+}
+
+/* --- Modal --------------------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: rgb(0 0 0 / 0.5);
+}
+
+/* Sombra só para o que flutua de verdade — e um modal flutua (§10.4). */
+.modal {
+  width: 100%;
+  max-width: 28rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+}
+
+.modal-title {
+  margin-bottom: var(--space-3);
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.modal-actions:empty {
+  display: none;
+}
+
+/* --- Avisos -------------------------------------------------------------- */
+
+.notifications {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: min(24rem, calc(100vw - var(--space-6)));
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-left-width: var(--space-1);
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--text-sm);
+  animation: enter-up var(--duration-base) var(--ease-out);
+}
+
+.notification-text {
+  flex: 1;
+  color: var(--color-ink);
+}
+
+.notification-success { border-left-color: var(--color-success); }
+.notification-attention { border-left-color: var(--color-attention); }
+.notification-danger { border-left-color: var(--color-danger); }
+.notification-info { border-left-color: var(--color-info); }
+
+/*
+ * O nome do keyframe descreve o PAPEL, não o primeiro consumidor: `enter-up`
+ * sobrevive à migração; `notification-in` morreria na primeira reutilização
+ * (§11.2). E a animação termina em estado visível — uma que terminasse oculta
+ * desapareceria de vez com o movimento reduzido ligado.
+ */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Cartão e a tela de conta -------------------------------------------- */
+
+/* Profundidade por tom e borda. Cartão em repouso NÃO tem sombra — ela fica
+   reservada ao que flutua de verdade (§10.4). */
+.card {
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.account-layout {
+  display: grid;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+/* Densidade a partir do breakpoint maior; a base é a tela pequena (§10.5). */
+@media (min-width: 48rem) {
+  .account-layout {
+    grid-template-columns: 1fr 1.5fr;
+  }
+}

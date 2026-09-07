@@ -37,6 +37,32 @@ export function setErrorReporter(reporter) {
 }
 
 /**
+ * O que fazer quando a sessão morre no meio do uso.
+ *
+ * `401` tem fluxo próprio e **não é erro inesperado** (§8.4): leva ao login.
+ * O `403` não passa por aqui de propósito — sessão válida com nível
+ * insuficiente não desloga ninguém (ADR-007).
+ */
+let onSessionExpired = null;
+
+/**
+ * Só o PRIMEIRO 401 avisa.
+ *
+ * Uma tela que dispara três requisições em paralelo recebe três 401 quando a
+ * sessão vence. Sem esta trava seriam três redirecionamentos e três avisos
+ * empilhados, para um único acontecimento.
+ */
+let sessionExpiryHandled = false;
+
+export function setSessionExpiredHandler(handler) {
+  onSessionExpired = typeof handler === "function" ? handler : null;
+
+  // Registrar um tratador novo significa sessão nova: a trava recomeça, senão
+  // o segundo vencimento da vida da aba passaria despercebido.
+  sessionExpiryHandled = false;
+}
+
+/**
  * Monta a URL a partir do caminho nomeado e dos parâmetros.
  *
  * Parâmetro vazio é **omitido**, não enviado em branco: `?search=` faria o
@@ -232,6 +258,23 @@ function handle(error, { timedOut, timeoutMs, signal, silent }) {
     : error instanceof ApiError
       ? error
       : new NetworkError(error);
+
+  /*
+   * A sessão venceu durante o uso (RF-08).
+   *
+   * `silent` sai fora: quem pede em silêncio está tratando o 401 por conta
+   * própria — é o caso da leitura de sessão no boot, em que 401 significa
+   * "ainda não entrou" e mandar essa pessoa para o login com aviso de sessão
+   * expirada seria mentir sobre o que aconteceu.
+   */
+  if (translated.status === 401 && !silent && onSessionExpired !== null && !sessionExpiryHandled) {
+    sessionExpiryHandled = true;
+    onSessionExpired();
+
+    // O aviso de sessão expirada já é a mensagem; somar um erro genérico em
+    // cima empilharia dois textos sobre o mesmo acontecimento.
+    return translated;
+  }
 
   if (!silent && reportError !== null) {
     reportError(translated);
