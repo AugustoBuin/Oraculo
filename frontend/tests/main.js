@@ -12,6 +12,7 @@ import "~/suites/elements.test.js";
 import "~/suites/events.test.js";
 import "~/suites/config.test.js";
 import "~/suites/theme.test.js";
+import "~/suites/client.test.js";
 
 const root = document.getElementById("results");
 
