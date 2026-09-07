@@ -55,3 +55,27 @@ export const PERMISSION_LABELS = {
 export const CARD_SORT_OPTIONS = ["recent", "name", "game"];
 
 export const DEFAULT_CARD_SORT = "recent";
+
+/**
+ * As três preferências de tema.
+ *
+ * `SYSTEM` é o padrão e não é a mesma coisa que `LIGHT`: ele acompanha o
+ * sistema operacional pela media query, sem JavaScript nenhum — é o que evita
+ * a piscada de tema no carregamento para quem nunca escolheu (`tokens.css`).
+ */
+export const THEME_PREFERENCES = {
+  SYSTEM: "system",
+  LIGHT: "light",
+  DARK: "dark",
+};
+
+/**
+ * As chaves do armazenamento do navegador.
+ *
+ * Prefixadas para não colidir com nada de outra aplicação servida da mesma
+ * origem. Nenhuma delas guarda dado pessoal, token ou dado de carta: só
+ * preferência de interface (§8.7).
+ */
+export const STORAGE_KEYS = {
+  themePreference: "oraculo:theme",
+};

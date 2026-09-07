@@ -1,0 +1,119 @@
+/*
+ * Reset enxuto e padrões de elemento.
+ *
+ * Só o que corrige comportamento herdado ruim do navegador. Estilo de
+ * componente mora com o componente; utilitário mora em `utilities.css`.
+ *
+ * Nenhum valor cru aqui: tudo vem de `tokens.css` (§10.1).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Nenhum tamanho de fonte fixado na raiz: o rem passa a respeitar a
+     configuração de tamanho de fonte do navegador, que é o que faz o zoom de
+     200% funcionar sem perda de conteúdo (§9.5). */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-body);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+
+  /* A página nunca rola na horizontal; quem rola é o contêiner, no próprio
+     eixo (§10.5, RNF-04). */
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--color-ink);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4, h5, h6 { font-size: var(--text-md); }
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: max(1px, 0.0625em);
+  text-underline-offset: 0.15em;
+}
+
+img {
+  /* Imagem nunca estoura o contêiner, e o espaço reservado herda o tom da
+     superfície em vez de mostrar o ícone de imagem quebrada (RF-34). */
+  max-width: 100%;
+  height: auto;
+  background-color: var(--color-line);
+}
+
+/* Controles herdam a tipografia da página em vez da do sistema. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/*
+ * O anel de foco NUNCA é removido — só substituído por um visível (§9.2).
+ *
+ * `:focus-visible` e não `:focus`: quem clica com o mouse não vê o anel, quem
+ * navega por teclado vê. Remover o `:focus` do navegador sem colocar nada no
+ * lugar é o erro que torna a aplicação inoperável sem mouse.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Alvo de toque na base mobile; densidade maior só a partir do ponteiro fino
+   (§9.5). */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  input,
+  select {
+    min-height: var(--target-min);
+  }
+}
+
+/* Tabelas rolam no próprio eixo — a página não (§10.5). */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+  text-align: left;
+}

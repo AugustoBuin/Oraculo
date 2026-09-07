@@ -25,6 +25,17 @@
       }
     }
   </script>
+
+  <!--
+    A ordem é a do cascata e não é arbitrária: os tokens precisam existir
+    antes de qualquer regra que os consuma, e os utilitários vêm por último
+    para vencerem o padrão de elemento sem precisar de !important.
+
+    Nenhuma fonte remota e nenhum CSS de CDN (RNF-01).
+  -->
+  <link rel="stylesheet" href="/src/styles/tokens.css">
+  <link rel="stylesheet" href="/src/styles/base.css">
+  <link rel="stylesheet" href="/src/styles/utilities.css">
 </head>
 <body>
   <noscript>O Oráculo precisa de JavaScript habilitado.</noscript>

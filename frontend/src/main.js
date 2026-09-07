@@ -7,6 +7,7 @@
  */
 
 import { ConfigError, loadConfig } from "@/shared/config/env.js";
+import { initTheme } from "@/shared/theme/theme.js";
 
 const APP_ROOT_ID = "app";
 
@@ -66,6 +67,11 @@ function boot() {
     renderBootFailure(root);
     return;
   }
+
+  // Antes de desenhar qualquer coisa: escrever o tema depois do primeiro
+  // quadro é o que produz a piscada que a divisão com o CSS existe para
+  // evitar (shared/theme/theme.js).
+  initTheme();
 
   // A partir daqui entra o shell da aplicação (F-011), que decide entre a tela
   // de login e o portal pelo resultado de GET /api/auth/session.
