@@ -21,6 +21,7 @@ final class InMemoryRarityGateway implements RarityGateway
             Rarity::with(31, 1, 'mythic', 'Mítica', true, 4),
             Rarity::with(30, 1, 'common', 'Comum', true, 1),
             Rarity::with(32, 1, 'rare', 'Rara', true, 3),
+            Rarity::with(33, 1, 'aposentada', 'Raridade Aposentada', false, 5),
             Rarity::with(40, 2, 'rare-holo', 'Rara Holo', true, 4),
         ];
 
@@ -32,6 +33,17 @@ final class InMemoryRarityGateway implements RarityGateway
         $found = array_values(array_filter(
             $this->rarities,
             static fn(Rarity $r): bool => $r->gameId === $gameId && $r->active
+        ));
+        usort($found, static fn(Rarity $a, Rarity $b): int => $a->sortOrder <=> $b->sortOrder);
+
+        return $found;
+    }
+
+    public function listAllByGame(int $gameId): array
+    {
+        $found = array_values(array_filter(
+            $this->rarities,
+            static fn(Rarity $item): bool => $item->gameId === $gameId
         ));
         usort($found, static fn(Rarity $a, Rarity $b): int => $a->sortOrder <=> $b->sortOrder);
 

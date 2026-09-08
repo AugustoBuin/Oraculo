@@ -38,6 +38,17 @@ final class InMemoryEditionGateway implements EditionGateway
         return $found;
     }
 
+    public function listAllByGame(int $gameId): array
+    {
+        $found = array_values(array_filter(
+            $this->editions,
+            static fn(Edition $item): bool => $item->gameId === $gameId
+        ));
+        usort($found, static fn(Edition $a, Edition $b): int => $a->sortOrder <=> $b->sortOrder);
+
+        return $found;
+    }
+
     public function findByGameAndCode(int $gameId, string $code): ?Edition
     {
         foreach ($this->editions as $edition) {

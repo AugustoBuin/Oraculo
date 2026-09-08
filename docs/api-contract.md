@@ -192,6 +192,30 @@ Os três endpoints de leitura abaixo são o motor da cascata (RF-20 a RF-27).
 
 `id` é o **slug**, não o id numérico: o identificador público precisa ser estável e legível.
 
+#### `?incluirInativos=1` — só para `ADMIN`
+
+Por padrão as listagens devolvem **apenas itens ativos**, na forma publicada pelo enunciado:
+`{ "id": "dom", "name": "Dominaria" }`. É essa lista que a cascata do cadastro consome, e
+oferecer um item desativado para carta nova seria o oposto do que o RF-43 pede.
+
+A administração de catálogos precisa do contrário: sem enxergar o que está desativado, não
+há de onde chamar o `PUT` que reativa — desativar viraria porta de mão única.
+
+Com `?incluirInativos=1`:
+
+```jsonc
+// ADMIN
+{ "data": [ { "id": "hob", "name": "The Hobbit", "active": false } ] }
+```
+
+Duas garantias, e as duas são testadas:
+
+- **O parâmetro é um pedido, não uma permissão.** Ele vem da query string, que é dado do
+  cliente. Quem decide se vale é o caso de uso, pelo nível da sessão: `VIEWER` e `EDITOR`
+  recebem a lista de ativos mesmo mandando o parâmetro.
+- **`active` é acrescentado, nunca substituído.** Quem não pediu a lista completa continua
+  recebendo `{id, name}` — a forma do enunciado não muda para ninguém.
+
 ### `GET /api/games/{gameId}/editions` — `VIEWER`
 
 ```jsonc
