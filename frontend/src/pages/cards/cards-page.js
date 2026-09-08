@@ -22,10 +22,12 @@ import {
 } from "@/shared/config/constants.js";
 import { el } from "@/shared/dom/elements.js";
 import { scope } from "@/shared/dom/events.js";
+import { hasLevel } from "@/shared/session/session.js";
 import { readPreference, writePreference } from "@/shared/storage/preference.js";
 import { listCards } from "@/features/cards/api/cards-api.js";
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
+import { confirmCardDeletion } from "@/features/cards/components/delete-card-dialog.js";
 import { readCardQuery, writeCardQuery } from "@/features/cards/utils/card-query.js";
 import { ROUTES } from "@/pages/app-shell/navigation.js";
 import { cardsFilters } from "@/pages/cards/cards-filters.js";
@@ -35,7 +37,7 @@ import { cardsFilters } from "@/pages/cards/cards-filters.js";
  * @param {{ navigate: (path: string) => void }} config
  * @returns {() => void}
  */
-export function cardsPage(root, { navigate }) {
+export function cardsPage(root, { navigate, notify }) {
   const life = scope();
 
   const results = el("div", { classes: ["cards-results"] });
@@ -59,6 +61,27 @@ export function cardsPage(root, { navigate }) {
    * para redesenhar o que já está na memória.
    */
   let lastResult = null;
+
+  /**
+   * Quem só consulta não abre o formulário.
+   *
+   * O cartão deixa de ser clicável em vez de levar a uma tela de "sem
+   * permissão": a forma mais eficaz de proteger quem tem menos familiaridade
+   * com tecnologia não é uma interface mais simples — é não lhe dar um botão
+   * que ela não precisa apertar. O servidor recusa de qualquer forma (§8.1).
+   */
+  const canEdit = hasLevel("EDITOR");
+  const openCard = canEdit ? (id) => navigate(ROUTES.editCard(id)) : undefined;
+
+  /**
+   * Excluir também é privilégio de quem edita.
+   *
+   * O botão nem existe para quem consulta — e o servidor recusa de qualquer
+   * forma, porque esconder é conveniência visual, não autorização (§8.1).
+   */
+  const deleteCardFlow = canEdit
+    ? (card) => confirmCardDeletion({ card, notify, onDone: () => load() })
+    : undefined;
 
   const viewToggle = segmentedControl({
     label: "Visualização",
@@ -90,7 +113,23 @@ export function cardsPage(root, { navigate }) {
       children: [
         el("div", {
           classes: ["page-header"],
-          children: [el("h1", { text: "Catálogo de cartas" }), viewToggle.node],
+          children: [
+            el("h1", { text: "Catálogo de cartas" }),
+            el("div", {
+              classes: ["page-actions"],
+              children: canEdit
+                ? [
+                    viewToggle.node,
+                    button({
+                      label: "Nova carta",
+                      variant: "primary",
+                      scope: life,
+                      onClick: () => navigate(ROUTES.newCard),
+                    }).node,
+                  ]
+                : [viewToggle.node],
+            }),
+          ],
         }),
         filters.node,
         results,
@@ -214,12 +253,10 @@ export function cardsPage(root, { navigate }) {
   /** Desenha a listagem na visão corrente, a partir de dado já carregado. */
   function renderResults({ cards, meta }) {
     renderInto((scoped) => {
-      const onOpen = (id) => navigate(`/cartas/${id}`);
-
       const listing =
         view === CARD_VIEWS.TABLE
-          ? cardTable({ cards, scope: scoped, onOpen })
-          : cardGallery({ cards, scope: scoped, onOpen });
+          ? cardTable({ cards, scope: scoped, onOpen: openCard, onDelete: deleteCardFlow })
+          : cardGallery({ cards, scope: scoped, onOpen: openCard, onDelete: deleteCardFlow });
 
       return el("div", {
         classes: ["stack-loose"],

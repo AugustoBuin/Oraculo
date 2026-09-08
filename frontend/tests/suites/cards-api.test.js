@@ -1,7 +1,16 @@
 import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
-import { normalizeQuery, parseCard, parseCardList } from "@/features/cards/api/cards-api.js";
+import {
+  createCard,
+  getCardHistory,
+  normalizeQuery,
+  parseCard,
+  parseCardList,
+  parseDuplicate,
+} from "@/features/cards/api/cards-api.js";
 import { readCardQuery, writeCardQuery } from "@/features/cards/utils/card-query.js";
-import { assertNull, assertSame, assertThrows, suite, test } from "~/runner.js";
+import { cache, cacheKey } from "@/shared/store/cache.js";
+import { fetchDouble } from "~/doubles/fetch.js";
+import { assertNull, assertRejects, assertSame, assertThrows, suite, test } from "~/runner.js";
 
 const cartaValida = {
   id: 12,
@@ -181,5 +190,190 @@ suite("features/cards/utils · consulta na URL", () => {
 
     assertSame(q.page, 1);
     assertSame(q.sort, "recent");
+  });
+});
+
+suite("features/cards/api · escrita", () => {
+  const carta = {
+    nameEn: "  Black Lotus  ",
+    namePt: "  ",
+    game: "magic",
+    edition: "dom",
+    rarity: "mythic",
+    image: null,
+  };
+
+  const resposta = {
+    data: {
+      id: 12,
+      nameEn: "Black Lotus",
+      namePt: null,
+      game: { id: "magic", name: "Magic" },
+      edition: { id: "dom", name: "Dominaria" },
+      rarity: { id: "mythic", name: "Mítica" },
+      imageUrl: null,
+    },
+  };
+
+  async function withFetch(body) {
+    const double = fetchDouble();
+
+    try {
+      await body(double);
+      assertSame(double.unexpected.length, 0, `requisição não prevista: ${double.unexpected}`);
+    } finally {
+      double.restore();
+      cache.clear();
+    }
+  }
+
+  test("monta o corpo campo a campo, sem id nem autoria", async () => {
+    // O corpo nunca é o objeto do formulário repassado inteiro: `id`,
+    // `createdBy` e `createdAt` não vêm do cliente, e a identidade do
+    // solicitante vem da sessão, no servidor (RN-08).
+    await withFetch(async (double) => {
+      double.onJson("POST", "/api/cards", resposta, 201);
+
+      await createCard({ ...carta, id: 99, createdBy: 1, createdAt: "hoje" });
+
+      const enviado = JSON.parse(double.lastCall.body);
+      assertSame(
+        Object.keys(enviado).sort().join(","),
+        "confirmDuplicate,edition,game,image,nameEn,namePt,rarity",
+      );
+    });
+  });
+
+  test("apara o nome e transforma nome PT vazio em nulo (RN-03)", async () => {
+    await withFetch(async (double) => {
+      double.onJson("POST", "/api/cards", resposta, 201);
+
+      await createCard(carta);
+
+      const enviado = JSON.parse(double.lastCall.body);
+      assertSame(enviado.nameEn, "Black Lotus");
+      assertNull(enviado.namePt, "string vazia é ausência, não texto em branco");
+    });
+  });
+
+  test("confirmDuplicate só vai como verdadeiro quando o usuário confirma", async () => {
+    await withFetch(async (double) => {
+      double.onJson("POST", "/api/cards", resposta, 201);
+
+      await createCard(carta);
+      assertSame(JSON.parse(double.lastCall.body).confirmDuplicate, false);
+
+      await createCard(carta, { confirmDuplicate: true });
+      assertSame(JSON.parse(double.lastCall.body).confirmDuplicate, true);
+    });
+  });
+
+  test("o 409 de duplicidade carrega a carta existente", async () => {
+    await withFetch(async (double) => {
+      double.on("POST", "/api/cards", {
+        status: 409,
+        body: JSON.stringify({
+          message: "Já existe uma carta com este nome nesta edição.",
+          duplicate: { id: 8, nameEn: "Forest", edition: { id: "dom", name: "Dominaria" } },
+        }),
+      });
+
+      const erro = await assertRejects(createCard(carta), ApiError);
+      const duplicata = parseDuplicate(erro);
+
+      assertSame(duplicata.nameEn, "Forest");
+      assertSame(duplicata.editionName, "Dominaria");
+    });
+  });
+
+  test("409 sem aviso de duplicidade devolve nulo, sem presumir a causa", async () => {
+    // O mesmo 409 cobre outras violações de estado; a tela não pode presumir
+    // qual foi e mostrar um aviso de duplicidade que não existe.
+    await withFetch(async (double) => {
+      double.on("POST", "/api/cards", {
+        status: 409,
+        body: JSON.stringify({ message: "Conflito de estado." }),
+      });
+
+      const erro = await assertRejects(createCard(carta), ApiError);
+      assertNull(parseDuplicate(erro));
+    });
+  });
+
+  test("salvar derruba o cache da listagem, e só dele", async () => {
+    // Alterar uma carta não muda a lista de edições: derrubar o catálogo junto
+    // transformaria o cache em enfeite (§5.4).
+    await withFetch(async (double) => {
+      double.onJson("POST", "/api/cards", resposta, 201);
+
+      await cache.fetchOnce(cacheKey("cards", 1), async () => "lista", { ttlMs: 60000 });
+      await cache.fetchOnce(cacheKey("catalogs", "games"), async () => "jogos", { ttlMs: 60000 });
+
+      await createCard(carta);
+
+      assertSame(cache.peek(cacheKey("cards", 1)), undefined);
+      assertSame(cache.peek(cacheKey("catalogs", "games")), "jogos");
+    });
+  });
+});
+
+suite("features/cards/api · histórico", () => {
+  async function withFetch(body) {
+    const double = fetchDouble();
+
+    try {
+      await body(double);
+      assertSame(double.unexpected.length, 0, `requisição não prevista: ${double.unexpected}`);
+    } finally {
+      double.restore();
+      cache.clear();
+    }
+  }
+
+  test("normaliza as entradas do contrato", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [
+          {
+            action: "updated",
+            user: { id: 2, name: "Editor de Catálogo" },
+            changes: { rarity: { from: "Rara", to: "Mítica" } },
+            createdAt: "2026-09-04T14:31:02-03:00",
+          },
+        ],
+      });
+
+      const entradas = await getCardHistory(12);
+
+      assertSame(entradas.length, 1);
+      assertSame(entradas[0].action, "updated");
+      assertSame(entradas[0].userName, "Editor de Catálogo");
+      assertSame(entradas[0].changes.rarity.to, "Mítica");
+    });
+  });
+
+  test("um registro fora do contrato não derruba o painel", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [
+          { action: "created", user: { name: "Alguém" }, changes: {}, createdAt: "2026-09-04T14:31:02-03:00" },
+          { semAcao: true },
+        ],
+      });
+
+      const entradas = await getCardHistory(12);
+
+      assertSame(entradas.length, 1, "a linha ruim foi descartada, o resto ficou");
+    });
+  });
+
+  test("autor removido não vira 'undefined' na tela", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [{ action: "deleted", changes: {}, createdAt: "2026-09-04T14:31:02-03:00" }],
+      });
+
+      assertNull((await getCardHistory(12))[0].userName);
+    });
   });
 });

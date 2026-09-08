@@ -621,3 +621,184 @@
 .card-row:hover {
   background-color: var(--color-bg);
 }
+
+/* Rodapé do campo: a dica e a ação de tentar de novo dividem a linha. */
+.field-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  min-height: 1.25rem;
+}
+
+.field-footer .button {
+  padding: 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+
+/* --- Formulário de carta ------------------------------------------------- */
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.form-layout {
+  max-width: 40rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.image-field {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (min-width: 36rem) {
+  .image-field {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+
+/* A pré-visualização reserva o espaço desde o início: sem isso o formulário
+   pula quando a imagem chega (§12.2). */
+.image-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  aspect-ratio: 488 / 680;
+  padding: var(--space-2);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  overflow: hidden;
+}
+
+.image-preview-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-preview-empty {
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.inline-message-attention .button {
+  margin-top: var(--space-2);
+}
+
+/* --- Campo de imagem ----------------------------------------------------- */
+
+.image-field {
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.image-field-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.file-input {
+  padding: var(--space-2);
+}
+
+.file-input::file-selector-button {
+  margin-right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+@media (min-width: 36rem) {
+  .image-field {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-4);
+    align-items: start;
+  }
+
+  .image-field legend {
+    grid-column: 1 / -1;
+  }
+}
+
+/* A exclusão é discreta no cartão: ela não disputa a atenção com a ação
+   primária da tela, e a cor de perigo já a distingue (§10.2). */
+.card-delete {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+/* --- Histórico ----------------------------------------------------------- */
+
+.history-summary {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Profundidade por borda, não por sombra: a linha do tempo é conteúdo em
+   repouso (§10.4). */
+.history-entry {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-line);
+}
+
+.history-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.history-changes {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-change {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+
+.history-field {
+  color: var(--color-muted);
+  min-width: 9rem;
+}

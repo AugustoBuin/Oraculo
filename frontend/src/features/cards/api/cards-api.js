@@ -212,3 +212,230 @@ export async function listCards(query, { signal } = {}) {
 export function invalidateCards() {
   cache.invalidate("cards");
 }
+
+/**
+ * Uma carta específica.
+ *
+ * `404` quando não existe **ou está excluída** — o contrato não distingue os
+ * dois, e o cliente não deve tentar: devolver "existe mas foi excluída"
+ * confirmaria a existência do registro (`api-contract.md` §5).
+ */
+export async function getCard(id, { signal } = {}) {
+  const payload = await cache.fetchOnce(
+    cacheKey("cards", "byId", id),
+    () => api.get(API_ENDPOINTS.cards.byId(id), { signal }),
+    { ttlMs: CACHE_TTL_MS.card },
+  );
+
+  const card = parseCard(payload?.data);
+
+  if (card === null) {
+    throw new ApiError(200, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  return card;
+}
+
+/**
+ * Monta o corpo da escrita **campo a campo**.
+ *
+ * O corpo da requisição nunca é o objeto do formulário repassado inteiro: `id`,
+ * `createdBy` e `createdAt` não vêm do cliente, e a identidade do solicitante
+ * vem sempre da sessão, no servidor (RN-08, `PADROES.md` §5.3).
+ */
+function toCardPayload(form, { confirmDuplicate = false } = {}) {
+  return {
+    nameEn: form.nameEn.trim(),
+    // Ausência é ausência: string vazia vira nulo, porque `namePt` é opcional
+    // por regra de negócio, não por descuido (RN-03).
+    namePt: form.namePt?.trim() === "" ? null : (form.namePt?.trim() ?? null),
+    game: form.game,
+    edition: form.edition,
+    rarity: form.rarity,
+    image: form.image ?? null,
+    confirmDuplicate,
+  };
+}
+
+/**
+ * Cria uma carta.
+ *
+ * **A duplicidade avisa, não bloqueia** (RN-04): o servidor devolve `409` com a
+ * carta existente no corpo, e quem chama decide se reenvia com
+ * `confirmDuplicate`. Impressões múltiplas na mesma edição são legítimas —
+ * terrenos básicos em Magic são o caso clássico.
+ */
+export async function createCard(form, options = {}) {
+  const payload = await api.post(API_ENDPOINTS.cards.list, toCardPayload(form, options), {
+    silent: true,
+  });
+
+  invalidateCards();
+
+  return parseCard(payload?.data);
+}
+
+export async function updateCard(id, form, options = {}) {
+  const payload = await api.put(API_ENDPOINTS.cards.byId(id), toCardPayload(form, options), {
+    silent: true,
+  });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+
+  return parseCard(payload?.data);
+}
+
+/**
+ * A carta duplicada que o `409` carrega, normalizada.
+ *
+ * Devolve `null` quando o corpo não traz o aviso — o mesmo `409` também cobre
+ * outras violações de estado, e a tela não pode presumir qual foi.
+ */
+export function parseDuplicate(error) {
+  const raw = error?.body?.duplicate;
+
+  if (raw === null || typeof raw !== "object") {
+    return null;
+  }
+
+  const edition = raw.edition;
+
+  return typeof raw.nameEn === "string"
+    ? {
+        id: raw.id,
+        nameEn: raw.nameEn,
+        editionName: typeof edition?.name === "string" ? edition.name : null,
+      }
+    : null;
+}
+
+/**
+ * Envia a imagem e devolve a referência a ser gravada na carta.
+ *
+ * Separado do `POST /api/cards` de propósito (`api-contract.md` §6): permite
+ * pré-visualizar antes de salvar a carta, e mantém o endpoint de carta em JSON
+ * puro.
+ *
+ * `silent` porque o campo de imagem apresenta o próprio erro, ancorado no
+ * lugar certo — um aviso flutuante diria a mesma coisa longe de onde ela
+ * importa.
+ */
+export async function uploadCardImage(file, { signal } = {}) {
+  const body = new FormData();
+
+  // O campo se chama `file` por contrato. O nome do arquivo vai junto, mas o
+  // servidor gera o dele: o nome enviado é dado hostil.
+  body.set("file", file);
+
+  const payload = await api.post(API_ENDPOINTS.uploads.cardImage, body, { signal, silent: true });
+
+  const reference = payload?.data?.reference;
+  const url = payload?.data?.url;
+
+  if (typeof reference !== "string" || reference === "") {
+    throw new ApiError(201, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  return {
+    reference,
+    // A URL vem do servidor, mas passa pela mesma allowlist de esquema que
+    // qualquer outra: validar na borda vale para o que é nosso também.
+    url: typeof url === "string" && isSafeUrl(url) ? url : null,
+  };
+}
+
+/**
+ * Recupera o par `(type, reference)` a partir da `imageUrl` da resposta.
+ *
+ * **Existe porque o contrato expõe a URL pronta e nunca o par** — o que é a
+ * decisão certa para quem só exibe (`api-contract.md` §5). Mas a edição
+ * precisa reenviar a imagem que já está lá: sem isto, abrir uma carta, mudar
+ * só o nome e salvar mandaria `image: null` e **apagaria a imagem** sem que
+ * ninguém tivesse pedido.
+ *
+ * A recuperação é possível porque a forma da URL distingue os dois casos: o
+ * que veio de upload é servido por `/api/media/{reference}`; o resto é remoto.
+ */
+export function imageFromUrl(imageUrl) {
+  if (typeof imageUrl !== "string" || imageUrl === "") {
+    return null;
+  }
+
+  const uploaded = /^\/api\/media\/([A-Za-z0-9._-]+)$/.exec(imageUrl);
+
+  if (uploaded !== null) {
+    return { type: "upload", reference: uploaded[1] };
+  }
+
+  return isSafeUrl(imageUrl) ? { type: "remote", reference: imageUrl } : null;
+}
+
+/**
+ * Exclui uma carta.
+ *
+ * **A exclusão é lógica** (RN-05): a carta some de toda listagem e de toda
+ * contagem imediatamente, e o histórico é preservado. É o que torna o desfazer
+ * possível.
+ *
+ * `silent` porque a tela apresenta o próprio resultado — com a ação de
+ * desfazer junto, que um aviso genérico de erro não teria.
+ */
+export async function deleteCard(id) {
+  await api.delete(API_ENDPOINTS.cards.byId(id), { silent: true });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+}
+
+/**
+ * Restaura uma carta excluída — o "Desfazer" da Decisão de UX nº 2.
+ *
+ * `409` quando a carta não está excluída: alguém já a restaurou, ou o prazo
+ * do desfazer venceu depois de outra pessoa mexer. Quem chama trata.
+ */
+export async function restoreCard(id) {
+  const payload = await api.post(API_ENDPOINTS.cards.restore(id), undefined, { silent: true });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+
+  return parseCard(payload?.data);
+}
+
+/**
+ * O histórico de alterações da carta (RF-18).
+ *
+ * `changes` já vem apresentável do servidor — só o que mudou, com valores
+ * legíveis, nunca ids internos nem a linha inteira (`api-contract.md` §5). A
+ * borda aqui confere a forma e descarta o registro que não bate, em vez de
+ * derrubar o painel por causa de uma linha antiga.
+ */
+export async function getCardHistory(id, { signal } = {}) {
+  const payload = await api.get(API_ENDPOINTS.cards.history(id), { signal, silent: true });
+
+  if (!Array.isArray(payload?.data)) {
+    throw new ApiError(200, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  const entries = [];
+
+  for (const raw of payload.data) {
+    if (typeof raw?.action !== "string" || typeof raw?.createdAt !== "string") {
+      console.error("[cards] registro de histórico fora do contrato, descartado", { raw });
+      continue;
+    }
+
+    entries.push({
+      action: raw.action,
+      userName: typeof raw.user?.name === "string" ? raw.user.name : null,
+      createdAt: raw.createdAt,
+      // `changes` é um mapa livre de campo → { from, to }. Guardamos só o que
+      // tem a forma esperada; o resto não vira linha na tela.
+      changes:
+        raw.changes !== null && typeof raw.changes === "object" ? raw.changes : {},
+    });
+  }
+
+  return entries;
+}

@@ -31,11 +31,15 @@ const cellText = (card, key) => {
 /**
  * @param {{ cards: object[], onOpen?: (id: number) => void, scope: object }} config
  */
-export function cardTable({ cards, onOpen, scope }) {
+export function cardTable({ cards, onOpen, onDelete, scope }) {
+  const columns = onDelete === undefined
+    ? COLUMNS
+    : [...COLUMNS, { key: null, label: "Ações" }];
+
   const head = el("thead", {
     children: [
       el("tr", {
-        children: COLUMNS.map((column) =>
+        children: columns.map((column) =>
           // `scope="col"` é o que faz o leitor de tela anunciar o cabeçalho
           // junto de cada célula. Sem ele a tabela vira uma lista de valores
           // soltos para quem não a enxerga (§9.1).
@@ -45,16 +49,36 @@ export function cardTable({ cards, onOpen, scope }) {
     ],
   });
 
+  const byId = new Map(cards.map((card) => [card.id, card]));
+
   const body = el("tbody", {
-    children: cards.map((card) =>
-      el("tr", {
+    children: cards.map((card) => {
+      const cells = COLUMNS.map((column) => el("td", { text: cellText(card, column.key) }));
+
+      if (onDelete !== undefined) {
+        cells.push(
+          el("td", {
+            children: [
+              el("button", {
+                text: "Excluir",
+                attrs: {
+                  type: "button",
+                  "data-action": "delete",
+                  "aria-label": `Excluir ${card.nameEn}`,
+                },
+                classes: ["button", "button-danger", "card-delete"],
+              }),
+            ],
+          }),
+        );
+      }
+
+      return el("tr", {
         attrs: { "data-card-id": card.id, tabindex: "0" },
         classes: ["card-row"],
-        children: COLUMNS.map((column) =>
-          el("td", { text: cellText(card, column.key) }),
-        ),
-      }),
-    ),
+        children: cells,
+      });
+    }),
   });
 
   const table = el("table", {
@@ -66,26 +90,41 @@ export function cardTable({ cards, onOpen, scope }) {
     ],
   });
 
-  if (onOpen !== undefined) {
-    const open = (target) => {
+  if (onOpen !== undefined || onDelete !== undefined) {
+    const act = (target) => {
       const row = target.closest?.("[data-card-id]");
       const id = Number(row?.dataset.cardId);
 
-      if (Number.isInteger(id)) {
-        onOpen(id);
+      if (!Number.isInteger(id)) {
+        return;
       }
+
+      // Excluir vence abrir: sem isto, clicar em "Excluir" também navegaria
+      // para a edição.
+      if (target.closest?.('[data-action="delete"]') !== null) {
+        onDelete?.(byId.get(id));
+        return;
+      }
+
+      onOpen?.(id);
     };
 
     // Um listener no corpo da tabela, não um por linha (§12.3).
-    scope.on(body, "click", (event) => open(event.target));
+    scope.on(body, "click", (event) => act(event.target));
 
     // Tudo que se faz com o mouse se faz com o teclado (§9.2). A linha tem
-    // `tabindex`, então Enter e Espaço precisam abrir — é o que um `button`
-    // nativo daria de graça e uma linha de tabela não dá.
+    // `tabindex`, então Enter e Espaço precisam agir — é o que um `button`
+    // nativo daria de graça e uma linha de tabela não dá. O botão de excluir
+    // é nativo e já trata os dois, então o evento dele não chega aqui como
+    // tecla da linha.
     scope.on(body, "keydown", (event) => {
+      if (event.target.closest?.('[data-action="delete"]') !== null) {
+        return;
+      }
+
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        open(event.target);
+        act(event.target);
       }
     });
   }

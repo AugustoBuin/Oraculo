@@ -13,6 +13,22 @@
   box-sizing: border-box;
 }
 
+/*
+ * `hidden` precisa vencer qualquer `display` de classe.
+ *
+ * A regra do navegador para `[hidden]` é `display: none`, e qualquer classe
+ * que declare `display` — `.button { display: inline-flex }` — tem
+ * especificidade maior e a sobrepõe. O elemento fica visível com o atributo
+ * marcado, e o defeito não dá erro nenhum: só aparece na tela.
+ *
+ * Como os do bloco de movimento reduzido em `tokens.css`, este `!important`
+ * existe para **reforçar** um comportamento padrão que outra regra sobrepõe —
+ * não para contornar a cascata. São os únicos casos do projeto.
+ */
+[hidden] {
+  display: none !important;
+}
+
 html {
   /* Nenhum tamanho de fonte fixado na raiz: o rem passa a respeitar a
      configuração de tamanho de fonte do navegador, que é o que faz o zoom de

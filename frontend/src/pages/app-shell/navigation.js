@@ -14,6 +14,10 @@
 
 export const ROUTES = {
   cards: "/",
+  newCard: "/cartas/nova",
+  // `:id` é o padrão que o roteador casa; `editCard(id)` monta o endereço.
+  editCardPattern: "/cartas/:id",
+  editCard: (id) => `/cartas/${encodeURIComponent(id)}`,
   catalogs: "/catalogos",
   account: "/conta",
 };
