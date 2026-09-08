@@ -35,9 +35,16 @@ export function loading(message = "Carregando…") {
  *
  * Texto útil, não "Nenhum resultado": quem chega aqui precisa saber o que
  * fazer em seguida, e a ação opcional é o caminho.
+ *
+ * `as` existe para o estado que **é** a tela inteira — "Página não
+ * encontrada" não está dentro de uma página com título, ela é a página. Aí o
+ * título do estado precisa ser o `h1`, ou a tela fica sem cabeçalho nenhum e
+ * quem navega por cabeçalhos não tem por onde começar (§9.2). Dentro de uma
+ * página que já tem `h1`, o padrão continua certo: o estado é mensagem, não
+ * seção. A aparência não muda com o nível — quem manda é `.state-title`.
  */
-export function empty({ title, description, action } = {}) {
-  const children = [el("p", { text: title, classes: ["state-title"] })];
+export function empty({ title, description, action, as = "p" } = {}) {
+  const children = [el(as, { text: title, classes: ["state-title"] })];
 
   if (description !== undefined) {
     children.push(el("p", { text: description, classes: ["text-muted"] }));
@@ -55,6 +62,9 @@ export function empty({ title, description, action } = {}) {
  *
  * `role="alert"` porque erro que bloqueia interrompe de propósito — é o caso
  * em que `assertive` é o certo (§9.3).
+ *
+ * Sem o `as` de `empty()` e `forbidden()` de propósito: falha sempre acontece
+ * dentro de uma tela que já se apresentou, e cujo `h1` continua na página.
  */
 export function failure({ message, action } = {}) {
   const children = [
@@ -86,12 +96,12 @@ export function failure({ message, action } = {}) {
  * Separado do erro de propósito: um `403` **não** desloga e não é falha do
  * usuário (ADR-007). O texto diz o que aconteceu sem sugerir que ele errou.
  */
-export function forbidden(message = "Você não tem permissão para ver esta tela.") {
+export function forbidden(message = "Você não tem permissão para ver esta tela.", { as = "p" } = {}) {
   return el("div", {
     classes: ["state", "state-forbidden"],
     attrs: { role: "status" },
     children: [
-      el("p", {
+      el(as, {
         classes: ["state-title"],
         children: [
           el("span", { text: "🔒", attrs: { "aria-hidden": "true" }, classes: ["state-icon"] }),

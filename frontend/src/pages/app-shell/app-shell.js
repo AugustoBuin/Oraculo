@@ -115,7 +115,10 @@ export function appShell(root, { onSignedOut }) {
     path,
     page: (target, params) => {
       if (!hasLevel(requires)) {
-        target.replaceChildren(forbidden());
+        // A recusa ocupa a tela inteira, então o título dela é o `h1` da
+        // tela. `undefined` porque a mensagem padrão é a certa aqui — o que
+        // muda é o nível do título, não o texto (§9.2).
+        target.replaceChildren(forbidden(undefined, { as: "h1" }));
         return null;
       }
 
@@ -142,6 +145,9 @@ export function appShell(root, { onSignedOut }) {
         empty({
           title: "Página não encontrada",
           description: "O endereço não corresponde a nenhuma tela do portal.",
+          // Mesmo motivo do 403: aqui o estado É a tela, e sem isto ela não
+          // teria cabeçalho nenhum.
+          as: "h1",
         }),
       );
 

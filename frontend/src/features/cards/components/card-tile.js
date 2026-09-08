@@ -70,7 +70,13 @@ export function cardTile(card, { scope, canDelete = false }) {
   const names = [
     // `textContent` sempre: nome de carta é dado editável, e o catálogo é
     // exatamente onde alguém digitaria `<script>` para ver o que acontece.
-    el("h3", { text: card.nameEn, classes: ["card-name"] }),
+    //
+    // `h2` porque o cartão é seção direta da página, e a página é dona do
+    // `h1`. Um `h3` aqui pularia o nível intermediário: quem navega por
+    // cabeçalhos ouve o salto como seção faltando e procura o que não existe.
+    // O tamanho vem de `.card-name`, não do nível — trocar o nível não mexe
+    // na aparência (§9.2).
+    el("h2", { text: card.nameEn, classes: ["card-name"] }),
   ];
 
   if (card.namePt !== null) {
