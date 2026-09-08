@@ -39,7 +39,7 @@ final class CatalogPresenter
     public static function editions(array $editions, bool $withState = false): array
     {
         return array_map(
-            static fn(Edition $e): array => self::item($e->code, $e->name, $e->active, $withState),
+            static fn(Edition $e): array => self::item($e->id, $e->code, $e->name, $e->active, $withState),
             $editions
         );
     }
@@ -51,7 +51,7 @@ final class CatalogPresenter
     public static function rarities(array $rarities, bool $withState = false): array
     {
         return array_map(
-            static fn(Rarity $r): array => self::item($r->code, $r->name, $r->active, $withState),
+            static fn(Rarity $r): array => self::item($r->id, $r->code, $r->name, $r->active, $withState),
             $rarities
         );
     }
@@ -59,20 +59,35 @@ final class CatalogPresenter
     /**
      * A forma do item.
      *
-     * `active` é ACRESCENTADO, nunca substituído: a forma publicada pelo
-     * enunciado continua sendo `{id, name}` para todo mundo que não pediu a
-     * lista completa — e é ela que a cascata consome. O campo a mais só
-     * aparece para quem administra o catálogo, que precisa saber o que está
-     * desativado para poder reativar.
+     * Os dois campos extras são ACRESCENTADOS, nunca substituídos: a forma
+     * publicada pelo enunciado continua sendo `{id, name}` para todo mundo que
+     * não pediu a lista completa — e é ela que a cascata consome.
      *
-     * @return array{id: string, name: string, active?: bool}
+     * `active` existe para o ADMIN saber o que reativar.
+     *
+     * `ref` existe porque **as rotas de escrita são endereçadas pelo id
+     * numérico**, e o `id` público é o código. Sem ele, a tela de
+     * administração lista os itens e não consegue apontar para nenhum — foi
+     * exatamente o que aconteceu ao exercitar a tela pela primeira vez.
+     *
+     * Expor o id numérico como `id` continua fora de questão: isso amarraria o
+     * contrato público à ordem de inserção do seed. Como campo à parte, e só
+     * para quem administra, ele é o que é — uma referência de escrita.
+     *
+     * @return array{id: string, name: string, active?: bool, ref?: int}
      */
-    private static function item(string $code, string $name, bool $active, bool $withState): array
-    {
+    private static function item(
+        int $id,
+        string $code,
+        string $name,
+        bool $active,
+        bool $withState,
+    ): array {
         $item = ['id' => $code, 'name' => $name];
 
         if ($withState) {
             $item['active'] = $active;
+            $item['ref'] = $id;
         }
 
         return $item;

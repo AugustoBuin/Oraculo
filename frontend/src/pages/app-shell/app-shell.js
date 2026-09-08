@@ -20,19 +20,8 @@ import { logout } from "@/features/auth/api/auth-api.js";
 import { accountPage } from "@/pages/account/account-page.js";
 import { cardsPage } from "@/pages/cards/cards-page.js";
 import { cardFormPage } from "@/pages/cards/card-form-page.js";
+import { catalogsPage } from "@/pages/catalogs/catalogs-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
-
-/**
- * Tela ainda não construída.
- *
- * Explícita de propósito: uma rota que existe na navegação e leva a nada seria
- * pior do que uma que diz o que falta. Sai quando F-020 e F-040 chegarem.
- */
-const placeholder = (title) => (outlet) => {
-  outlet.replaceChildren(empty({ title, description: "Esta tela chega em uma etapa adiante." }));
-
-  return null;
-};
 
 /**
  * @param {HTMLElement} root
@@ -95,7 +84,11 @@ export function appShell(root, { onSignedOut }) {
           params,
         ),
     },
-    { path: ROUTES.catalogs, requires: "ADMIN", page: placeholder("Administração de catálogos") },
+    {
+      path: ROUTES.catalogs,
+      requires: "ADMIN",
+      page: (target) => catalogsPage(target, { notify: notifications.notify }),
+    },
     {
       path: ROUTES.account,
       requires: "VIEWER",
