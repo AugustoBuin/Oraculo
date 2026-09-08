@@ -550,16 +550,23 @@ vencer.
 **Objetivo:** RF-40 a RF-43, pela UI. Sem esta tarefa os catálogos continuam administráveis
 pela API — é por isso que ela é a segunda a cair, não a primeira.
 
-**Entregar:** `pages/catalogs/` consumindo as nove rotas de escrita de `api-contract.md` §4,
-todas `ADMIN`.
+**Entregar:** `pages/catalogs/` consumindo as **seis** rotas de escrita de
+`api-contract.md` §4, todas `ADMIN`.
+
+> **Correção do backlog.** Este item dizia "nove rotas", número herdado de um fragmento
+> desatualizado do contrato que listava gestão de jogos. Ela **não existe nesta API**, por
+> decisão registrada no próprio §4: criar um jogo sem raridades deixaria o sistema num
+> estado pior do que não ter o botão. São seis rotas — três de edição, três de raridade.
 
 **Aceite:**
 - [ ] A tela inteira só aparece para `ADMIN`; `EDITOR` que chega pela URL vê "sem permissão",
       não uma tela quebrada.
-- [ ] `slug` de jogo e `code` de edição e raridade são **imutáveis** na edição — o campo nem
-      é oferecido.
-- [ ] `409` de código duplicado mostra mensagem clara.
-- [ ] Exclusão de item em uso devolve `409` e a tela oferece **desativar** como saída (RF-43).
+- [ ] `code` de edição e raridade é **imutável** na edição — o campo nem é oferecido.
+- [ ] `409` de código duplicado no mesmo jogo mostra mensagem clara; o mesmo código em
+      jogos diferentes é aceito.
+- [ ] `DELETE` **desativa e nunca falha**: devolve `wasInUse`, e a tela usa isso para dizer
+      que as cartas que usam o item continuam como estão (RF-43).
+- [ ] Reativar é um `PUT` com o registro inteiro — mandar só `active` devolve `400`.
 - [ ] Item desativado some dos cadastros novos e continua exibido nas cartas que já o usam.
 - [ ] Alterar um catálogo invalida o cache da cascata — o formulário não pode seguir
       oferecendo uma edição recém-desativada.

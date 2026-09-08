@@ -264,21 +264,13 @@ honesto quando a ação é reversível — e reativar é um `PUT` com `active: t
 > TCG novo é operação estrutural e rara, melhor atendida por uma migration que traga o
 > catálogo completo de uma vez.
 
----|---|---|
-| `POST` | `/api/games` | Cria jogo. Corpo: `{ "slug", "name", "sortOrder"? }` |
-| `PUT` | `/api/games/{gameId}` | Atualiza `name`, `active`, `sortOrder`. **`slug` é imutável** — é o identificador público |
-| `DELETE` | `/api/games/{gameId}` | Desativa. `409` se houver carta usando o jogo (RF-43) |
-| `POST` | `/api/games/{gameId}/editions` | `{ "code", "name", "sortOrder"? }` |
-| `PUT` | `/api/editions/{editionId}` | `name`, `active`, `sortOrder` |
-| `DELETE` | `/api/editions/{editionId}` | Desativa. `409` se em uso |
-| `POST` | `/api/games/{gameId}/rarities` | `{ "code", "name", "sortOrder"? }` |
-| `PUT` | `/api/rarities/{rarityId}` | `name`, `active`, `sortOrder` |
-| `DELETE` | `/api/rarities/{rarityId}` | Desativa. `409` se em uso |
+#### O `PUT` é substituição, não remendo
 
-> **Por que `409` e não exclusão em cascata.** Apagar um jogo levaria junto edições,
-> raridades e cartas. Um portal administrativo não pode ter um botão cuja consequência real
-> o usuário não consegue prever. Desativar preserva o que já existe e some das opções de
-> cadastro novo.
+O corpo carrega o registro inteiro — `name` é obrigatório mesmo quando só se quer
+reativar. Mandar `{ "active": true }` sozinho devolve `400` apontando `name`.
+
+É o comportamento que o backend implementa, e vale a pena saber antes de escrever a tela:
+um formulário que envia só o campo alterado quebraria em toda reativação.
 
 ---
 
