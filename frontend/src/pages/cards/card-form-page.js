@@ -13,6 +13,7 @@ import { el } from "@/shared/dom/elements.js";
 import { scope } from "@/shared/dom/events.js";
 import { getCard } from "@/features/cards/api/cards-api.js";
 import { cardForm } from "@/features/cards/components/card-form.js";
+import { cardHistory } from "@/features/cards/components/card-history.js";
 import {
   listEditions,
   listGames,
@@ -61,7 +62,20 @@ export function cardFormPage(root, { navigate, notify }, params = {}) {
       onCancel: () => navigate(ROUTES.cards),
     });
 
-    container.replaceChildren(el("section", { classes: ["card"], children: [form.node] }));
+    const sections = [el("section", { classes: ["card"], children: [form.node] })];
+
+    if (card !== null) {
+      // O histórico só existe para carta que existe, e só é buscado quando
+      // alguém abre o painel (§12.2).
+      sections.push(
+        el("section", {
+          classes: ["card"],
+          children: [cardHistory({ cardId: card.id, scope: life }).node],
+        }),
+      );
+    }
+
+    container.replaceChildren(...sections);
     form.focus();
   }
 

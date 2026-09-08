@@ -402,3 +402,40 @@ export async function restoreCard(id) {
 
   return parseCard(payload?.data);
 }
+
+/**
+ * O histórico de alterações da carta (RF-18).
+ *
+ * `changes` já vem apresentável do servidor — só o que mudou, com valores
+ * legíveis, nunca ids internos nem a linha inteira (`api-contract.md` §5). A
+ * borda aqui confere a forma e descarta o registro que não bate, em vez de
+ * derrubar o painel por causa de uma linha antiga.
+ */
+export async function getCardHistory(id, { signal } = {}) {
+  const payload = await api.get(API_ENDPOINTS.cards.history(id), { signal, silent: true });
+
+  if (!Array.isArray(payload?.data)) {
+    throw new ApiError(200, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  const entries = [];
+
+  for (const raw of payload.data) {
+    if (typeof raw?.action !== "string" || typeof raw?.createdAt !== "string") {
+      console.error("[cards] registro de histórico fora do contrato, descartado", { raw });
+      continue;
+    }
+
+    entries.push({
+      action: raw.action,
+      userName: typeof raw.user?.name === "string" ? raw.user.name : null,
+      createdAt: raw.createdAt,
+      // `changes` é um mapa livre de campo → { from, to }. Guardamos só o que
+      // tem a forma esperada; o resto não vira linha na tela.
+      changes:
+        raw.changes !== null && typeof raw.changes === "object" ? raw.changes : {},
+    });
+  }
+
+  return entries;
+}

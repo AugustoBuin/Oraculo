@@ -750,3 +750,55 @@
   padding: var(--space-1) var(--space-2);
   font-size: var(--text-xs);
 }
+
+/* --- Histórico ----------------------------------------------------------- */
+
+.history-summary {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Profundidade por borda, não por sombra: a linha do tempo é conteúdo em
+   repouso (§10.4). */
+.history-entry {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-line);
+}
+
+.history-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.history-changes {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-change {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+
+.history-field {
+  color: var(--color-muted);
+  min-width: 9rem;
+}

@@ -1,6 +1,7 @@
 import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
 import {
   createCard,
+  getCardHistory,
   normalizeQuery,
   parseCard,
   parseCardList,
@@ -312,6 +313,67 @@ suite("features/cards/api · escrita", () => {
 
       assertSame(cache.peek(cacheKey("cards", 1)), undefined);
       assertSame(cache.peek(cacheKey("catalogs", "games")), "jogos");
+    });
+  });
+});
+
+suite("features/cards/api · histórico", () => {
+  async function withFetch(body) {
+    const double = fetchDouble();
+
+    try {
+      await body(double);
+      assertSame(double.unexpected.length, 0, `requisição não prevista: ${double.unexpected}`);
+    } finally {
+      double.restore();
+      cache.clear();
+    }
+  }
+
+  test("normaliza as entradas do contrato", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [
+          {
+            action: "updated",
+            user: { id: 2, name: "Editor de Catálogo" },
+            changes: { rarity: { from: "Rara", to: "Mítica" } },
+            createdAt: "2026-09-04T14:31:02-03:00",
+          },
+        ],
+      });
+
+      const entradas = await getCardHistory(12);
+
+      assertSame(entradas.length, 1);
+      assertSame(entradas[0].action, "updated");
+      assertSame(entradas[0].userName, "Editor de Catálogo");
+      assertSame(entradas[0].changes.rarity.to, "Mítica");
+    });
+  });
+
+  test("um registro fora do contrato não derruba o painel", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [
+          { action: "created", user: { name: "Alguém" }, changes: {}, createdAt: "2026-09-04T14:31:02-03:00" },
+          { semAcao: true },
+        ],
+      });
+
+      const entradas = await getCardHistory(12);
+
+      assertSame(entradas.length, 1, "a linha ruim foi descartada, o resto ficou");
+    });
+  });
+
+  test("autor removido não vira 'undefined' na tela", async () => {
+    await withFetch(async (double) => {
+      double.onJson("GET", "/api/cards/12/history", {
+        data: [{ action: "deleted", changes: {}, createdAt: "2026-09-04T14:31:02-03:00" }],
+      });
+
+      assertNull((await getCardHistory(12))[0].userName);
     });
   });
 });
