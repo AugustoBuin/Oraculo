@@ -17,6 +17,7 @@
  *      resposta pode já estar a caminho do `then` quando o abort chega.
  */
 
+import { button } from "@/shared/components/button.js";
 import { el } from "@/shared/dom/elements.js";
 
 /** O valor que representa "nada escolhido". */
@@ -45,12 +46,30 @@ export function cascadeSelect({
   const select = el("select", { attrs: { id, name: id }, classes: ["field-input"] });
   const status = el("p", { classes: ["field-hint"], attrs: { id: `${id}-status` } });
 
+  /*
+   * A ação de tentar de novo (RF-26).
+   *
+   * Fica escondida até haver falha. Sem ela o campo morre na primeira falha de
+   * rede e a única saída do usuário é recarregar a página inteira — perdendo o
+   * que já tiver preenchido no formulário.
+   */
+  const retryButton = button({
+    label: "Tentar novamente",
+    variant: "ghost",
+    scope,
+    onClick: () => {
+      retry();
+    },
+  });
+
+  retryButton.node.hidden = true;
+
   const wrapper = el("div", {
     classes: ["field"],
     children: [
       el("label", { text: label, attrs: { for: id }, classes: ["field-label"] }),
       select,
-      status,
+      el("div", { classes: ["field-footer"], children: [status, retryButton.node] }),
     ],
   });
 
@@ -87,6 +106,11 @@ export function cascadeSelect({
     select.setAttribute("aria-busy", state === "loading" ? "true" : "false");
     select.setAttribute("aria-describedby", `${id}-status`);
     wrapper.dataset.state = state;
+
+    // `hidden` e não `display: none` no CSS: o atributo tira o botão da ordem
+    // de foco também, e um botão invisível que ainda recebe Tab é uma parada
+    // fantasma para quem navega por teclado (§9.2).
+    retryButton.node.hidden = state !== "failed";
   }
 
   function reset() {
@@ -147,6 +171,15 @@ export function cascadeSelect({
     }
   }
 
+  /** Recarrega mantendo o pai — é a ação de "tentar novamente" do RF-26. */
+  function retry() {
+    delete wrapper.dataset.error;
+
+    // A falha da recarga já está desenhada no próprio campo; deixá-la subir
+    // daqui viraria uma rejeição não tratada vinda de um clique.
+    return load().catch(() => {});
+  }
+
   scope.on(select, "change", () => {
     desiredValue = select.value;
     onChange?.(select.value);
@@ -189,10 +222,7 @@ export function cascadeSelect({
     },
 
     /** Recarrega mantendo o pai — é a ação de "tentar novamente" do RF-26. */
-    retry() {
-      delete wrapper.dataset.error;
-      return load();
-    },
+    retry,
 
     get state() {
       return wrapper.dataset.state;

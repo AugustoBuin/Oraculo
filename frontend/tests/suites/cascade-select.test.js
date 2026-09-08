@@ -201,6 +201,31 @@ suite("shared/components/cascade-select · reset e erro", () => {
       assertSame(cascade.value, "");
     }));
 
+  test("a ação de tentar de novo só aparece na falha (RF-26)", () =>
+    comCascata(async ({ cascade, loader }) => {
+      const acao = () => cascade.wrapper.querySelector(".field-footer button");
+
+      assertTrue(acao().hidden, "no estado inicial não há o que repetir");
+
+      const pending = cascade.setParent("magic");
+      await proximoQuadro();
+      assertTrue(acao().hidden, "carregando não é falha");
+
+      loader.last.reject(new Error("rede caiu"));
+      await pending.catch(() => {});
+
+      assertFalse(acao().hidden, "sem a ação, o campo morre na primeira falha de rede");
+
+      // `hidden` tira o botão da ordem de foco: um botão invisível que ainda
+      // recebe Tab é uma parada fantasma para quem navega por teclado.
+      const retomada = cascade.retry();
+      await proximoQuadro();
+      loader.last.resolve([{ id: "dom", name: "Dominaria" }]);
+      await retomada;
+
+      assertTrue(acao().hidden, "resolvida a falha, a ação some");
+    }));
+
   test("falha vira estado de erro sem travar o campo (RF-26)", () =>
     comCascata(async ({ cascade, loader }) => {
       const pending = cascade.setParent("magic");
