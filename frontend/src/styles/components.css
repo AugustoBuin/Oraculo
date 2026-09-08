@@ -636,3 +636,66 @@
   font-size: var(--text-xs);
   color: var(--color-accent);
 }
+
+/* --- Formulário de carta ------------------------------------------------- */
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.form-layout {
+  max-width: 40rem;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.image-field {
+  display: grid;
+  gap: var(--space-3);
+}
+
+@media (min-width: 36rem) {
+  .image-field {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+
+/* A pré-visualização reserva o espaço desde o início: sem isso o formulário
+   pula quando a imagem chega (§12.2). */
+.image-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 8rem;
+  aspect-ratio: 488 / 680;
+  padding: var(--space-2);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  overflow: hidden;
+}
+
+.image-preview-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-preview-empty {
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+.inline-message-attention .button {
+  margin-top: var(--space-2);
+}

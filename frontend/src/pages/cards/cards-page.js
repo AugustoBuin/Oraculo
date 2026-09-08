@@ -22,6 +22,7 @@ import {
 } from "@/shared/config/constants.js";
 import { el } from "@/shared/dom/elements.js";
 import { scope } from "@/shared/dom/events.js";
+import { hasLevel } from "@/shared/session/session.js";
 import { readPreference, writePreference } from "@/shared/storage/preference.js";
 import { listCards } from "@/features/cards/api/cards-api.js";
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
@@ -60,6 +61,17 @@ export function cardsPage(root, { navigate }) {
    */
   let lastResult = null;
 
+  /**
+   * Quem só consulta não abre o formulário.
+   *
+   * O cartão deixa de ser clicável em vez de levar a uma tela de "sem
+   * permissão": a forma mais eficaz de proteger quem tem menos familiaridade
+   * com tecnologia não é uma interface mais simples — é não lhe dar um botão
+   * que ela não precisa apertar. O servidor recusa de qualquer forma (§8.1).
+   */
+  const canEdit = hasLevel("EDITOR");
+  const openCard = canEdit ? (id) => navigate(ROUTES.editCard(id)) : undefined;
+
   const viewToggle = segmentedControl({
     label: "Visualização",
     options: [
@@ -90,7 +102,23 @@ export function cardsPage(root, { navigate }) {
       children: [
         el("div", {
           classes: ["page-header"],
-          children: [el("h1", { text: "Catálogo de cartas" }), viewToggle.node],
+          children: [
+            el("h1", { text: "Catálogo de cartas" }),
+            el("div", {
+              classes: ["page-actions"],
+              children: canEdit
+                ? [
+                    viewToggle.node,
+                    button({
+                      label: "Nova carta",
+                      variant: "primary",
+                      scope: life,
+                      onClick: () => navigate(ROUTES.newCard),
+                    }).node,
+                  ]
+                : [viewToggle.node],
+            }),
+          ],
         }),
         filters.node,
         results,
@@ -214,12 +242,10 @@ export function cardsPage(root, { navigate }) {
   /** Desenha a listagem na visão corrente, a partir de dado já carregado. */
   function renderResults({ cards, meta }) {
     renderInto((scoped) => {
-      const onOpen = (id) => navigate(`/cartas/${id}`);
-
       const listing =
         view === CARD_VIEWS.TABLE
-          ? cardTable({ cards, scope: scoped, onOpen })
-          : cardGallery({ cards, scope: scoped, onOpen });
+          ? cardTable({ cards, scope: scoped, onOpen: openCard })
+          : cardGallery({ cards, scope: scoped, onOpen: openCard });
 
       return el("div", {
         classes: ["stack-loose"],

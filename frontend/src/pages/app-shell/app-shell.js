@@ -19,6 +19,7 @@ import { hasLevel } from "@/shared/session/session.js";
 import { logout } from "@/features/auth/api/auth-api.js";
 import { accountPage } from "@/pages/account/account-page.js";
 import { cardsPage } from "@/pages/cards/cards-page.js";
+import { cardFormPage } from "@/pages/cards/card-form-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 
 /**
@@ -65,6 +66,30 @@ export function appShell(root, { onSignedOut }) {
       // `router` já está atribuído quando a página é montada — a rota só é
       // chamada depois de `start()`.
       page: (target) => cardsPage(target, { navigate: (path) => router.navigate(path) }),
+    },
+    /*
+     * A ordem importa: `/cartas/nova` vem ANTES de `/cartas/:id`, senão
+     * "nova" seria capturado como um id e a tela de cadastro viraria uma
+     * tentativa de editar a carta chamada "nova".
+     */
+    {
+      path: ROUTES.newCard,
+      requires: "EDITOR",
+      page: (target) =>
+        cardFormPage(target, {
+          navigate: (path) => router.navigate(path),
+          notify: notifications.notify,
+        }),
+    },
+    {
+      path: ROUTES.editCardPattern,
+      requires: "EDITOR",
+      page: (target, params) =>
+        cardFormPage(
+          target,
+          { navigate: (path) => router.navigate(path), notify: notifications.notify },
+          params,
+        ),
     },
     { path: ROUTES.catalogs, requires: "ADMIN", page: placeholder("Administração de catálogos") },
     {

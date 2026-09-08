@@ -212,3 +212,100 @@ export async function listCards(query, { signal } = {}) {
 export function invalidateCards() {
   cache.invalidate("cards");
 }
+
+/**
+ * Uma carta específica.
+ *
+ * `404` quando não existe **ou está excluída** — o contrato não distingue os
+ * dois, e o cliente não deve tentar: devolver "existe mas foi excluída"
+ * confirmaria a existência do registro (`api-contract.md` §5).
+ */
+export async function getCard(id, { signal } = {}) {
+  const payload = await cache.fetchOnce(
+    cacheKey("cards", "byId", id),
+    () => api.get(API_ENDPOINTS.cards.byId(id), { signal }),
+    { ttlMs: CACHE_TTL_MS.card },
+  );
+
+  const card = parseCard(payload?.data);
+
+  if (card === null) {
+    throw new ApiError(200, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  return card;
+}
+
+/**
+ * Monta o corpo da escrita **campo a campo**.
+ *
+ * O corpo da requisição nunca é o objeto do formulário repassado inteiro: `id`,
+ * `createdBy` e `createdAt` não vêm do cliente, e a identidade do solicitante
+ * vem sempre da sessão, no servidor (RN-08, `PADROES.md` §5.3).
+ */
+function toCardPayload(form, { confirmDuplicate = false } = {}) {
+  return {
+    nameEn: form.nameEn.trim(),
+    // Ausência é ausência: string vazia vira nulo, porque `namePt` é opcional
+    // por regra de negócio, não por descuido (RN-03).
+    namePt: form.namePt?.trim() === "" ? null : (form.namePt?.trim() ?? null),
+    game: form.game,
+    edition: form.edition,
+    rarity: form.rarity,
+    image: form.image ?? null,
+    confirmDuplicate,
+  };
+}
+
+/**
+ * Cria uma carta.
+ *
+ * **A duplicidade avisa, não bloqueia** (RN-04): o servidor devolve `409` com a
+ * carta existente no corpo, e quem chama decide se reenvia com
+ * `confirmDuplicate`. Impressões múltiplas na mesma edição são legítimas —
+ * terrenos básicos em Magic são o caso clássico.
+ */
+export async function createCard(form, options = {}) {
+  const payload = await api.post(API_ENDPOINTS.cards.list, toCardPayload(form, options), {
+    silent: true,
+  });
+
+  invalidateCards();
+
+  return parseCard(payload?.data);
+}
+
+export async function updateCard(id, form, options = {}) {
+  const payload = await api.put(API_ENDPOINTS.cards.byId(id), toCardPayload(form, options), {
+    silent: true,
+  });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+
+  return parseCard(payload?.data);
+}
+
+/**
+ * A carta duplicada que o `409` carrega, normalizada.
+ *
+ * Devolve `null` quando o corpo não traz o aviso — o mesmo `409` também cobre
+ * outras violações de estado, e a tela não pode presumir qual foi.
+ */
+export function parseDuplicate(error) {
+  const raw = error?.body?.duplicate;
+
+  if (raw === null || typeof raw !== "object") {
+    return null;
+  }
+
+  const edition = raw.edition;
+
+  return typeof raw.nameEn === "string"
+    ? {
+        id: raw.id,
+        nameEn: raw.nameEn,
+        editionName: typeof edition?.name === "string" ? edition.name : null,
+      }
+    : null;
+}
