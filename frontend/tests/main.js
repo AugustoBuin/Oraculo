@@ -21,6 +21,7 @@ import "~/suites/navigation.test.js";
 import "~/suites/cards-api.test.js";
 import "~/suites/cascade-select.test.js";
 import "~/suites/preference.test.js";
+import "~/suites/card-image.test.js";
 
 const root = document.getElementById("results");
 

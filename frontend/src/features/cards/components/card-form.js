@@ -17,7 +17,12 @@ import { cascadeSelect } from "@/shared/components/cascade-select.js";
 import { field } from "@/shared/components/field.js";
 import { inlineMessage } from "@/shared/components/feedback.js";
 import { el } from "@/shared/dom/elements.js";
-import { createCard, parseDuplicate, updateCard } from "@/features/cards/api/cards-api.js";
+import {
+  createCard,
+  imageFromUrl,
+  parseDuplicate,
+  updateCard,
+} from "@/features/cards/api/cards-api.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 
 const MAX_NAME_LENGTH = 150;
@@ -81,7 +86,17 @@ export function cardForm({ scope, card = null, catalogs, onSaved, onCancel }) {
     loadOptions: (gameId, options) => catalogs.listRarities(gameId, options),
   });
 
-  const image = cardImageField({ scope, value: null });
+  /*
+   * Editando, o campo já nasce com a imagem que a carta tem.
+   *
+   * Sem recuperar o par `(type, reference)`, abrir uma carta, mudar só o nome
+   * e salvar mandaria `image: null` — apagando a imagem sem ninguém pedir.
+   */
+  const image = cardImageField({
+    scope,
+    value: isEditing ? imageFromUrl(card.imageUrl) : null,
+    previewUrl: card?.imageUrl ?? null,
+  });
 
   const submit = button({
     label: isEditing ? "Salvar alterações" : "Cadastrar carta",

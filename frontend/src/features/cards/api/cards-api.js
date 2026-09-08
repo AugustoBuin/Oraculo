@@ -309,3 +309,64 @@ export function parseDuplicate(error) {
       }
     : null;
 }
+
+/**
+ * Envia a imagem e devolve a referência a ser gravada na carta.
+ *
+ * Separado do `POST /api/cards` de propósito (`api-contract.md` §6): permite
+ * pré-visualizar antes de salvar a carta, e mantém o endpoint de carta em JSON
+ * puro.
+ *
+ * `silent` porque o campo de imagem apresenta o próprio erro, ancorado no
+ * lugar certo — um aviso flutuante diria a mesma coisa longe de onde ela
+ * importa.
+ */
+export async function uploadCardImage(file, { signal } = {}) {
+  const body = new FormData();
+
+  // O campo se chama `file` por contrato. O nome do arquivo vai junto, mas o
+  // servidor gera o dele: o nome enviado é dado hostil.
+  body.set("file", file);
+
+  const payload = await api.post(API_ENDPOINTS.uploads.cardImage, body, { signal, silent: true });
+
+  const reference = payload?.data?.reference;
+  const url = payload?.data?.url;
+
+  if (typeof reference !== "string" || reference === "") {
+    throw new ApiError(201, MALFORMED_MESSAGE, { body: payload });
+  }
+
+  return {
+    reference,
+    // A URL vem do servidor, mas passa pela mesma allowlist de esquema que
+    // qualquer outra: validar na borda vale para o que é nosso também.
+    url: typeof url === "string" && isSafeUrl(url) ? url : null,
+  };
+}
+
+/**
+ * Recupera o par `(type, reference)` a partir da `imageUrl` da resposta.
+ *
+ * **Existe porque o contrato expõe a URL pronta e nunca o par** — o que é a
+ * decisão certa para quem só exibe (`api-contract.md` §5). Mas a edição
+ * precisa reenviar a imagem que já está lá: sem isto, abrir uma carta, mudar
+ * só o nome e salvar mandaria `image: null` e **apagaria a imagem** sem que
+ * ninguém tivesse pedido.
+ *
+ * A recuperação é possível porque a forma da URL distingue os dois casos: o
+ * que veio de upload é servido por `/api/media/{reference}`; o resto é remoto.
+ */
+export function imageFromUrl(imageUrl) {
+  if (typeof imageUrl !== "string" || imageUrl === "") {
+    return null;
+  }
+
+  const uploaded = /^\/api\/media\/([A-Za-z0-9._-]+)$/.exec(imageUrl);
+
+  if (uploaded !== null) {
+    return { type: "upload", reference: uploaded[1] };
+  }
+
+  return isSafeUrl(imageUrl) ? { type: "remote", reference: imageUrl } : null;
+}

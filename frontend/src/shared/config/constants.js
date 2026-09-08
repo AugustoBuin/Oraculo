@@ -73,6 +73,24 @@ export const CARD_SORT_LABELS = {
 export const SEARCH_DEBOUNCE_MS = 350;
 
 /**
+ * Teto do upload de imagem.
+ *
+ * **Espelha o `UPLOAD_MAX_BYTES` do servidor, e não o substitui.** A checagem
+ * daqui evita subir três megabytes para receber um 413 no fim; a que vale é a
+ * do servidor, que confere antes de gravar (§8.1). Se os dois divergirem, quem
+ * ganha é o servidor — e o usuário vê a mensagem dele.
+ */
+export const UPLOAD_MAX_BYTES = 3 * 1024 * 1024;
+
+/**
+ * Os tipos aceitos, pelo CONTEÚDO do arquivo (`api-contract.md` §6).
+ *
+ * SVG está fora, e a ausência é deliberada: SVG é um documento XML que carrega
+ * script.
+ */
+export const UPLOAD_ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+/**
  * Por quanto tempo cada tipo de leitura serve.
  *
  * Toda leitura remota declara isto **explicitamente**: leitura sem política de
