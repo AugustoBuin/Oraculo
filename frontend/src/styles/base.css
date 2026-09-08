@@ -21,8 +21,9 @@
  * especificidade maior e a sobrepõe. O elemento fica visível com o atributo
  * marcado, e o defeito não dá erro nenhum: só aparece na tela.
  *
- * É o único `!important` do projeto, e existe para reforçar o comportamento
- * padrão, não para contorná-lo.
+ * Como os do bloco de movimento reduzido em `tokens.css`, este `!important`
+ * existe para **reforçar** um comportamento padrão que outra regra sobrepõe —
+ * não para contornar a cascata. São os únicos casos do projeto.
  */
 [hidden] {
   display: none !important;
