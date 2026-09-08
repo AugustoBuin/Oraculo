@@ -370,3 +370,35 @@ export function imageFromUrl(imageUrl) {
 
   return isSafeUrl(imageUrl) ? { type: "remote", reference: imageUrl } : null;
 }
+
+/**
+ * Exclui uma carta.
+ *
+ * **A exclusão é lógica** (RN-05): a carta some de toda listagem e de toda
+ * contagem imediatamente, e o histórico é preservado. É o que torna o desfazer
+ * possível.
+ *
+ * `silent` porque a tela apresenta o próprio resultado — com a ação de
+ * desfazer junto, que um aviso genérico de erro não teria.
+ */
+export async function deleteCard(id) {
+  await api.delete(API_ENDPOINTS.cards.byId(id), { silent: true });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+}
+
+/**
+ * Restaura uma carta excluída — o "Desfazer" da Decisão de UX nº 2.
+ *
+ * `409` quando a carta não está excluída: alguém já a restaurou, ou o prazo
+ * do desfazer venceu depois de outra pessoa mexer. Quem chama trata.
+ */
+export async function restoreCard(id) {
+  const payload = await api.post(API_ENDPOINTS.cards.restore(id), undefined, { silent: true });
+
+  invalidateCards();
+  cache.invalidate(cacheKey("cards", "byId", id));
+
+  return parseCard(payload?.data);
+}

@@ -741,3 +741,12 @@
     grid-column: 1 / -1;
   }
 }
+
+/* A exclusão é discreta no cartão: ela não disputa a atenção com a ação
+   primária da tela, e a cor de perigo já a distingue (§10.2). */
+.card-delete {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}

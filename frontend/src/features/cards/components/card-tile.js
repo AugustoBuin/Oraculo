@@ -6,6 +6,7 @@
  * visão padrão.
  */
 
+import { button } from "@/shared/components/button.js";
 import { el } from "@/shared/dom/elements.js";
 
 /**
@@ -34,9 +35,9 @@ function imagePlaceholder(card) {
 
 /**
  * @param {object} card já normalizado por `parseCard`
- * @param {{ scope: object }} config
+ * @param {{ scope: object, canDelete?: boolean }} config
  */
-export function cardTile(card, { scope }) {
+export function cardTile(card, { scope, canDelete = false }) {
   const media = el("div", { classes: ["card-media"] });
 
   if (card.imageUrl === null) {
@@ -76,22 +77,42 @@ export function cardTile(card, { scope }) {
     names.push(el("p", { text: card.namePt, classes: ["card-name-pt"] }));
   }
 
+  const body = [
+    ...names,
+    el("p", { text: card.game.name, classes: ["card-meta"] }),
+    el("p", { text: card.edition.name, classes: ["card-meta"] }),
+    el("span", { text: card.rarity.name, classes: ["badge"] }),
+  ];
+
+  if (canDelete) {
+    /*
+     * A ação é marcada por `data-action` e não recebe listener próprio: quem
+     * escuta é a grade, com UM listener para todos os cartões (§12.3). Numa
+     * listagem de volume, a diferença é entre um listener e mil.
+     *
+     * `button` nativo, não `div` clicável: Enter e Espaço vêm de graça.
+     */
+    body.push(
+      el("button", {
+        text: "Excluir",
+        attrs: {
+          type: "button",
+          "data-action": "delete",
+          // O nome vai no rótulo acessível porque "Excluir" repetido vinte
+          // vezes na grade não diz a quem navega por áudio o que será
+          // excluído (§9.3).
+          "aria-label": `Excluir ${card.nameEn}`,
+        },
+        classes: ["button", "button-danger", "card-delete"],
+      }),
+    );
+  }
+
   return el("article", {
     classes: ["card-tile"],
     // Lido pela delegação de evento do contêiner: um listener para a grade
     // inteira, não um por cartão (§12.3).
     attrs: { "data-card-id": card.id },
-    children: [
-      media,
-      el("div", {
-        classes: ["card-body"],
-        children: [
-          ...names,
-          el("p", { text: card.game.name, classes: ["card-meta"] }),
-          el("p", { text: card.edition.name, classes: ["card-meta"] }),
-          el("span", { text: card.rarity.name, classes: ["badge"] }),
-        ],
-      }),
-    ],
+    children: [media, el("div", { classes: ["card-body"], children: body })],
   });
 }

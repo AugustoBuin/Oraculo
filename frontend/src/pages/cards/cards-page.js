@@ -27,6 +27,7 @@ import { readPreference, writePreference } from "@/shared/storage/preference.js"
 import { listCards } from "@/features/cards/api/cards-api.js";
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
+import { confirmCardDeletion } from "@/features/cards/components/delete-card-dialog.js";
 import { readCardQuery, writeCardQuery } from "@/features/cards/utils/card-query.js";
 import { ROUTES } from "@/pages/app-shell/navigation.js";
 import { cardsFilters } from "@/pages/cards/cards-filters.js";
@@ -36,7 +37,7 @@ import { cardsFilters } from "@/pages/cards/cards-filters.js";
  * @param {{ navigate: (path: string) => void }} config
  * @returns {() => void}
  */
-export function cardsPage(root, { navigate }) {
+export function cardsPage(root, { navigate, notify }) {
   const life = scope();
 
   const results = el("div", { classes: ["cards-results"] });
@@ -71,6 +72,16 @@ export function cardsPage(root, { navigate }) {
    */
   const canEdit = hasLevel("EDITOR");
   const openCard = canEdit ? (id) => navigate(ROUTES.editCard(id)) : undefined;
+
+  /**
+   * Excluir também é privilégio de quem edita.
+   *
+   * O botão nem existe para quem consulta — e o servidor recusa de qualquer
+   * forma, porque esconder é conveniência visual, não autorização (§8.1).
+   */
+  const deleteCardFlow = canEdit
+    ? (card) => confirmCardDeletion({ card, notify, onDone: () => load() })
+    : undefined;
 
   const viewToggle = segmentedControl({
     label: "Visualização",
@@ -244,8 +255,8 @@ export function cardsPage(root, { navigate }) {
     renderInto((scoped) => {
       const listing =
         view === CARD_VIEWS.TABLE
-          ? cardTable({ cards, scope: scoped, onOpen: openCard })
-          : cardGallery({ cards, scope: scoped, onOpen: openCard });
+          ? cardTable({ cards, scope: scoped, onOpen: openCard, onDelete: deleteCardFlow })
+          : cardGallery({ cards, scope: scoped, onOpen: openCard, onDelete: deleteCardFlow });
 
       return el("div", {
         classes: ["stack-loose"],

@@ -65,7 +65,11 @@ export function appShell(root, { onSignedOut }) {
       requires: "VIEWER",
       // `router` já está atribuído quando a página é montada — a rota só é
       // chamada depois de `start()`.
-      page: (target) => cardsPage(target, { navigate: (path) => router.navigate(path) }),
+      page: (target) =>
+        cardsPage(target, {
+          navigate: (path) => router.navigate(path),
+          notify: notifications.notify,
+        }),
     },
     /*
      * A ordem importa: `/cartas/nova` vem ANTES de `/cartas/:id`, senão
