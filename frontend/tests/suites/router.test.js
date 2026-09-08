@@ -1,5 +1,5 @@
 import { createRouter, matchRoute } from "@/shared/router/router.js";
-import { assertNull, assertSame, assertTrue, suite, test } from "~/runner.js";
+import { assertFalse, assertNull, assertSame, assertTrue, suite, test } from "~/runner.js";
 
 suite("shared/router · casamento de rota", () => {
   test("casa caminho literal", () => {
@@ -200,4 +200,70 @@ suite("shared/router · limpeza entre telas", () => {
       window.history.replaceState({}, "", original);
     }
   });
+});
+
+/*
+ * O roteador escuta o clique no documento inteiro, e isso o coloca no caminho
+ * de links que não são dele.
+ *
+ * Defeito real, achado na passagem de teclado de F-050: o primeiro Tab de
+ * qualquer tela cai em "Pular para o conteúdo", e o Enter não fazia nada. O
+ * roteador engolia o `#conteudo`, chamava `preventDefault()` e navegava para
+ * o mesmo caminho sem o fragmento — o atalho de acessibilidade mais básico da
+ * aplicação estava morto, sem erro nenhum no console.
+ */
+suite("shared/router · o clique que não é do roteador", () => {
+  /** Dispara um clique de verdade e devolve o evento, para inspecionar. */
+  function clicar(link) {
+    const evento = new MouseEvent("click", { bubbles: true, cancelable: true, button: 0 });
+    link.dispatchEvent(evento);
+    return evento;
+  }
+
+  async function comLink(href, body) {
+    const root = document.createElement("div");
+    const original = window.location.pathname + window.location.search;
+
+    const router = createRouter({ routes: [{ path: "/", page: () => null }], root, notFound: () => null });
+    const stop = router.start();
+
+    const link = document.createElement("a");
+    link.href = href;
+    link.textContent = "link";
+    document.body.append(link);
+
+    try {
+      await body(link);
+    } finally {
+      link.remove();
+      stop();
+      window.history.replaceState({}, "", original);
+    }
+  }
+
+  test("âncora da própria página fica com o navegador (RNF-06)", () =>
+    comLink("#conteudo", (link) => {
+      assertFalse(
+        clicar(link).defaultPrevented,
+        "o salto para o conteúdo é do navegador; o roteador não tem o que fazer com ele",
+      );
+    }));
+
+  test("âncora com query igual à da página também fica", () =>
+    comLink(window.location.pathname + window.location.search + "#conteudo", (link) => {
+      assertFalse(clicar(link).defaultPrevented);
+    }));
+
+  test("link interno de verdade continua sendo do roteador", () =>
+    comLink("/outra-tela", (link) => {
+      assertTrue(
+        clicar(link).defaultPrevented,
+        "sem isto a navegação vira recarga de página inteira",
+      );
+    }));
+
+  test("fragmento apontando para OUTRO caminho é navegação, não âncora", () =>
+    comLink("/outra-tela#conteudo", (link) => {
+      assertTrue(clicar(link).defaultPrevented);
+    }));
 });

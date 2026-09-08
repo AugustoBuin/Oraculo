@@ -172,6 +172,23 @@ export function createRouter({ routes, root, notFound, onNavigate }) {
     if (link.hasAttribute("download")) return;
     if (link.origin !== window.location.origin) return;
 
+    /*
+     * Âncora da própria página é do navegador, não do roteador.
+     *
+     * `#conteudo` é o destino do "Pular para o conteúdo", o primeiro Tab de
+     * qualquer tela. Sequestrar esse clique deixava o atalho morto — sem erro
+     * no console, sem nada na tela: o Enter simplesmente não fazia coisa
+     * alguma, e quem navega por teclado ficava sem o desvio do cabeçalho
+     * (§9.2, RNF-06).
+     */
+    if (
+      link.hash !== "" &&
+      link.pathname === window.location.pathname &&
+      link.search === window.location.search
+    ) {
+      return;
+    }
+
     event.preventDefault();
     navigate(link.pathname + link.search);
   }
