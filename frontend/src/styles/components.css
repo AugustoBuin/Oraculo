@@ -268,6 +268,10 @@
    em vez de espremer a navegação. */
 .app-actions {
   display: flex;
+  /* As duas ações também quebram ENTRE SI. Sem isto elas dividiam a mesma
+     linha estreita com a fonte do navegador em 200%, e "Sair" era renderizado
+     como "S / ai / r" — legível na medição, ilegível na tela. */
+  flex-wrap: wrap;
   gap: var(--space-2);
   margin-left: auto;
 }
@@ -401,10 +405,16 @@
  * Mobile-first: uma coluna na base, e a grade adensa sozinha conforme cabe.
  * `auto-fill` com `minmax` evita breakpoint escrito à mão para cada largura —
  * e nenhuma regra depende de pixel fixo (§10.5).
+ *
+ * O `min(…, 100%)` é o que impede a coluna de ficar MAIOR que o contêiner.
+ * `11rem` acompanha o tamanho do texto: com a fonte a 200%, a coluna mínima
+ * passa de 176 para 352px e não cabe mais numa tela de 360. Sem o `min()` a
+ * grade estoura, e como a página não rola na horizontal, o excedente é
+ * cortado — perda de conteúdo, não inconveniência (RNF-06, WCAG 1.4.4).
  */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
   gap: var(--space-4);
 }
 
@@ -507,7 +517,9 @@
  */
 .filters {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  /* `min(…, 100%)` pelo mesmo motivo de `.card-grid`: a coluna mínima nunca
+     pode ser maior que o espaço disponível. */
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
   gap: var(--space-3);
   padding: var(--space-4);
   background-color: var(--color-surface);
@@ -560,6 +572,10 @@
 
 .segmented {
   display: inline-flex;
+  /* As opções passam para a linha de baixo quando não cabem lado a lado —
+     duas etiquetas de texto com a fonte em 200% não cabem em 360px, e sem a
+     quebra o controle inteiro empurrava o formulário para fora da tela. */
+  flex-wrap: wrap;
   padding: var(--space-1);
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -676,7 +692,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 8rem;
+  /* `min(…, 100%)` outra vez: 8rem viram 256px com a fonte do navegador em
+     200%, e aí a miniatura ficava mais larga que o espaço restante do
+     formulário. O `aspect-ratio` abaixo mantém a proporção enquanto ela
+     encolhe. */
+  width: min(8rem, 100%);
   aspect-ratio: 488 / 680;
   padding: var(--space-2);
   background-color: var(--color-bg);
