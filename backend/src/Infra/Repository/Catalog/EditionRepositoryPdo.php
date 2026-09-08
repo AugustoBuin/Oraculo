@@ -30,6 +30,24 @@ final class EditionRepositoryPdo implements EditionGateway, CatalogItemGateway
         return array_map($this->toEntity(...), $statement->fetchAll());
     }
 
+    /**
+     * Inclui as desativadas. `deleted_at` continua fora: desativado é estado
+     * reversível, excluído não é — e a administração de catálogos existe para
+     * o primeiro caso, não para desfazer o segundo.
+     */
+    public function listAllByGame(int $gameId): array
+    {
+        $statement = $this->pdo->prepare(
+            'SELECT ' . self::COLUMNS . '
+             FROM editions
+             WHERE game_id = :game_id AND deleted_at IS NULL
+             ORDER BY sort_order ASC, name ASC'
+        );
+        $statement->execute(['game_id' => $gameId]);
+
+        return array_map($this->toEntity(...), $statement->fetchAll());
+    }
+
     public function findByGameAndCode(int $gameId, string $code): ?Edition
     {
         // O jogo entra na cláusula, não em uma checagem posterior: procurar só

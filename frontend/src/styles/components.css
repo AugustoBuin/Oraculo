@@ -802,3 +802,74 @@
   color: var(--color-muted);
   min-width: 9rem;
 }
+
+/* --- Administração de catálogos ------------------------------------------ */
+
+.catalog-game-picker {
+  max-width: 20rem;
+}
+
+.catalog-panels {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 56rem) {
+  .catalog-panels {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.catalog-list {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.catalog-row:last-child {
+  border-bottom: 0;
+}
+
+/*
+ * Dois sinais para o item desativado: o tom esmaecido E a etiqueta escrita
+ * "Desativada". Só o esmaecimento excluiria quem não distingue tons (§9.4).
+ */
+.catalog-row-inactive .catalog-name,
+.catalog-row-inactive .catalog-code {
+  color: var(--color-muted);
+}
+
+.catalog-row-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.catalog-name {
+  color: var(--color-ink);
+}
+
+.catalog-code {
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.catalog-form {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-line);
+}
