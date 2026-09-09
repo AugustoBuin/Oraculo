@@ -21,11 +21,9 @@
 !/backend/storage/sessions/.gitkeep
 *.log
 
-# --- Evidência bruta: relatórios de auditoria e investigação ficam fora do Git.
-#     O que precisa chegar ao time (o ledger) vive em docs/audits/. ---
-/reports/
+# --- Investigação de deploy fica fora do Git: carrega segredo em texto claro.
+#     Relatório de auditoria e ledger são versionados, em docs/audits/. ---
 /docs/investigations/
-/docs/security_reports/
 
 # --- Dependências: não usamos Composer (ADR-001). A regra fica como guarda
 #     para que um vendor/ acidental nunca seja commitado. ---

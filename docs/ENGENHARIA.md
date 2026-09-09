@@ -174,3 +174,6 @@ Comentário explica **por quê**, nunca **o quê**.
   mudança estrutural.
 - `docs/audits/open-findings.md` — achados abertos. Leia antes de começar qualquer
   trabalho; se a sua mudança toca um local listado, corrija ou, no mínimo, não piore.
+- `docs/audits/` — os relatórios completos de qualidade e segurança, datados e
+  **versionados** junto do ledger. Relatório salvo é imutável; o que muda de status é o
+  ledger.
