@@ -47,6 +47,16 @@ body {
   /* A página nunca rola na horizontal; quem rola é o contêiner, no próprio
      eixo (§10.5, RNF-04). */
   overflow-x: hidden;
+
+  /* Palavra que não cabe quebra em vez de esticar a caixa. Sem isto, um
+     e-mail ou um "Administração de catálogos" com a fonte do navegador em
+     200% passa da largura da tela — e, como a página não rola na horizontal,
+     o que passou é CORTADO.
+     `anywhere` e não `break-word`: só o primeiro entra também no cálculo da
+     largura mínima da caixa, que é o que permite ao cartão encolher junto.
+     Com `break-word` a caixa continuava reservando a palavra inteira e
+     estourava a grade do mesmo jeito (§10.5, RNF-06). */
+  overflow-wrap: anywhere;
 }
 
 h1,
@@ -95,6 +105,30 @@ textarea {
 
 button {
   cursor: pointer;
+}
+
+/*
+ * `fieldset` nasce com `min-width: min-content` na folha do navegador, e essa
+ * regra não vem de nenhum CSS do projeto — é herança do próprio agente. O
+ * efeito é um grupo de campos que se recusa a encolher: com a fonte em 200%,
+ * o agrupamento de imagem ficava mais largo que a tela e o excedente sumia no
+ * `overflow-x: hidden` do `body`. Zerar devolve o `fieldset` ao fluxo normal.
+ */
+fieldset {
+  min-width: 0;
+}
+
+/*
+ * Mesmo problema do `fieldset`, em outra roupa: `input` calcula uma largura
+ * intrínseca a partir do atributo `size`, e com a fonte em 200% isso vira 366
+ * pixels que o campo se recusa a ceder. A caixa que o contém — item de grade,
+ * com `min-width: auto` — herda o piso e passa da tela. A largura de verdade
+ * vem de `.field-input`, que ocupa 100% do contêiner.
+ */
+input,
+select,
+textarea {
+  min-width: 0;
 }
 
 /*

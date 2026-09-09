@@ -22,6 +22,9 @@ import "~/suites/cards-api.test.js";
 import "~/suites/cascade-select.test.js";
 import "~/suites/preference.test.js";
 import "~/suites/card-image.test.js";
+import "~/suites/card-tile.test.js";
+import "~/suites/feedback.test.js";
+import "~/suites/change-password-form.test.js";
 
 const root = document.getElementById("results");
 
