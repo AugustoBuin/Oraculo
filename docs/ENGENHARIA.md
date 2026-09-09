@@ -33,11 +33,15 @@ código entregue.
 | Comando | O que faz |
 |---|---|
 | `docker compose up` | Sobe MySQL + PHP/Apache, aplica migrations e seed. É o único passo necessário. |
-| `docker compose exec app php bin/migrate.php` | Aplica as migrations pendentes. Idempotente; roda sozinho no boot. |
-| `docker compose exec app php bin/seed.php` | Popula massa inicial. Idempotente. |
-| `docker compose exec app php bin/test.php` | Micro-runner de testes autoral (ADR-004). |
-| `docker compose exec app php bin/check-boundaries.php` | Verifica as fronteiras de camada do PHP **e** do JS (ADR-002). |
-| `docker compose exec app php bin/validate.php` | Cadeia completa: conflitos → `php -l` → fronteiras → testes. É o que roda no hook de pré-push. |
+| `docker compose exec app php backend/bin/migrate.php` | Aplica as migrations pendentes. Idempotente; roda sozinho no boot. |
+| `docker compose exec app php backend/bin/seed.php` | Popula massa inicial. Idempotente. |
+| `docker compose exec app php backend/bin/test.php` | Micro-runner de testes autoral (ADR-004). |
+| `docker compose exec app php backend/bin/check-boundaries.php` | Verifica as fronteiras de camada do PHP **e** do JS (ADR-002). |
+| `docker compose exec app php backend/bin/validate.php` | Cadeia completa: conflitos → `php -l` → fronteiras → testes. É o que roda no hook de pré-push. |
+
+> O diretório de trabalho do contêiner é `/var/www`, com `backend/` e `frontend/` lado a
+> lado — por isso o caminho começa em `backend/`. Rodar `php bin/validate.php` de dentro do
+> contêiner responde `Could not open input file`.
 
 Variáveis obrigatórias (`.env`, **fora** do document root): `DB_HOST`, `DB_NAME`,
 `DB_USER`, `DB_PASS`, `APP_ENV`, `APP_URL`, `SESSION_TTL_SECONDS`, `UPLOAD_MAX_BYTES`.

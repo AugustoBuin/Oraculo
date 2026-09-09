@@ -57,7 +57,11 @@ export function changePasswordForm({ scope, onChanged }) {
     attrs: { novalidate: true },
     classes: ["stack"],
     children: [
-      el("h1", { text: "Trocar a senha" }),
+      // `h2`: o formulário é embutido numa página que já tem `h1`. Componente
+      // que carrega o próprio `h1` empurra a página para o nível errado —
+      // aqui ele fazia a tela de conta anunciar "Trocar a senha" como se
+      // fosse o nome dela (§9.2).
+      el("h2", { text: "Trocar a senha" }),
       // O aviso vem antes da ação, não como surpresa depois dela.
       el("p", {
         text:
