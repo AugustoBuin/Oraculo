@@ -161,6 +161,8 @@ Comentário explica **por quê**, nunca **o quê**.
 - Merge em `development` com `--no-ff` para o histórico mostrar o processo.
 - Conventional Commits em português, no imperativo: `feat(card): adiciona cascata de raridade`.
 - Um commit = uma ideia. Se o título precisa de "e", são dois commits.
+- O `pre-push` roda `backend/bin/validate.php` no contêiner e barra o envio se a cadeia
+  ficar vermelha. Com o ambiente no chão ele falha com instrução — não há PHP no host.
 
 ---
 
