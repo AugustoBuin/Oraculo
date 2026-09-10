@@ -12,6 +12,7 @@ import "~/suites/elements.test.js";
 import "~/suites/events.test.js";
 import "~/suites/config.test.js";
 import "~/suites/theme.test.js";
+import "~/suites/palette.test.js";
 import "~/suites/client.test.js";
 import "~/suites/store.test.js";
 import "~/suites/session.test.js";
