@@ -34,4 +34,16 @@ enum RarityColor: string
 
     /** O selo neutro de antes da paleta: raridade que ninguém pintou fica como era. */
     public const DEFAULT = self::GRAPHITE;
+
+    /**
+     * A cor gravada, com o padrão no lugar de um valor fora da paleta.
+     *
+     * Na escrita, cor fora da paleta é recusada. Na leitura, um valor inválido
+     * só chega por escrita direta no banco — e derrubar a leitura por isso
+     * tiraria do ar a galeria inteira por causa de uma linha.
+     */
+    public static function fromStored(mixed $raw): self
+    {
+        return is_string($raw) ? self::tryFrom($raw) ?? self::DEFAULT : self::DEFAULT;
+    }
 }
