@@ -10,8 +10,8 @@
  * `unsafe-inline`. Chave desconhecida vira grafite, o selo neutro.
  */
 
-import { rarityColor } from "@/features/catalogs/rarity-colors.js";
 import { el } from "@/shared/dom/elements.js";
+import { rarityColor } from "@/shared/theme/rarity-colors.js";
 
 /**
  * @param {{ name: string, color?: string }} rarity

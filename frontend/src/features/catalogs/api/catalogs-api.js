@@ -12,9 +12,9 @@
 import { api } from "@/shared/api/client.js";
 import { API_ENDPOINTS } from "@/shared/api/endpoints.js";
 import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
-import { rarityColor } from "@/features/catalogs/rarity-colors.js";
 import { CACHE_TTL_MS } from "@/shared/config/constants.js";
 import { cache, cacheKey } from "@/shared/store/cache.js";
+import { rarityColor } from "@/shared/theme/rarity-colors.js";
 
 /**
  * Normaliza a lista `{ id, name }` do contrato.
