@@ -12,6 +12,7 @@ use App\Domain\Catalog\Entity\Edition;
 use App\Domain\Catalog\Entity\Game;
 use App\Domain\Catalog\Entity\Rarity;
 use App\Shared\Enum\ImageType;
+use App\Shared\Enum\RarityColor;
 
 /**
  * Persistência de cartas em MySQL.
@@ -39,7 +40,7 @@ final class CardRepositoryPdo implements CardGateway
         g.id AS g_id, g.slug AS g_slug, g.name AS g_name, g.active AS g_active, g.sort_order AS g_sort,
         e.id AS e_id, e.game_id AS e_game_id, e.code AS e_code, e.name AS e_name,
         e.active AS e_active, e.sort_order AS e_sort,
-        r.id AS r_id, r.game_id AS r_game_id, r.code AS r_code, r.name AS r_name,
+        r.id AS r_id, r.game_id AS r_game_id, r.code AS r_code, r.name AS r_name, r.color AS r_color,
         r.active AS r_active, r.sort_order AS r_sort
     ';
 
@@ -288,6 +289,7 @@ final class CardRepositoryPdo implements CardGateway
                 (string) $row['r_name'],
                 (bool) $row['r_active'],
                 (int) $row['r_sort'],
+                RarityColor::fromStored($row['r_color']),
             ),
             image: $imageType === null ? null : CardImage::with($imageType, (string) $row['image_reference']),
             createdBy: (int) $row['created_by'],

@@ -37,6 +37,13 @@ final class RarityColorTest extends TestCase
         $this->assertNull(RarityColor::tryFrom(''));
     }
 
+    public function testCorGravadaForaDaPaletaViraOPadraoEmVezDeDerrubarALeitura(): void
+    {
+        $this->assertSame(RarityColor::COPPER, RarityColor::fromStored('copper'));
+        $this->assertSame(RarityColor::GRAPHITE, RarityColor::fromStored('dourado'));
+        $this->assertSame(RarityColor::GRAPHITE, RarityColor::fromStored(null));
+    }
+
     public function testOPadraoEOGrafiteONeutroDeHoje(): void
     {
         $this->assertSame(RarityColor::GRAPHITE, RarityColor::DEFAULT);

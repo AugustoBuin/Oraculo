@@ -7,10 +7,11 @@ namespace App\Infra\Repository\Catalog;
 use App\Domain\Catalog\Entity\Rarity;
 use App\Domain\Catalog\Gateway\CatalogItemGateway;
 use App\Domain\Catalog\Gateway\RarityGateway;
+use App\Shared\Enum\RarityColor;
 
 final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
 {
-    private const COLUMNS = 'id, game_id, code, name, active, sort_order';
+    private const COLUMNS = 'id, game_id, code, name, color, active, sort_order';
 
     public function __construct(
         private readonly \PDO $pdo,
@@ -177,6 +178,7 @@ final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
             name: (string) $row['name'],
             active: (bool) $row['active'],
             sortOrder: (int) $row['sort_order'],
+            color: RarityColor::fromStored($row['color']),
         );
     }
 }

@@ -162,34 +162,38 @@ echo '  edições   ' . count($editions) . ' (conforme o JSON do enunciado)' . P
  * É esta tabela que impede cadastrar carta de Magic como "Secret Rare".
  */
 $rarities = [
-    ['magic', 'common', 'Comum', 1],
-    ['magic', 'uncommon', 'Incomum', 2],
-    ['magic', 'rare', 'Rara', 3],
-    ['magic', 'mythic', 'Mítica', 4],
-    ['pokemon', 'common', 'Comum', 1],
-    ['pokemon', 'uncommon', 'Incomum', 2],
-    ['pokemon', 'rare', 'Rara', 3],
-    ['pokemon', 'rare-holo', 'Rara Holo', 4],
-    ['pokemon', 'ultra-rare', 'Ultra Rara', 5],
-    ['pokemon', 'secret-rare', 'Secreta', 6],
-    ['yugioh', 'common', 'Comum', 1],
-    ['yugioh', 'rare', 'Rara', 2],
-    ['yugioh', 'super-rare', 'Super Rara', 3],
-    ['yugioh', 'ultra-rare', 'Ultra Rara', 4],
-    ['yugioh', 'secret-rare', 'Secreta', 5],
+    ['magic', 'common', 'Comum', 1, 'graphite'],
+    ['magic', 'uncommon', 'Incomum', 2, 'silver'],
+    ['magic', 'rare', 'Rara', 3, 'gold'],
+    ['magic', 'mythic', 'Mítica', 4, 'copper'],
+    ['pokemon', 'common', 'Comum', 1, 'graphite'],
+    ['pokemon', 'uncommon', 'Incomum', 2, 'silver'],
+    ['pokemon', 'rare', 'Rara', 3, 'gold'],
+    ['pokemon', 'rare-holo', 'Rara Holo', 4, 'aquamarine'],
+    ['pokemon', 'ultra-rare', 'Ultra Rara', 5, 'tourmaline'],
+    ['pokemon', 'secret-rare', 'Secreta', 6, 'obsidian'],
+    ['yugioh', 'common', 'Comum', 1, 'graphite'],
+    ['yugioh', 'rare', 'Rara', 2, 'silver'],
+    ['yugioh', 'super-rare', 'Super Rara', 3, 'aquamarine'],
+    ['yugioh', 'ultra-rare', 'Ultra Rara', 4, 'gold'],
+    ['yugioh', 'secret-rare', 'Secreta', 5, 'obsidian'],
 ];
 
 $insertRarity = $pdo->prepare(
-    'INSERT INTO rarities (game_id, code, name, sort_order, active, created_at)
-     VALUES (:game_id, :code, :name, :sort_order, 1, :now)
+    'INSERT INTO rarities (game_id, code, name, color, sort_order, active, created_at)
+     VALUES (:game_id, :code, :name, :color, :sort_order, 1, :now)
      ON DUPLICATE KEY UPDATE name = VALUES(name), sort_order = VALUES(sort_order)'
 );
 
-foreach ($rarities as [$game, $code, $name, $order]) {
+// A cor entra só na inserção, e fica FORA do ON DUPLICATE KEY UPDATE: o seed
+// roda a cada boot, e reescrevê-la desfaria a escolha do ADMIN a cada
+// `docker compose up`. Banco que já existia recebe as cores pela migration 0012.
+foreach ($rarities as [$game, $code, $name, $order, $color]) {
     $insertRarity->execute([
         'game_id' => $gameIds[$game],
         'code' => $code,
         'name' => $name,
+        'color' => $color,
         'sort_order' => $order,
         'now' => $now,
     ]);
