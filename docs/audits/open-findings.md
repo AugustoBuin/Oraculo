@@ -12,6 +12,7 @@ Contrato do formato: `backend/PADROES.md` §14.1.
 | OF-001 | HIGH | 6,5 | Parâmetro de consulta ou cookie em forma de array (`?page[]=1`) vira `ErrorException` e responde 500 em qualquer rota `/api/*`, **sem autenticação** — o erro nasce em `fromGlobals()`, antes do pipeline, e cada requisição grava uma linha de log com stack completa | `backend/src/Infra/Http/Request.php:89`, `backend/src/Infra/Http/Request.php:91` | `2026-09-09-auditoria-final-qualidade-backend.md`; `2026-09-09-auditoria-final-seguranca.md` | fixed | | 2026-09-09 | 2026-09-09 |
 | OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 | OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
+| OF-004 | HIGH | — | Campo de imagem inutilizável no desktop: a trilha `auto` do grid reservava a largura NATURAL da imagem (488px), o item pintava 128px, e a coluna dos controles era espremida até o mínimo — que `overflow-wrap: anywhere`, herdado do `body`, reduz a UM caractere. "Remover imagem" saía uma letra por linha, com 379px de buraco ao lado | `frontend/src/styles/components.css` (`.image-field`, media de 36rem) | reportado pelo autor na tela, 09/09 — **nenhuma das três auditorias pegou** | fixed | | 2026-09-09 | 2026-09-09 |
 
 ## Convenções
 
@@ -100,6 +101,31 @@ comportamento: a leitura em voo é de fato interrompida. As guardas depois do `a
 páginas, ficam no roteiro manual — camada de DOM, por ADR-004 — e foram percorridas:
 `/catalogos`, `/cartas/:id` e a galeria com filtro pela URL, todas carregando e com console
 limpo.
+
+**OF-004 é o achado que as auditorias NÃO pegaram, e vale registrar por quê.** Os dois
+auditores de qualidade leram código; este defeito só existe em geometria calculada, com uma
+imagem grande JÁ CARREGADA e a viewport acima de 36rem. E a verificação em tela do mesmo dia
+passou ao lado dele: as larguras que medi (360, 500) ficam abaixo do ponto onde o grid de duas
+colunas entra, e nas larguras maiores eu olhei a galeria, não o formulário rolado até a
+imagem. Leitura de código e amostragem de largura, as duas, tinham o mesmo ponto cego.
+
+É **regressão do `63b6413`** (F-050, "o layout sobrevive à fonte do navegador em 200%"): a
+correção do caso estreito introduziu `width: min(8rem, 100%)` na pré-visualização, e a
+porcentagem dela não resolve durante o dimensionamento intrínseco da trilha. Uma correção de
+largura quebrando outra largura.
+
+Corrigido com `grid-template-columns: minmax(0, 1fr) 8rem` — trilha fixa em vez de `auto`, e
+`minmax(0, …)` porque o mínimo `auto` de `1fr` não protege nada sob `overflow-wrap: anywhere`.
+O `8rem` da trilha e o `36rem` da media query escalam juntos com a fonte, que é o que mantém o
+F-050 de pé. Uma media query duplicada e agora contraditória foi removida no mesmo passo: ela
+repetia `1fr auto` para o mesmo seletor, e deixá-la faria a correção depender de ordem de
+arquivo.
+
+Coberto por `frontend/tests/suites/image-field-layout.test.js`, que mede geometria real — a
+página de testes já carrega `components.css`, então não houve infraestrutura nova a criar. O
+teste nasceu **vazio**: com `<img>` sem `src` não há medida intrínseca, e ele passava sem a
+correção. Passou a carregar uma imagem `blob:` de 488x680 e a **afirmar** essa condição, para
+não voltar a passar por acidente. A suíte foi de 228 para 231.
 
 ## Auditorias planejadas
 

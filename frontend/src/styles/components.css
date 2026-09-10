@@ -674,16 +674,13 @@
   margin-top: var(--space-4);
 }
 
+/* Empilhado é o padrão; as duas colunas entram na regra de `.image-field` mais
+   abaixo, que é a que vale. Uma segunda media query aqui só repetiria o que lá
+   já está — e repetida com valor DIFERENTE viraria contradição silenciosa,
+   decidida por ordem de arquivo. */
 .image-field {
   display: grid;
   gap: var(--space-3);
-}
-
-@media (min-width: 36rem) {
-  .image-field {
-    grid-template-columns: 1fr auto;
-    align-items: start;
-  }
 }
 
 /* A pré-visualização reserva o espaço desde o início: sem isso o formulário
@@ -752,7 +749,24 @@
 @media (min-width: 36rem) {
   .image-field {
     display: grid;
-    grid-template-columns: 1fr auto;
+    /*
+     * A segunda trilha é FIXA, e não `auto`, por um motivo medido: trilha
+     * `auto` se dimensiona pelo max-content do item, e a porcentagem de
+     * `min(8rem, 100%)` na pré-visualização não resolve durante o
+     * dimensionamento intrínseco. O que sobrava era a largura NATURAL da
+     * imagem — 488px, a proporção de uma carta. A trilha reservava 488, o item
+     * pintava 128, e o resto virava buraco: os controles ao lado eram
+     * espremidos até o mínimo, que `overflow-wrap: anywhere` (herdado do
+     * `body`) reduz a UM caractere. "Remover imagem" saía uma letra por linha.
+     *
+     * `8rem` casa com a largura da própria pré-visualização, e escala com a
+     * fonte do navegador junto com o `36rem` desta media query — que é o que
+     * mantém de pé o F-050, sem reintroduzir o que ele corrigiu.
+     *
+     * `minmax(0, 1fr)` e não `1fr`: `1fr` tem mínimo `auto`, e com
+     * `overflow-wrap: anywhere` esse mínimo não protege nada.
+     */
+    grid-template-columns: minmax(0, 1fr) 8rem;
     gap: var(--space-4);
     align-items: start;
   }
