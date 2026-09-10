@@ -184,10 +184,14 @@ export function collectTokens(rules, prefix) {
  *   começa com `--color-surface`);
  * - a tinta de uma superfície de ação (`--color-on-X`) é medida sobre ela;
  * - cada cor é medida sobre a própria versão suave (`--color-X-soft`);
- * - o foco é medido sobre as superfícies a 3:1, que é o piso de componente.
+ * - **componente** — o anel de foco e a borda de controle (`--color-border`)
+ *   — é medido sobre as superfícies a 3:1, que é o piso da WCAG 1.4.11 para o
+ *   que identifica um controle, e não o de texto.
  *
- * É tinta quem não é superfície, versão suave, tinta de ação, linha nem foco.
- * A convenção de nome é o que permite a um token novo entrar na conta sozinho.
+ * A linha (`--color-line`) não entra: é decorativa — divisória, borda de
+ * cartão —, e não identifica controle nenhum. É tinta quem não é superfície,
+ * versão suave, tinta de ação, linha nem componente. A convenção de nome é o
+ * que permite a um token novo entrar na conta sozinho.
  *
  * @param {string[]} names
  * @returns {Array<{ fg: string, bg: string, min: number }>}
@@ -195,12 +199,13 @@ export function collectTokens(rules, prefix) {
 export function contrastPairs(names) {
   const declared = new Set(names);
   const isSurface = (name) => name === "--color-bg" || name.startsWith("--color-surface");
+  const isComponent = (name) => name === "--color-focus" || name.startsWith("--color-border");
   const isInk = (name) =>
     !isSurface(name) &&
+    !isComponent(name) &&
     !name.endsWith("-soft") &&
     !name.startsWith("--color-on-") &&
-    name !== "--color-line" &&
-    name !== "--color-focus";
+    name !== "--color-line";
 
   const surfaces = names.filter(isSurface);
   const pairs = [];
@@ -223,9 +228,9 @@ export function contrastPairs(names) {
     }
   }
 
-  if (declared.has("--color-focus")) {
+  for (const name of names.filter(isComponent)) {
     for (const surface of surfaces) {
-      pairs.push({ fg: "--color-focus", bg: surface, min: COMPONENT_MINIMUM });
+      pairs.push({ fg: name, bg: surface, min: COMPONENT_MINIMUM });
     }
   }
 
