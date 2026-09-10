@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\UseCases\Catalog;
 
 use App\Domain\Catalog\Gateway\CatalogItemGateway;
+use App\Domain\Catalog\Validation\CatalogItemRules;
 use App\Domain\Errors\NotFoundError;
 use App\Domain\Errors\ValidationError;
 use App\Shared\Observability\Logger;
@@ -37,9 +38,10 @@ final class UpdateCatalogItemUseCase
         }
 
         $trimmed = trim($name);
+        $errors = CatalogItemRules::nameErrors($trimmed);
 
-        if ($trimmed === '') {
-            throw ValidationError::field('name', 'O nome é obrigatório.');
+        if ($errors !== []) {
+            throw ValidationError::fields($errors);
         }
 
         $this->items->updateDetails($itemId, $trimmed, $sortOrder, $active);

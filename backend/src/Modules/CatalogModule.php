@@ -7,22 +7,26 @@ namespace App\Modules;
 use App\Infra\Http\Guard;
 use App\Infra\Http\Route;
 use App\Infra\Http\Routes\Catalog\CreateCatalogItemRoute;
+use App\Infra\Http\Routes\Catalog\CreateEditionRoute;
 use App\Infra\Http\Routes\Catalog\DeactivateCatalogItemRoute;
 use App\Infra\Http\Routes\Catalog\ListEditionsRoute;
 use App\Infra\Http\Routes\Catalog\ListGamesRoute;
 use App\Infra\Http\Routes\Catalog\ListRaritiesRoute;
 use App\Infra\Http\Routes\Catalog\UpdateCatalogItemRoute;
+use App\Infra\Http\Routes\Catalog\UpdateEditionRoute;
 use App\Infra\Repository\Catalog\EditionRepositoryPdo;
 use App\Infra\Repository\Catalog\GameRepositoryPdo;
 use App\Infra\Repository\Catalog\RarityRepositoryPdo;
 use App\Shared\Enum\PermissionLevel;
 use App\Shared\Observability\Logger;
 use App\UseCases\Catalog\CreateCatalogItemUseCase;
+use App\UseCases\Catalog\CreateEditionUseCase;
 use App\UseCases\Catalog\DeactivateCatalogItemUseCase;
 use App\UseCases\Catalog\ListEditionsUseCase;
 use App\UseCases\Catalog\ListGamesUseCase;
 use App\UseCases\Catalog\ListRaritiesUseCase;
 use App\UseCases\Catalog\UpdateCatalogItemUseCase;
+use App\UseCases\Catalog\UpdateEditionUseCase;
 
 /**
  * Composition root do catálogo.
@@ -65,16 +69,30 @@ final class CatalogModule
             ),
 
             // --- Escrita: o que só o ADMIN alcança ---------------------------
-            ...self::writeRoutes('editions', $games, $editions, $logger),
+            Guard::protect(
+                CreateEditionRoute::create(CreateEditionUseCase::create($games, $editions, $logger)),
+                PermissionLevel::ADMIN
+            ),
+            Guard::protect(
+                UpdateEditionRoute::create(UpdateEditionUseCase::create($editions, $logger)),
+                PermissionLevel::ADMIN
+            ),
+            Guard::protect(
+                DeactivateCatalogItemRoute::create(
+                    '/api/editions/{id}',
+                    DeactivateCatalogItemUseCase::create($editions, $logger)
+                ),
+                PermissionLevel::ADMIN
+            ),
             ...self::writeRoutes('rarities', $games, $rarities, $logger),
         ];
     }
 
     /**
-     * As mesmas três operações, para edições e para raridades.
+     * As três operações de escrita da raridade, ainda pelo caminho genérico.
      *
-     * Escrever seis rotas idênticas criaria seis lugares para corrigir o mesmo
-     * defeito. A porta CatalogItemGateway existe exatamente para isso.
+     * A edição já tem criar e alterar próprios; a raridade passa para os dela
+     * quando ganhar cor — é a divergência que separou as duas escritas.
      *
      * @param \App\Domain\Catalog\Gateway\GameGateway $games
      * @param \App\Domain\Catalog\Gateway\CatalogItemGateway $items
