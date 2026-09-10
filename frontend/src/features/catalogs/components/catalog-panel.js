@@ -135,9 +135,16 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
           attrs: { "aria-label": `Reativar ${item.name}` },
           onClick: async () => {
             try {
-              // O PUT é substituição: `name` vai junto mesmo só querendo
-              // reativar, senão o servidor devolve 400 apontando `name`.
-              await api.update(item.ref, { name: item.name, sortOrder: 0, active: true });
+              // O PUT é substituição: o registro inteiro vai junto mesmo só
+              // querendo reativar. Mandar `sortOrder: 0`, como antes, jogava a
+              // "Mítica" reativada para o topo da cascata; e a raridade sem a
+              // cor seria recusada.
+              await api.update(item.ref, {
+                name: item.name,
+                sortOrder: item.sortOrder,
+                active: true,
+                color: item.color,
+              });
               notify({ message: `${item.name} foi reativada.`, tone: "success" });
               load();
             } catch (error) {

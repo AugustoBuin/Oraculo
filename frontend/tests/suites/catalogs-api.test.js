@@ -11,9 +11,15 @@
  * `await`, nas páginas, são camada de DOM — roteiro manual, por ADR-004.
  */
 
-import { listEditionsForAdmin, listRaritiesForAdmin } from "@/features/catalogs/api/catalogs-api.js";
+import {
+  createRarity,
+  listEditionsForAdmin,
+  listRaritiesForAdmin,
+  updateEdition,
+  updateRarity,
+} from "@/features/catalogs/api/catalogs-api.js";
 import { fetchDouble } from "~/doubles/fetch.js";
-import { assertSame, assertTrue, suite, test } from "~/runner.js";
+import { assertFalse, assertSame, assertTrue, suite, test } from "~/runner.js";
 
 /** Instala o dublê, roda o corpo e restaura o `fetch` — inclusive se falhar. */
 async function comRede(body) {
@@ -91,5 +97,59 @@ suite("features/catalogs/api · a listagem de administração é cancelável", (
 
       assertSame(items.length, 1);
       assertSame(items[0].id, "dom");
+    }));
+});
+
+suite("features/catalogs/api · a escrita leva o registro inteiro", () => {
+  test("a listagem da administração traz a ordem e, na raridade, a cor", () =>
+    comRede(async (double) => {
+      double.onJson("GET", "/api/games/magic/rarities", {
+        data: [{ id: "mythic", ref: 4, name: "Mítica", active: false, sortOrder: 4, color: "copper" }],
+      });
+
+      const [mitica] = await listRaritiesForAdmin("magic");
+
+      assertSame(mitica.sortOrder, 4);
+      assertSame(mitica.color, "copper");
+    }));
+
+  test("a edição vem com a ordem e sem cor", () =>
+    comRede(async (double) => {
+      double.onJson("GET", "/api/games/magic/editions", { data: [{ ...ITENS.data[0], sortOrder: 2 }] });
+
+      const [dominaria] = await listEditionsForAdmin("magic");
+
+      assertSame(dominaria.sortOrder, 2);
+      assertSame(dominaria.color, null);
+    }));
+
+  test("alterar raridade manda a cor e a ordem — o PUT é substituição", () =>
+    comRede(async (double) => {
+      double.on("PUT", "/api/rarities/4", { status: 204 });
+
+      await updateRarity(4, { name: " Mítica ", sortOrder: 4, active: true, color: "copper" });
+
+      const corpo = JSON.parse(double.lastCall.body);
+      assertSame(corpo.name, "Mítica");
+      assertSame(corpo.sortOrder, 4);
+      assertSame(corpo.color, "copper");
+    }));
+
+  test("alterar edição não manda cor nenhuma", () =>
+    comRede(async (double) => {
+      double.on("PUT", "/api/editions/7", { status: 204 });
+
+      await updateEdition(7, { name: "Dominaria", sortOrder: 1, active: true, color: "copper" });
+
+      assertFalse("color" in JSON.parse(double.lastCall.body));
+    }));
+
+  test("criar raridade manda a cor escolhida", () =>
+    comRede(async (double) => {
+      double.onJson("POST", "/api/games/magic/rarities", { data: { id: 9 } }, 201);
+
+      await createRarity("magic", { code: "epic", name: "Épica", sortOrder: 0, color: "tourmaline" });
+
+      assertSame(JSON.parse(double.lastCall.body).color, "tourmaline");
     }));
 });
