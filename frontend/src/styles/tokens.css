@@ -20,27 +20,46 @@
    * existe (§10.5).
    * ------------------------------------------------------------------- */
 
-  --color-bg: #f6f1ea;
+  /*
+   * A base é a do molde novo da Liga — o da LigaPokemon, lido do próprio
+   * site em 10/09/2026: página cinza-fria, superfície branca, texto neutro.
+   * O corpo `#4a4a4a` é o mesmo de todos os portais da Liga. Os tons que o
+   * site usa como texto e reprovavam aqui foram fechados até passar
+   * (`docs/design.md` §2).
+   */
+  --color-bg: #f0f0f2;
   --color-surface: #ffffff;
 
-  --color-ink: #26201e;    /* texto primário  — 14,29:1 no fundo */
-  --color-body: #5c504a;   /* texto corrente  —  6,92:1 no fundo */
-  --color-muted: #6d5d52;  /* metadado        —  5,60:1 no fundo */
+  --color-ink: #1b1c1c;    /* texto primário  — 15,01:1 no fundo */
+  --color-body: #4a4a4a;   /* texto corrente  —  7,79:1 no fundo */
+  --color-muted: #67686b;  /* metadado        —  4,90:1 no fundo */
 
-  --color-line: #e8e0d6;
+  --color-line: #d8dddf;
+
+  /*
+   * A marca: o vermelho do logotipo da LigaPokemon, e SÓ no logotipo.
+   *
+   * O do site (#ef4036) dá 3,85:1 com branco e 3,38:1 sobre o fundo —
+   * reprova como texto de 18px, que é o tamanho do "Oráculo" no cabeçalho.
+   * Este é o tom mais próximo que passa sobre fundo E superfície. Não é cor
+   * de ação nem de estado: é identidade, e fica num lugar só.
+   */
+  --color-brand: #cc281d;
 
   /*
    * A voz única de ação. Ocupa no máximo ~10% da tela e marca UMA ação
    * primária por contexto — a raridade é o mecanismo que faz o usuário saber
    * onde apertar sem ler (§10.2).
    *
-   * O coral do Anexo D (#f1543f) virou este tom mais fechado porque tinta
-   * branca sobre ele dava 3,45:1. Este aceita branco a 5,61:1 e ainda serve
-   * como texto sobre o fundo, a 4,99:1.
+   * AZUL, como o interativo do molde novo. Era um vermelho-terracota quase
+   * igual ao de perigo: "Nova carta" e "Excluir" disputavam o mesmo sinal, e
+   * o sinal de perigo precisa ser só dele. O azul do site (#0085ff) dá
+   * 3,35:1; este aceita branco a 5,80:1 e serve como texto sobre o fundo, a
+   * 5,10:1.
    */
-  --color-accent: #bf3520;
+  --color-accent: #0062cc;
   --color-on-accent: #ffffff;
-  --color-accent-soft: #fbe7e2;
+  --color-accent-soft: #ddeaf6;
 
   /*
    * Estados. Cada matiz tem um significado registrado e não é reaproveitado
@@ -48,20 +67,22 @@
    * a superfície. O par `-soft` é o preenchimento de etiqueta, medido com a
    * própria tinta em cima.
    *
-   * Os tons crus do Anexo D (#16a34a, #ca8a04) reprovavam no tema claro —
-   * verde a 2,93:1 e âmbar a 2,61:1. Foram fechados até passarem.
+   * O verde é o do "menor preço" da Liga, que já passa (5,95:1). O
+   * informativo virou o índigo do molde novo: com a ação em azul, um
+   * informativo também azul faria dois papéis com o mesmo matiz.
    */
-  --color-success: #166534;
-  --color-success-soft: #e3f2e7;
+  --color-success: #167400;
+  --color-success-soft: #e2f1dc;
   --color-attention: #854d0e;
   --color-attention-soft: #f7eddb;
-  --color-danger: #b91c1c;
-  --color-danger-soft: #fbe6e6;
-  --color-info: #1d4ed8;
-  --color-info-soft: #e4eafb;
+  --color-danger: #c30010;
+  --color-danger-soft: #fde7e7;
+  --color-info: #48469c;
+  --color-info-soft: #e7e7f5;
 
-  /* O anel de foco nunca é removido; só substituído por um visível (§9.2). */
-  --color-focus: #1d4ed8;
+  /* O anel de foco nunca é removido; só substituído por um visível (§9.2).
+     É a cor da ação: foco e ação são o mesmo convite a interagir. */
+  --color-focus: #0062cc;
 
   /* ---------------------------------------------------------------------
    * Tipografia — escala fechada. Não se inventa valor intermediário (§10.3).
@@ -105,8 +126,13 @@
   /*
    * Profundidade vem de tom e borda. Sombra é reservada ao que flutua de
    * verdade — modal, popover, menu. Cartão em repouso não tem sombra (§10.4).
+   *
+   * Três camadas, a do que flutua no molde novo da Liga: uma sombra curta e
+   * marcada junto da borda, e duas longas e fracas que dão a distância. Uma
+   * sombra só, larga, lê como mancha.
    */
-  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.12);
+  --shadow-overlay: 0 3px 6px -4px rgb(0 0 0 / 0.12), 0 6px 16px rgb(0 0 0 / 0.08),
+    0 9px 28px 8px rgb(0 0 0 / 0.05);
 
   /* Alvo de toque mínimo na base mobile (§9.5). */
   --target-min: 2.75rem; /* 44px */
@@ -137,68 +163,74 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #14100e;
-    --color-surface: #1f1a17;
+    --color-bg: #111317;
+    --color-surface: #1b1e23;
 
-    --color-ink: #f3ece4;   /* 16,15:1 no fundo */
-    --color-body: #c9bdb2;  /* 10,27:1 no fundo */
-    --color-muted: #9e9189; /*  5,63:1 na superfície */
+    --color-ink: #eef0f3;   /* 16,29:1 no fundo */
+    --color-body: #c5c9cf;  /* 11,18:1 no fundo */
+    --color-muted: #9aa0a8; /*  6,34:1 na superfície */
 
-    --color-line: #2a2420;
+    --color-line: #2d3138;
+
+    --color-brand: #ff7a6e;
 
     /*
      * ESTE É O PAR QUE O §10.2 DESCREVE E QUE MAIS REPROVA.
      *
      * A superfície de acento clareia no tema escuro, e branco fixo em cima
-     * dela cai para 2,87:1. A tinta troca junto com a superfície: aqui ela é
-     * escura, a 6,60:1. Branco não é tinta — é uma cor como outra qualquer.
+     * dela cai para 2,55:1. A tinta troca junto com a superfície: aqui ela é
+     * escura, a 7,29:1. Branco não é tinta — é uma cor como outra qualquer.
      */
-    --color-accent: #f4705e;
-    --color-on-accent: #14100e;
-    --color-accent-soft: #2b1512;
+    --color-accent: #5ea4ff;
+    --color-on-accent: #0b1320;
+    --color-accent-soft: #132437;
 
     --color-success: #4ade80;
-    --color-success-soft: #12251a;
+    --color-success-soft: #10241a;
     --color-attention: #fbbf24;
     --color-attention-soft: #2a2009;
-    --color-danger: #f87171;
-    --color-danger-soft: #2b1414;
-    --color-info: #60a5fa;
-    --color-info-soft: #141d2e;
+    --color-danger: #ff6b6b;
+    --color-danger-soft: #2d1616;
+    --color-info: #a9a7f5;
+    --color-info-soft: #1c1b33;
 
-    --color-focus: #93c5fd;
+    --color-focus: #8ec1ff;
 
     /* A sombra precisa ser mais densa para existir sobre fundo escuro. */
-    --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+    --shadow-overlay: 0 3px 6px -4px rgb(0 0 0 / 0.48), 0 6px 16px rgb(0 0 0 / 0.32),
+      0 9px 28px 8px rgb(0 0 0 / 0.2);
   }
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #14100e;
-  --color-surface: #1f1a17;
+  --color-bg: #111317;
+  --color-surface: #1b1e23;
 
-  --color-ink: #f3ece4;
-  --color-body: #c9bdb2;
-  --color-muted: #9e9189;
+  --color-ink: #eef0f3;
+  --color-body: #c5c9cf;
+  --color-muted: #9aa0a8;
 
-  --color-line: #2a2420;
+  --color-line: #2d3138;
 
-  --color-accent: #f4705e;
-  --color-on-accent: #14100e;
-  --color-accent-soft: #2b1512;
+  --color-brand: #ff7a6e;
+
+  --color-accent: #5ea4ff;
+  --color-on-accent: #0b1320;
+  --color-accent-soft: #132437;
 
   --color-success: #4ade80;
-  --color-success-soft: #12251a;
+  --color-success-soft: #10241a;
   --color-attention: #fbbf24;
   --color-attention-soft: #2a2009;
-  --color-danger: #f87171;
-  --color-danger-soft: #2b1414;
-  --color-info: #60a5fa;
-  --color-info-soft: #141d2e;
+  --color-danger: #ff6b6b;
+  --color-danger-soft: #2d1616;
+  --color-info: #a9a7f5;
+  --color-info-soft: #1c1b33;
 
-  --color-focus: #93c5fd;
+  --color-focus: #8ec1ff;
 
-  --shadow-overlay: 0 8px 24px rgb(0 0 0 / 0.5);
+  --shadow-overlay: 0 3px 6px -4px rgb(0 0 0 / 0.48), 0 6px 16px rgb(0 0 0 / 0.32),
+    0 9px 28px 8px rgb(0 0 0 / 0.2);
 }
 
 /*

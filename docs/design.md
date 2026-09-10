@@ -20,49 +20,82 @@ para todo texto (nível AA, texto normal), **nos dois temas**.
 Cada tinta é medida contra **todas** as superfícies em que ela pode aparecer — fundo,
 superfície de cartão e, no caso dos estados, o preenchimento suave da própria etiqueta. Medir
 só contra a superfície fácil é como a paleta de referência passou despercebida: no tema claro
-o branco é mais generoso que o creme do fundo, e no tema escuro a superfície do cartão é mais
+o branco é mais generoso que o cinza do fundo, e no tema escuro a superfície do cartão é mais
 clara que o fundo. **A superfície difícil é sempre a outra.**
 
 ---
 
-## 2. O que mudou em relação à paleta de referência
+## 2. De onde vem a paleta
 
-O Anexo D do `frontend/PADROES-ENGENHARIA.md` foi o ponto de partida. Medido par a par,
-**reprovou em seis**:
+A primeira paleta partiu do Anexo D do `frontend/PADROES-ENGENHARIA.md` — a história está no
+Git. Em 10/09/2026 ela foi trocada pela do **molde novo da Liga**, o da LigaPokemon, lida do
+próprio site: cor computada no DOM, com a extensão do Chrome, e não estimada de captura de
+tela.
 
-| Par                                | Medido | Problema                                         |
-| ---------------------------------- | ------ | ------------------------------------------------ |
-| Branco sobre o acento `#f1543f`    | 3,45:1 | O coral é claro demais para receber tinta branca |
-| Acento como texto, tema claro      | 3,07:1 | Mesmo tom, agora como tinta sobre o creme        |
-| Sucesso `#16a34a`, tema claro      | 3,30:1 | Verde de etiqueta usado como texto               |
-| Atenção `#ca8a04`, tema claro      | 2,94:1 | O pior de todos — âmbar sobre branco             |
-| Perigo `#dc2626`, tema escuro      | 3,57:1 | Vermelho não redefinido para o tema escuro       |
-| Informativo `#2563eb`, tema escuro | 3,33:1 | Azul não redefinido para o tema escuro           |
+O motivo é de produto. Os portais da Liga trocam a cor da marca por jogo — laranja na Magic,
+roxo na YuGiOh, vermelho na Pokemon — e compartilham o resto: neutros, texto, verde de ação,
+vocabulário de componente. O Oráculo gerencia **todos** os jogos (PRD §1.1: o jogo é o
+tenant), então veste o que é compartilhado, não a cor de um jogo só. Entre os dois moldes
+que a Liga usa hoje, o autor escolheu o novo.
 
-As três causas, e o que foi feito:
+Medido par a par, o site reprova em três dos tons que usa como texto:
 
-**1. Superfície e tinta tratadas como a mesma coisa.** `#f1543f` servia ao mesmo tempo de
-preenchimento de botão e de cor de texto. São papéis diferentes com exigências opostas: como
-superfície precisa ser escura o bastante para aceitar tinta clara; como texto precisa ser
-escura o bastante para se destacar do fundo claro. O acento foi fechado para `#bf3520`, que
-faz as duas coisas — aceita branco a 5,61:1 e passa como texto a 4,99:1.
+| Par no site                                   | Medido | O que foi feito                                  |
+| --------------------------------------------- | ------ | ------------------------------------------------ |
+| Branco sobre o vermelho da marca `#ef4036`    | 3,85:1 | Marca fechada para `#cc281d`, só no logotipo     |
+| Azul do interativo `#0085ff` sobre branco     | 3,62:1 | Ação fechada para `#0062cc` — branco a 5,80:1    |
+| Metadado `#797a7b` sobre o fundo `#f0f0f2`    | 3,78:1 | Metadado fechado para `#67686b` — 4,90:1         |
 
-**2. Branco fixo como tinta.** É o caso que o §10.2 descreve textualmente: *"quando a
-superfície clareia no tema escuro, o branco reprova no contraste"*. No tema escuro a
-superfície de acento clareia para `#f4705e`, e branco em cima dela cai para **2,87:1**. A
-correção é a que o padrão manda: **a tinta troca junto com a superfície**. `--color-on-accent`
-é `#ffffff` no tema claro e `#14100e` no escuro.
+O que mais mudou, e por quê:
 
-**3. Cores de estado não redefinidas por tema.** O Anexo D declara os quatro estados só uma
-vez. Verde e âmbar reprovavam no tema claro; vermelho e azul, no escuro. Cada estado passou a
-ter valor próprio nos dois temas, mais um preenchimento suave medido com a própria tinta em
-cima.
+**1. A ação ficou azul, e o perigo ficou só com o vermelho.** O acento antigo era um
+vermelho-terracota (`#bf3520`) quase igual ao de perigo (`#b91c1c`): "Nova carta" e
+"Excluir" disputavam o mesmo sinal. No molde novo o azul é o interativo; seguir o molde
+devolve ao vermelho o significado que ele tem de ter numa ferramenta que exclui coisas.
+
+**2. A marca vive num lugar só.** O vermelho da LigaPokemon entra como `--color-brand`, e
+só o logotipo "Oráculo" o usa. É identidade, não ação nem estado — espalhado, ele voltaria a
+competir com o perigo.
+
+**3. O informativo virou índigo.** Com a ação em azul, um informativo também azul faria dois
+papéis com o mesmo matiz. O índigo `#48469c` também é do molde.
+
+**4. Neutros frios, texto neutro.** Página `#f0f0f2`, superfície branca, linha `#d8dddf`.
+O texto corrente `#4a4a4a` é o mesmo em todos os portais da Liga. O creme e o texto
+amarronzado da paleta anterior saíram — eram, além de tudo, o primeiro item da lista de
+clichês de design gerado que a revisão consultou.
+
+**5. O escuro foi composto, não invertido.** Os mesmos matizes, com a tinta clareada e a
+superfície escurecida, e cada par medido de novo.
+
+**6. A sombra do que flutua ganhou três camadas**, como no molde: uma curta e marcada junto
+da borda, duas longas e fracas. Continua valendo só para o que flutua (§10.4).
+
+**O que não entrou:** a Roboto do site — a fonte continua a do sistema (RNF-01, ADR-001); a
+sombra do cabeçalho, que no site existe com o cabeçalho parado e aqui contrariaria o §10.4; e
+as cores de preço, porque o Oráculo não tem preço.
+
+### O que a primeira paleta ensinou, e continua valendo
+
+**Superfície e tinta são papéis diferentes.** O coral do Anexo D (`#f1543f`) servia de
+preenchimento de botão e de cor de texto ao mesmo tempo, e reprovava nas duas — 3,45:1 com
+branco em cima. Todo acento precisa servir aos dois papéis, e é medido nos dois.
+
+**Branco não é tinta.** É o erro que o §10.2 descreve: *"quando a superfície clareia no tema
+escuro, o branco reprova no contraste"*. No escuro, a superfície de acento clareia para
+`#5ea4ff`, e branco em cima dela cai para **2,55:1**. A tinta troca junto com a superfície:
+`--color-on-accent` é `#ffffff` no claro e `#0b1320` no escuro, a 7,29:1.
+
+**Estado se redefine por tema.** O Anexo D declarava os quatro estados uma vez só, e cada um
+reprovava em um dos temas. Todo estado tem valor próprio nos dois temas, mais um
+preenchimento suave medido com a própria tinta em cima.
 
 ---
 
 ## 3. Contraste medido
 
-44 pares. **Piso 4,5:1. Pior par: 4,71:1.**
+48 pares. **Piso 4,5:1. Pior par: 4,74:1** — a marca sobre o fundo, onde ela nem aparece: o
+logotipo fica no cabeçalho branco, a 5,40:1.
 
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
@@ -74,55 +107,59 @@ cima.
 
 | Papel                | Tinta     | Sobre                       | Medido      |
 | -------------------- | --------- | --------------------------- | ----------- |
-| Texto primário       | `#26201e` | fundo `#f6f1ea`             | **14,29:1** |
-| Texto primário       | `#26201e` | superfície `#ffffff`        | **16,06:1** |
-| Texto corrente       | `#5c504a` | fundo `#f6f1ea`             | **6,92:1**  |
-| Texto corrente       | `#5c504a` | superfície `#ffffff`        | **7,77:1**  |
-| Metadado             | `#6d5d52` | fundo `#f6f1ea`             | **5,60:1**  |
-| Metadado             | `#6d5d52` | superfície `#ffffff`        | **6,29:1**  |
-| Acento como texto    | `#bf3520` | fundo `#f6f1ea`             | **4,99:1**  |
-| Acento como texto    | `#bf3520` | superfície `#ffffff`        | **5,61:1**  |
-| Tinta sobre o acento | `#ffffff` | acento `#bf3520`            | **5,61:1**  |
-| Sucesso              | `#166534` | fundo `#f6f1ea`             | **6,35:1**  |
-| Sucesso              | `#166534` | superfície `#ffffff`        | **7,13:1**  |
-| Sucesso              | `#166534` | sucesso suave `#e3f2e7`     | **6,15:1**  |
-| Atenção              | `#854d0e` | fundo `#f6f1ea`             | **6,10:1**  |
+| Texto primário       | `#1b1c1c` | fundo `#f0f0f2`             | **15,01:1** |
+| Texto primário       | `#1b1c1c` | superfície `#ffffff`        | **17,08:1** |
+| Texto corrente       | `#4a4a4a` | fundo `#f0f0f2`             | **7,79:1**  |
+| Texto corrente       | `#4a4a4a` | superfície `#ffffff`        | **8,86:1**  |
+| Metadado             | `#67686b` | fundo `#f0f0f2`             | **4,90:1**  |
+| Metadado             | `#67686b` | superfície `#ffffff`        | **5,57:1**  |
+| Marca (logotipo)     | `#cc281d` | fundo `#f0f0f2`             | **4,74:1**  |
+| Marca (logotipo)     | `#cc281d` | superfície `#ffffff`        | **5,40:1**  |
+| Acento como texto    | `#0062cc` | fundo `#f0f0f2`             | **5,10:1**  |
+| Acento como texto    | `#0062cc` | superfície `#ffffff`        | **5,80:1**  |
+| Tinta sobre o acento | `#ffffff` | acento `#0062cc`            | **5,80:1**  |
+| Sucesso              | `#167400` | fundo `#f0f0f2`             | **5,22:1**  |
+| Sucesso              | `#167400` | superfície `#ffffff`        | **5,95:1**  |
+| Sucesso              | `#167400` | sucesso suave `#e2f1dc`     | **5,05:1**  |
+| Atenção              | `#854d0e` | fundo `#f0f0f2`             | **6,02:1**  |
 | Atenção              | `#854d0e` | superfície `#ffffff`        | **6,85:1**  |
 | Atenção              | `#854d0e` | atenção suave `#f7eddb`     | **5,90:1**  |
-| Perigo               | `#b91c1c` | fundo `#f6f1ea`             | **5,76:1**  |
-| Perigo               | `#b91c1c` | superfície `#ffffff`        | **6,47:1**  |
-| Perigo               | `#b91c1c` | perigo suave `#fbe6e6`      | **5,41:1**  |
-| Informativo          | `#1d4ed8` | fundo `#f6f1ea`             | **5,96:1**  |
-| Informativo          | `#1d4ed8` | superfície `#ffffff`        | **6,70:1**  |
-| Informativo          | `#1d4ed8` | informativo suave `#e4eafb` | **5,57:1**  |
-| Acento em etiqueta   | `#bf3520` | acento suave `#fbe7e2`      | **4,71:1**  |
+| Perigo               | `#c30010` | fundo `#f0f0f2`             | **5,54:1**  |
+| Perigo               | `#c30010` | superfície `#ffffff`        | **6,31:1**  |
+| Perigo               | `#c30010` | perigo suave `#fde7e7`      | **5,34:1**  |
+| Informativo          | `#48469c` | fundo `#f0f0f2`             | **7,01:1**  |
+| Informativo          | `#48469c` | superfície `#ffffff`        | **7,98:1**  |
+| Informativo          | `#48469c` | informativo suave `#e7e7f5` | **6,52:1**  |
+| Acento em etiqueta   | `#0062cc` | acento suave `#ddeaf6`      | **4,75:1**  |
 
 ### Tema escuro
 
 | Papel                | Tinta     | Sobre                       | Medido      |
 | -------------------- | --------- | --------------------------- | ----------- |
-| Texto primário       | `#f3ece4` | fundo `#14100e`             | **16,15:1** |
-| Texto primário       | `#f3ece4` | superfície `#1f1a17`        | **14,72:1** |
-| Texto corrente       | `#c9bdb2` | fundo `#14100e`             | **10,27:1** |
-| Texto corrente       | `#c9bdb2` | superfície `#1f1a17`        | **9,36:1**  |
-| Metadado             | `#9e9189` | fundo `#14100e`             | **6,18:1**  |
-| Metadado             | `#9e9189` | superfície `#1f1a17`        | **5,63:1**  |
-| Acento como texto    | `#f4705e` | fundo `#14100e`             | **6,60:1**  |
-| Acento como texto    | `#f4705e` | superfície `#1f1a17`        | **6,01:1**  |
-| Tinta sobre o acento | `#14100e` | acento `#f4705e`            | **6,60:1**  |
-| Sucesso              | `#4ade80` | fundo `#14100e`             | **10,86:1** |
-| Sucesso              | `#4ade80` | superfície `#1f1a17`        | **9,89:1**  |
-| Sucesso              | `#4ade80` | sucesso suave `#12251a`     | **9,23:1**  |
-| Atenção              | `#fbbf24` | fundo `#14100e`             | **11,33:1** |
-| Atenção              | `#fbbf24` | superfície `#1f1a17`        | **10,32:1** |
+| Texto primário       | `#eef0f3` | fundo `#111317`             | **16,29:1** |
+| Texto primário       | `#eef0f3` | superfície `#1b1e23`        | **14,64:1** |
+| Texto corrente       | `#c5c9cf` | fundo `#111317`             | **11,18:1** |
+| Texto corrente       | `#c5c9cf` | superfície `#1b1e23`        | **10,05:1** |
+| Metadado             | `#9aa0a8` | fundo `#111317`             | **7,06:1**  |
+| Metadado             | `#9aa0a8` | superfície `#1b1e23`        | **6,34:1**  |
+| Marca (logotipo)     | `#ff7a6e` | fundo `#111317`             | **7,31:1**  |
+| Marca (logotipo)     | `#ff7a6e` | superfície `#1b1e23`        | **6,57:1**  |
+| Acento como texto    | `#5ea4ff` | fundo `#111317`             | **7,29:1**  |
+| Acento como texto    | `#5ea4ff` | superfície `#1b1e23`        | **6,55:1**  |
+| Tinta sobre o acento | `#0b1320` | acento `#5ea4ff`            | **7,29:1**  |
+| Sucesso              | `#4ade80` | fundo `#111317`             | **10,67:1** |
+| Sucesso              | `#4ade80` | superfície `#1b1e23`        | **9,59:1**  |
+| Sucesso              | `#4ade80` | sucesso suave `#10241a`     | **9,35:1**  |
+| Atenção              | `#fbbf24` | fundo `#111317`             | **11,14:1** |
+| Atenção              | `#fbbf24` | superfície `#1b1e23`        | **10,01:1** |
 | Atenção              | `#fbbf24` | atenção suave `#2a2009`     | **9,61:1**  |
-| Perigo               | `#f87171` | fundo `#14100e`             | **6,84:1**  |
-| Perigo               | `#f87171` | superfície `#1f1a17`        | **6,23:1**  |
-| Perigo               | `#f87171` | perigo suave `#2b1414`      | **6,26:1**  |
-| Informativo          | `#60a5fa` | fundo `#14100e`             | **7,44:1**  |
-| Informativo          | `#60a5fa` | superfície `#1f1a17`        | **6,78:1**  |
-| Informativo          | `#60a5fa` | informativo suave `#141d2e` | **6,63:1**  |
-| Acento em etiqueta   | `#f4705e` | acento suave `#2b1512`      | **6,01:1**  |
+| Perigo               | `#ff6b6b` | fundo `#111317`             | **6,70:1**  |
+| Perigo               | `#ff6b6b` | superfície `#1b1e23`        | **6,02:1**  |
+| Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
+| Informativo          | `#a9a7f5` | fundo `#111317`             | **8,44:1**  |
+| Informativo          | `#a9a7f5` | superfície `#1b1e23`        | **7,59:1**  |
+| Informativo          | `#a9a7f5` | informativo suave `#1c1b33` | **7,60:1**  |
+| Acento em etiqueta   | `#5ea4ff` | acento suave `#132437`      | **6,16:1**  |
 
 ---
 
@@ -139,12 +176,13 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-body`      | Texto corrente                                              |
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
 | `--color-line`      | Borda e divisória                                           |
-| `--color-accent`    | **A voz única de ação.** Uma ação primária por contexto     |
+| `--color-brand`     | A marca. Só o logotipo "Oráculo" — em nenhum outro lugar    |
+| `--color-accent`    | **A voz única de ação**, em azul. Uma ação primária por contexto |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
 | `--color-success`   | Operação concluída                                          |
 | `--color-attention` | Aviso que não impede — duplicidade de nome (RN-04)          |
 | `--color-danger`    | Exclusão e erro que bloqueia                                |
-| `--color-info`      | Informação neutra                                           |
+| `--color-info`      | Informação neutra — índigo, para não repetir o azul da ação |
 | `--color-focus`     | O anel de foco                                              |
 
 **A cor de acento ocupa no máximo ~10% da tela.** Se duas coisas clicáveis estão com a cor de
