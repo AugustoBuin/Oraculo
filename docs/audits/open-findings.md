@@ -127,6 +127,24 @@ teste nasceu **vazio**: com `<img>` sem `src` não há medida intrínseca, e ele
 correção. Passou a carregar uma imagem `blob:` de 488x680 e a **afirmar** essa condição, para
 não voltar a passar por acidente. A suíte foi de 228 para 231.
 
+**OF-004 teve a causa estrutural removida em 10/09.** A correção de 09/09 tratou o sintoma —
+trilha fixa no lugar de `auto` — e deixou de pé as duas condições que o produziram: a grade
+de duas colunas entrava por uma media query de **viewport**, e `overflow-wrap: anywhere`
+continuava global. A refatoração de layout tira as duas. O campo de imagem virou a primitiva
+`.sidebar`, que não usa media query nenhuma e quebra quando os controles não alcançam o
+próprio mínimo; e a quebra em qualquer ponto passou a valer só no texto que veio de fora. A
+media query de 36rem citada na coluna `Local` não existe mais. O porquê está em
+`docs/design.md` §9.
+
+A rede que prova isso é `frontend/tests/suites/layout-geometry.test.js`. Ela nasceu com
+quatro vermelhos — campo de imagem, barra de filtros e conta estourando num contêiner estreito
+com a janela larga, e um erro do próprio teste na tabela. A varredura dos pisos de
+min-content achou mais um defeito, e a rede o provou antes da correção: `.history-field`
+com piso rígido de `9rem`, que a 200% passava 43px da borda do cartão do histórico e era
+cortado. Esse não entra como linha: é `MEDIUM` (rótulo parcialmente cortado num painel
+secundário, só em 320px com a fonte dobrada), e `MEDIUM` fica fora do ledger por convenção.
+Fica registrado aqui porque nenhuma auditoria o pegou.
+
 ## Auditorias planejadas
 
 | Quando | Escopo |
