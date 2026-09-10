@@ -134,6 +134,17 @@ verificador é sugestão.
   verificação disso no roteiro de integração.
 - **Carta não tem chave natural**, então o seed de cartas roda uma vez só: se a tabela já
   tem linha, ele não mexe. Isso preserva o que for cadastrado entre reinícios do contêiner.
+- **Nenhuma `@media (min-width…)` em `components.css`.** Componente decide pela largura
+  **dele**: pelas primitivas de `utilities.css` (`.cluster`, `.sidebar`, `.switcher`) ou por
+  `@container`. Media query de viewport foi a causa do OF-004 — a regra respondia à janela, e
+  o componente vivia numa coluna. O porquê e o checklist estão em `docs/design.md` §9.
+- **`overflow-wrap: anywhere` não é global, e voltar a pô-lo no `body` reabre o OF-004.** Ele
+  zera a contribuição de min-content de todo texto que o herda, e o mínimo de qualquer coluna
+  vira um caractere. Vale só no texto que veio de fora; a lista está no topo de
+  `components.css`, e o resto usa `.wrap-anywhere`.
+- **Layout se prova medindo, não lendo.** `frontend/tests/suites/layout-geometry.test.js`
+  monta as telas em larguras que cruzam os pontos de quebra e mede três invariantes. Tela
+  nova entra lá, afirmando que o estado medido é o com dado — não o de carregamento.
 - **O JSON de edições do desafio é reproduzido literalmente**, inclusive as edições que
   não existem no mundo real (`The Hobbit`, `Marvel Super Heroes`, `Chaos Rising`,
   `Blazing Dominion`). Não "corrija" a massa de dados — ela é o contrato.

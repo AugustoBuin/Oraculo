@@ -1,7 +1,7 @@
 # Design — Oráculo
 
-Registro do sistema visual: as escalas, os papéis de cor e **a medição de contraste**
-exigida pelo RNF-05. A fonte da verdade é `frontend/src/styles/tokens.css`; este documento
+Registro do sistema visual: as escalas, os papéis de cor, **a medição de contraste**
+exigida pelo RNF-05 e os arranjos de layout. A fonte da verdade é `frontend/src/styles/tokens.css`; este documento
 explica as decisões e guarda os números.
 
 > **Por que a medição vem antes do primeiro componente.** O PRD §11 lista "contraste do tema
@@ -218,3 +218,108 @@ Dois detalhes que parecem preciosismo e não são:
    **nos dois temas**, antes de escrever a primeira regra que o consome.
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
+
+---
+
+## 9. Layout: primitivas, não pontos de quebra
+
+**Nenhuma regra de `components.css` pergunta a largura da janela.** Uma `@media` mede o
+viewport, e componente nenhum deste portal ocupa o viewport: o formulário vive numa coluna de
+40rem, os cartões da conta dividem a página, o painel de catálogo divide isso de novo. Quando
+a regra pergunta uma largura e o componente tem outra, a resposta certa chega no lugar
+errado. Foi o OF-004: a grade de duas colunas do campo de imagem entrava pela largura da
+janela dentro de um formulário estreito, e a coluna dos controles ficou com um caractere.
+
+A pergunta que se fazia era se não seria melhor fixar tamanhos por componente, por tela, por
+ponto de quebra. Não é, e o próprio defeito mostra por quê: a pré-visualização **tinha**
+tamanho fixo, obedeceu a ele, e o layout quebrou do mesmo jeito — quem errou foi a trilha da
+grade ao redor dela. A matriz "componente × tela" também cresce combinatoriamente e quebra sob
+o que não é viewport: fonte do navegador, zoom, conteúdo longo.
+
+### As quatro primitivas (`utilities.css`)
+
+| Primitiva | O que resolve | Onde |
+|---|---|---|
+| `.stack` | Espaço vertical entre irmãos | Formulários, cartões, páginas |
+| `.cluster` | Linha de itens que **quebra** quando não cabe | Cabeçalho, barras de ação, paginação, linhas de catálogo e de histórico, avisos |
+| `.sidebar` | Conteúdo flexível + barra de largura fixa que desce quando o conteúdo não alcança o mínimo | Campo de imagem |
+| `.switcher` | Colunas que viram pilha abaixo de um limiar — sem media query | Conta, painéis de catálogo |
+
+A família vem do *Every Layout* (Heydon Pickering e Andy Bell). Cada primitiva decide pelo
+espaço que **ela** tem — `flex-wrap` nas linhas, `flex-basis` calculado nas colunas — e é
+ajustada por custom property declarada na regra do componente (`--cluster-gap`,
+`--sidebar-side`, `--switcher-threshold`), não por variante nova. O componente compõe a
+primitiva na lista de classes, como já fazia com `.stack` e `.scroll-x`:
+`["cluster", "cluster-end", "form-actions"]`.
+
+`flex-wrap: wrap` morar no `.cluster` é a parte que mais importa: com a fonte em 200%, uma
+linha sem quebra desenhava "Sair" como "S / ai / r". Com a quebra na primitiva, a próxima
+barra que alguém escrever não tem como esquecê-la.
+
+### Quando o componente precisa perguntar a própria largura
+
+Uma primitiva não consegue mudar a grade **dos filhos** de um componente pela largura dele.
+Para isso existe `@container`, que é CSS nativo e não esbarra no ADR-001. Há um caso, a barra
+de filtros: a busca vale por dois campos quando a barra passa de 48rem. Como `@media`, com a
+janela larga e a barra estreita, a regra pedia duas trilhas a uma grade que o `auto-fit` tinha
+resolvido com uma, e a segunda nascia implícita, larga, empurrando a barra para fora do
+contêiner. Hoje a barra ocupa a página e o caso não aparecia — mas a regra estava certa só
+por acidente de onde o componente mora.
+
+`container-type: inline-size` contém só o eixo horizontal, então a altura continua vindo do
+conteúdo. E contenção de layout torna o contêiner o bloco de referência de quem tem
+`position: fixed` dentro dele — por isso ela fica na barra, e não no `<main>`: o modal e os
+avisos são fixos e precisam medir contra a janela.
+
+### O piso de min-content
+
+- **`1fr` é `minmax(auto, 1fr)`**, e esse `auto` é o min-content do item: a trilha se recusa a
+  ficar menor que a maior palavra. Trilha que precisa encolher declara `minmax(0, 1fr)`.
+- **Item de flex nasce com `min-width: auto`.** Quem cresce com `flex: 1` e mostra texto de
+  fora declara `min-width: 0` (`.notification-text`).
+- **Piso em `rem` vira `min(…, 100%)`.** `9rem` são 288px com a fonte em 200%; numa coluna
+  de 320px, dentro do cartão do histórico, isso passava 43px da borda e o excedente era
+  cortado (`.history-field`). O `min()` deixa o piso ceder quando o contêiner é menor que ele.
+
+### `overflow-wrap: anywhere` tem escopo
+
+Ele já foi global, no `body`, e resolvia o e-mail que passava da tela a 200%. O preço:
+`anywhere` zera a contribuição de min-content de **todo** texto que o herda, e essa
+contribuição é justamente a proteção do navegador contra o colapso de coluna. Com ela zerada
+na página inteira, o mínimo de qualquer coluna era um caractere — e foi assim que o OF-004
+virou "uma letra por linha" em vez de "coluna estreita".
+
+Agora ele vale só no texto que pode chegar sem espaço onde quebrar: nome de carta e de edição,
+código de catálogo, mensagem com nome de arquivo, valor do histórico, e-mail. A lista está no
+topo de `components.css`; quem não tem classe própria usa `.wrap-anywhere`.
+
+### A rede de geometria
+
+`frontend/tests/support/layout.js` monta as telas numa caixa de largura conhecida e **mede**,
+com três invariantes: nada passa da borda do contêiner; toda palavra cabe inteira na caixa
+que a mostra, salvo onde a quebra foi pedida; nada é cortado por uma caixa que esconde o
+excedente. As nove larguras **cercam** cada ponto de quebra por fora e por dentro — medir só
+as extremas foi o que deixou o OF-004 passar — e cada uma roda também com a fonte da raiz
+dobrada.
+
+Duas coisas que a rede não faz, registradas para ninguém confiar nela além da conta:
+
+- **Dobrar a raiz por script não dobra a `@media`.** `rem` numa media query é resolvido contra
+  o valor inicial, não contra o que a folha declarou. O teste fica mais severo que a
+  realidade — conteúdo dobrado, fronteira parada —, mas não substitui a verificação em tela
+  com a fonte do navegador em 200%.
+- **A rede é testada, porque asserção que não falha não protege.** A primeira versão da
+  terceira invariante comparava `scrollWidth` com `clientWidth` num elemento de overflow
+  visível, e por especificação os dois saem iguais; a da palavra inteira pulava a página
+  toda enquanto `anywhere` era herdado do `body`. As duas só foram descobertas porque cada
+  invariante é provada contra um caso sabidamente ruim.
+
+### Quando um arranjo novo entra
+
+1. Uma das quatro primitivas resolve? Componha-a. Arranjo novo é exceção que se justifica.
+2. O componente precisa mudar os próprios filhos pela própria largura? `@container` nele — e
+   nunca num ancestral que tenha `position: fixed` dentro.
+3. `@media (min-width…)` em `components.css` é reprovação. As que existem no projeto são de
+   preferência do usuário — tema, movimento, ponteiro —, não de largura.
+4. A tela nova entra em `layout-geometry.test.js`, e o teste **afirma** que o estado medido é o
+   estado com dado, não o de carregamento.

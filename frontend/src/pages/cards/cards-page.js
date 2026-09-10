@@ -112,11 +112,11 @@ export function cardsPage(root, { navigate, notify }) {
       classes: ["stack-loose"],
       children: [
         el("div", {
-          classes: ["page-header"],
+          classes: ["cluster", "cluster-between"],
           children: [
             el("h1", { text: "Catálogo de cartas" }),
             el("div", {
-              classes: ["page-actions"],
+              classes: ["cluster"],
               children: canEdit
                 ? [
                     viewToggle.node,

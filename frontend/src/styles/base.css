@@ -47,17 +47,27 @@ body {
   /* A página nunca rola na horizontal; quem rola é o contêiner, no próprio
      eixo (§10.5, RNF-04). */
   overflow-x: hidden;
-
-  /* Palavra que não cabe quebra em vez de esticar a caixa. Sem isto, um
-     e-mail ou um "Administração de catálogos" com a fonte do navegador em
-     200% passa da largura da tela — e, como a página não rola na horizontal,
-     o que passou é CORTADO.
-     `anywhere` e não `break-word`: só o primeiro entra também no cálculo da
-     largura mínima da caixa, que é o que permite ao cartão encolher junto.
-     Com `break-word` a caixa continuava reservando a palavra inteira e
-     estourava a grade do mesmo jeito (§10.5, RNF-06). */
-  overflow-wrap: anywhere;
 }
+
+/*
+ * `overflow-wrap: anywhere` NÃO mora aqui, e a ausência é deliberada.
+ *
+ * Ele já morou: a regra global resolvia o e-mail e o "Administração de
+ * catálogos" que passavam da tela com a fonte do navegador em 200%. O preço só
+ * apareceu no OF-004. `anywhere` — diferente de `break-word` — zera a
+ * contribuição de min-content de TODO texto que o herda, e essa contribuição é
+ * a proteção natural do navegador contra o colapso de coluna: é ela que faz
+ * uma trilha de grade ou um item de flex se recusarem a ficar menores que a
+ * maior palavra que precisam mostrar. Com ela zerada em toda a página, o
+ * mínimo de qualquer coluna passa a ser UM CARACTERE — e foi assim que
+ * "Remover imagem" saiu uma letra por linha ao lado de um buraco de 379px.
+ *
+ * A quebra continua existindo, onde ela é a resposta certa: no texto que vem
+ * de fora e pode não ter espaço nenhum — endereço, código de catálogo, nome de
+ * carta, dado do usuário. Esses lugares estão declarados em `components.css`,
+ * e o utilitário `.wrap-anywhere` atende quem não tem classe própria. O resto
+ * da interface volta a ter o piso de legibilidade de volta.
+ */
 
 h1,
 h2,

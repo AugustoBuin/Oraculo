@@ -47,7 +47,7 @@ export function catalogsPage(root, { notify }) {
   const life = createScope();
 
   const game = el("select", { attrs: { id: "jogo-catalogo" }, classes: ["field-input"] });
-  const panels = el("div", { classes: ["catalog-panels"] });
+  const panels = el("div", { classes: ["switcher", "catalog-panels"] });
 
   /** A vida dos dois painéis do jogo corrente. */
   let panelsLife = null;

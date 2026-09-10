@@ -38,15 +38,15 @@ export function appHeader({ brand, items, currentPath, actions = [] }) {
     classes: ["app-header"],
     children: [
       el("div", {
-        classes: ["app-header-inner", "container"],
+        classes: ["cluster", "app-header-inner", "container"],
         children: [
           el("a", { text: brand, attrs: { href: "/" }, classes: ["app-brand"] }),
           el("nav", {
             attrs: { "aria-label": "Principal" },
-            classes: ["app-nav"],
+            classes: ["cluster", "app-nav"],
             children: links,
           }),
-          el("div", { classes: ["app-actions"], children: actions }),
+          el("div", { classes: ["cluster", "app-actions"], children: actions }),
         ],
       }),
     ],

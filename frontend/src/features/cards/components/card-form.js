@@ -128,7 +128,10 @@ export function cardForm({ scope, card = null, catalogs, onSaved, onCancel }) {
       edition.wrapper,
       rarity.wrapper,
       image.node,
-      el("div", { classes: ["form-actions"], children: [cancel.node, submit.node] }),
+      el("div", {
+        classes: ["cluster", "cluster-end", "form-actions"],
+        children: [cancel.node, submit.node],
+      }),
     ],
   });
 
