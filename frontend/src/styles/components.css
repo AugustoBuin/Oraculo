@@ -918,3 +918,108 @@
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-line);
 }
+
+/* --- Paleta (/paleta) ---------------------------------------------------- */
+
+/*
+ * A tela que mostra os tokens. As cores das amostras não vêm daqui: são
+ * pintadas por CSSOM com o valor lido do `tokens.css` (ver `palette-page.js`).
+ * O que mora aqui é só a moldura, e ela usa os tokens como qualquer outra.
+ */
+.palette-table {
+  font-size: var(--text-sm);
+}
+
+/* Célula sem quebra: amostra, valor e veredito leem numa linha só. A tabela
+   passa a rolar no próprio `.scroll-x` quando não couber (RNF-04). */
+.palette-table th,
+.palette-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.palette-table tbody th {
+  font-weight: var(--weight-regular);
+}
+
+.palette-table tbody tr:last-child th,
+.palette-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* A borda existe para a amostra não sumir quando a cor dela é a do fundo em
+   que ela está — a superfície branca dentro de um cartão branco. */
+.palette-swatch {
+  display: inline-block;
+  width: var(--space-6);
+  height: var(--space-5);
+  margin-right: var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  vertical-align: middle;
+}
+
+.palette-sample {
+  display: inline-block;
+  margin-right: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-bold);
+}
+
+.palette-verdict {
+  margin-left: var(--space-2);
+  font-weight: var(--weight-medium);
+}
+
+.palette-verdict-pass { color: var(--color-success); }
+.palette-verdict-fail { color: var(--color-danger); }
+.palette-verdict-none { color: var(--color-muted); }
+
+.palette-shapes {
+  --cluster-gap: var(--space-5);
+
+  align-items: flex-start;
+}
+
+/* `max-width: 100%` no item e na caixa: com a fonte em 200%, 6rem de caixa
+   mais o respiro do palco passam de uma coluna de 320px. O palco mantém o
+   respiro e a caixa é quem cede. */
+.palette-shape-item {
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+/* Nome de token é uma palavra só, sem espaço onde quebrar — o mesmo critério
+   da lista do topo deste arquivo, aplicado aqui para a legenda caber no item
+   que encolheu. */
+.palette-shape-item figcaption {
+  margin-top: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+.palette-shape {
+  width: 6rem;
+  max-width: 100%;
+  height: 4rem;
+  border: 1px solid var(--color-muted);
+}
+
+/* Preenchimento e contorno que se destacam do cartão nos dois temas: a
+   amostra de raio existe para mostrar o canto, e caixa da cor do cartão com
+   linha fraca some justamente no escuro. */
+.palette-radius {
+  background-color: var(--color-bg);
+}
+
+/* O palco pinta o fundo do tema, para a sombra aparecer como aparece na tela
+   de verdade — sombra sobre branco e sombra sobre quase-preto são outra conta. */
+.palette-stage {
+  padding: var(--space-5);
+  border-radius: var(--radius-default);
+}

@@ -64,6 +64,12 @@ cima.
 
 44 pares. **Piso 4,5:1. Pior par: 4,71:1.**
 
+> **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
+> carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
+> os dois pares do anel de foco, que pedem 3:1 e não 4,5. Fica fora do menu: é ferramenta
+> para avaliar uma mudança de paleta, e se chega a ela pelo endereço. A tabela abaixo continua
+> sendo o **registro**, e muda no mesmo commit que muda a cor.
+
 ### Tema claro
 
 | Papel                | Tinta     | Sobre                       | Medido      |
@@ -215,7 +221,8 @@ Dois detalhes que parecem preciosismo e não são:
 
 1. Ele tem um papel semântico que nenhum token existente cobre? Se não, use o que existe.
 2. É cor de texto? **Meça** contra fundo, superfície e qualquer preenchimento em que apareça,
-   **nos dois temas**, antes de escrever a primeira regra que o consome.
+   **nos dois temas**, antes de escrever a primeira regra que o consome. A tela `/paleta` faz a
+   conta sozinha para todo token que siga a convenção de nome (`-soft`, `on-`, `surface`).
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
 
