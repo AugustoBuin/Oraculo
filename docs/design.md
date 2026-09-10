@@ -81,6 +81,12 @@ superfície escurecida, e cada par medido de novo.
 **6. A sombra do que flutua ganhou três camadas**, como no molde: uma curta e marcada junto
 da borda, duas longas e fracas. Continua valendo só para o que flutua (§10.4).
 
+**7. Os estados são as pedras do oráculo.** Rubi para perigo, topázio para atenção, jade
+para sucesso, safira para informação — e ametista, a ação. Nenhum sai da convenção
+(vermelho, âmbar, verde, azul); o que muda é o tom. A atenção deixou o marrom-alaranjado por
+um dourado (`#915b00`), o complementar do violeta, e o sucesso deixou o verde de "menor
+preço" da Liga por um jade (`#0b7643`).
+
 **O que não entrou:** a Roboto do site — a fonte continua a do sistema (RNF-01, ADR-001); a
 sombra do cabeçalho, que no site existe com o cabeçalho parado e aqui contrariaria o §10.4; e
 as cores de preço, porque o Oráculo não tem preço.
@@ -127,12 +133,12 @@ preenchimento suave medido com a própria tinta em cima.
 | Acento como texto    | `#6a4bc6` | fundo `#f0eff5`             | **5,35:1**  |
 | Acento como texto    | `#6a4bc6` | superfície `#ffffff`        | **6,11:1**  |
 | Tinta sobre o acento | `#ffffff` | acento `#6a4bc6`            | **6,11:1**  |
-| Sucesso              | `#167400` | fundo `#f0eff5`             | **5,20:1**  |
-| Sucesso              | `#167400` | superfície `#ffffff`        | **5,95:1**  |
-| Sucesso              | `#167400` | sucesso suave `#e2f1dc`     | **5,05:1**  |
-| Atenção              | `#854d0e` | fundo `#f0eff5`             | **5,99:1**  |
-| Atenção              | `#854d0e` | superfície `#ffffff`        | **6,85:1**  |
-| Atenção              | `#854d0e` | atenção suave `#f7eddb`     | **5,90:1**  |
+| Sucesso              | `#0b7643` | fundo `#f0eff5`             | **4,98:1**  |
+| Sucesso              | `#0b7643` | superfície `#ffffff`        | **5,70:1**  |
+| Sucesso              | `#0b7643` | sucesso suave `#ddf6e4`     | **4,98:1**  |
+| Atenção              | `#915b00` | fundo `#f0eff5`             | **4,96:1**  |
+| Atenção              | `#915b00` | superfície `#ffffff`        | **5,68:1**  |
+| Atenção              | `#915b00` | atenção suave `#ffebd5`     | **4,89:1**  |
 | Perigo               | `#c30010` | fundo `#f0eff5`             | **5,52:1**  |
 | Perigo               | `#c30010` | superfície `#ffffff`        | **6,31:1**  |
 | Perigo               | `#c30010` | perigo suave `#fde7e7`      | **5,34:1**  |
@@ -156,12 +162,12 @@ preenchimento suave medido com a própria tinta em cima.
 | Acento como texto    | `#a290fa` | fundo `#131217`             | **7,02:1**  |
 | Acento como texto    | `#a290fa` | superfície `#1e1d23`        | **6,30:1**  |
 | Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |
-| Sucesso              | `#4ade80` | fundo `#131217`             | **10,70:1** |
-| Sucesso              | `#4ade80` | superfície `#1e1d23`        | **9,60:1**  |
-| Sucesso              | `#4ade80` | sucesso suave `#10241a`     | **9,35:1**  |
-| Atenção              | `#fbbf24` | fundo `#131217`             | **11,17:1** |
-| Atenção              | `#fbbf24` | superfície `#1e1d23`        | **10,02:1** |
-| Atenção              | `#fbbf24` | atenção suave `#2a2009`     | **9,61:1**  |
+| Sucesso              | `#5ee295` | fundo `#131217`             | **11,35:1** |
+| Sucesso              | `#5ee295` | superfície `#1e1d23`        | **10,19:1** |
+| Sucesso              | `#5ee295` | sucesso suave `#082313`     | **10,15:1** |
+| Atenção              | `#ffbb69` | fundo `#131217`             | **11,15:1** |
+| Atenção              | `#ffbb69` | superfície `#1e1d23`        | **10,01:1** |
+| Atenção              | `#ffbb69` | atenção suave `#2a1903`     | **10,14:1** |
 | Perigo               | `#ff6b6b` | fundo `#131217`             | **6,72:1**  |
 | Perigo               | `#ff6b6b` | superfície `#1e1d23`        | **6,03:1**  |
 | Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
