@@ -6,6 +6,34 @@
  * sobre um valor arbitrário neste arquivo (§10.1, §10.3).
  */
 
+/* --- Texto que veio de fora ---------------------------------------------- */
+
+/*
+ * Onde a quebra em qualquer ponto vale — e só aqui.
+ *
+ * A lista é curta de propósito e cada linha responde à mesma pergunta: este
+ * texto pode chegar sem um espaço onde quebrar? Nome de carta e de edição vêm
+ * do banco; código de catálogo é um slug inteiro; a mensagem de erro carrega
+ * nome de arquivo enviado; o estado vazio repete o termo que a pessoa buscou.
+ * Rótulo escrito por nós fica de fora: ele tem espaço, e o piso de min-content
+ * é o que impede a coluna dele de colapsar (ver `base.css`).
+ */
+.card-name,
+.card-name-pt,
+.card-meta,
+.card-image-empty-text,
+.card-table td,
+.catalog-name,
+.catalog-code,
+.notification-text,
+.field-error,
+.field-hint,
+.inline-message,
+.state-title,
+.state p {
+  overflow-wrap: anywhere;
+}
+
 /* --- Botão --------------------------------------------------------------- */
 
 .button {
@@ -220,11 +248,8 @@
   background-color: var(--color-surface);
 }
 
+/* Arranjo pelo `.cluster`; aqui fica só o que é do cabeçalho. */
 .app-header-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
   padding-block: var(--space-3);
 }
 
@@ -236,9 +261,7 @@
 }
 
 .app-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1);
+  --cluster-gap: var(--space-1);
 }
 
 .nav-link {
@@ -265,14 +288,11 @@
 }
 
 /* As ações vão para a direita; em tela pequena, quebram para a linha de baixo
-   em vez de espremer a navegação. */
+   em vez de espremer a navegação. A quebra ENTRE elas — sem a qual "Sair" saía
+   como "S / ai / r" a 200% — agora é garantia da primitiva, não desta regra. */
 .app-actions {
-  display: flex;
-  /* As duas ações também quebram ENTRE SI. Sem isto elas dividiam a mesma
-     linha estreita com a fonte do navegador em 200%, e "Sair" era renderizado
-     como "S / ai / r" — legível na medição, ilegível na tela. */
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  --cluster-gap: var(--space-2);
+
   margin-left: auto;
 }
 
@@ -310,10 +330,8 @@
 }
 
 .modal-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-2);
+  --cluster-gap: var(--space-2);
+
   margin-top: var(--space-5);
 }
 
@@ -335,9 +353,6 @@
 }
 
 .notification {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
@@ -348,8 +363,15 @@
   animation: enter-up var(--duration-base) var(--ease-out);
 }
 
+/*
+ * `min-width: 0` porque `flex: 1` não basta: item de flex nasce com mínimo
+ * `auto`, que é o min-content do texto. Sem zerar, uma mensagem sem espaço —
+ * o nome de um arquivo enviado, por exemplo — empurra o aviso para fora da
+ * faixa em vez de quebrar dentro dela.
+ */
 .notification-text {
   flex: 1;
+  min-width: 0;
   color: var(--color-ink);
 }
 
@@ -386,17 +408,30 @@
   border-radius: var(--radius-default);
 }
 
+/*
+ * Os dois cartões da conta, num `.switcher`.
+ *
+ * O limiar é o mesmo 48rem da media query que este arranjo substituiu — o que
+ * mudou é o que ele mede: a largura desta faixa, não a da janela. A tela de
+ * conta é a que mais expõe a diferença, porque o e-mail do usuário é a cadeia
+ * longa sem espaço mais comum do portal e é a coluna estreita que o quebra.
+ */
 .account-layout {
-  display: grid;
-  gap: var(--space-4);
-  align-items: start;
+  --switcher-threshold: 48rem;
+
+  /* Cada cartão vale a própria altura; esticar o menor até o maior deixaria um
+     bloco de superfície vazia embaixo dos dados da conta. */
+  align-items: flex-start;
 }
 
-/* Densidade a partir do breakpoint maior; a base é a tela pequena (§10.5). */
-@media (min-width: 48rem) {
-  .account-layout {
-    grid-template-columns: 1fr 1.5fr;
-  }
+/*
+ * A proporção 1 : 1.5 que as trilhas de grade declaravam, agora em `flex-grow`
+ * — com base zero, crescer 1 e 1,5 divide a sobra exatamente como `1fr 1.5fr`
+ * dividia a linha. O formulário de senha é o trabalho da tela e fica com a
+ * parte maior; o cartão de dados é referência.
+ */
+.account-layout > :last-child {
+  flex-grow: 1.5;
 }
 
 /* --- Galeria de cartas --------------------------------------------------- */
@@ -496,14 +531,6 @@
 
 /* --- Paginação ----------------------------------------------------------- */
 
-.pagination {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-}
-
 .pagination-status {
   color: var(--color-body);
   font-size: var(--text-sm);
@@ -516,6 +543,16 @@
  * Sem breakpoint escrito à mão e sem largura fixa em pixel (§10.5).
  */
 .filters {
+  /*
+   * A barra é o contêiner de consulta dos próprios campos.
+   *
+   * É o que permite à regra abaixo perguntar a largura DELA, e não a da
+   * janela. `inline-size` contém só o eixo horizontal: a altura continua vindo
+   * do conteúdo, que é o que a barra precisa quando um campo em cascata troca
+   * de estado e ganha uma linha de dica.
+   */
+  container: filters / inline-size;
+
   display: grid;
   /* `min(…, 100%)` pelo mesmo motivo de `.card-grid`: a coluna mínima nunca
      pode ser maior que o espaço disponível. */
@@ -527,12 +564,21 @@
   border-radius: var(--radius-default);
 }
 
-/* A busca ocupa a linha inteira em tela pequena: é o campo mais usado. */
+/* A busca ocupa a linha inteira em tela estreita: é o campo mais usado. */
 .filters .field:first-child {
   grid-column: 1 / -1;
 }
 
-@media (min-width: 48rem) {
+/*
+ * Larga o bastante, a busca vale por dois campos em vez da linha inteira.
+ *
+ * Era uma `@media (min-width: 48rem)`, e a diferença não é cosmética: com a
+ * janela larga e a barra estreita, `span 2` pedia duas trilhas a uma grade que
+ * o `auto-fit` tinha resolvido com UMA. A segunda nascia implícita, dimensionada
+ * por `auto`, e a barra inteira passava da borda do contêiner. A pergunta certa
+ * sempre foi a largura da barra.
+ */
+@container filters (min-width: 48rem) {
   .filters .field:first-child {
     grid-column: span 2;
   }
@@ -561,14 +607,6 @@
 }
 
 /* --- Cabeçalho de página e alternador de visão --------------------------- */
-
-.page-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
 
 .segmented {
   display: inline-flex;
@@ -639,11 +677,14 @@
 }
 
 /* Rodapé do campo: a dica e a ação de tentar de novo dividem a linha. */
+/*
+ * A dica e a ação de tentar de novo dividem a linha — e quebram quando não
+ * couberem. Antes esta linha não quebrava: com a fonte em 200%, a dica da
+ * cascata e "Tentar novamente" disputavam a mesma faixa estreita.
+ */
 .field-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
+  --cluster-gap: var(--space-2);
+
   min-height: 1.25rem;
 }
 
@@ -655,32 +696,14 @@
 
 /* --- Formulário de carta ------------------------------------------------- */
 
-.page-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-}
-
 .form-layout {
   max-width: 40rem;
 }
 
 .form-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
+  --cluster-gap: var(--space-2);
 
-/* Empilhado é o padrão; as duas colunas entram na regra de `.image-field` mais
-   abaixo, que é a que vale. Uma segunda media query aqui só repetiria o que lá
-   já está — e repetida com valor DIFERENTE viraria contradição silenciosa,
-   decidida por ordem de arquivo. */
-.image-field {
-  display: grid;
-  gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
 /* A pré-visualização reserva o espaço desde o início: sem isso o formulário
@@ -689,11 +712,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* `min(…, 100%)` outra vez: 8rem viram 256px com a fonte do navegador em
-     200%, e aí a miniatura ficava mais larga que o espaço restante do
-     formulário. O `aspect-ratio` abaixo mantém a proporção enquanto ela
-     encolhe. */
-  width: min(8rem, 100%);
+  /* Nenhuma largura declarada aqui: ela é a barra do `.sidebar`, e quem
+     dimensiona a barra é o `flex-basis` da primitiva. Uma largura própria
+     brigaria com o eixo principal do flex e reintroduziria a divergência
+     entre o que a trilha reserva e o que o item pinta — que é o OF-004. */
   aspect-ratio: 488 / 680;
   padding: var(--space-2);
   background-color: var(--color-bg);
@@ -725,6 +747,26 @@
   border-radius: var(--radius-default);
 }
 
+/*
+ * O arranjo é um `.sidebar`, e ele mora num elemento próprio DENTRO do
+ * `fieldset` — não no `fieldset`.
+ *
+ * `<legend>` não é um filho comum: o navegador o trata como a legenda da
+ * caixa, e o que ele faz quando o `fieldset` vira contêiner flex varia. Um
+ * elemento intermediário tira a dúvida do caminho em vez de compensá-la com
+ * uma regra de posicionamento que só funciona onde foi testada.
+ *
+ * As duas medidas são o contrato da barra: 8rem é a miniatura, 20rem é o piso
+ * abaixo do qual os controles deixam de ser utilizáveis e a barra desce. As
+ * duas em `rem`, para escalarem junto com a fonte do navegador (F-050).
+ */
+.image-field-body {
+  --sidebar-side: 8rem;
+  --sidebar-content-min: 20rem;
+
+  margin-top: var(--space-3);
+}
+
 .image-field-controls {
   display: flex;
   flex-direction: column;
@@ -744,36 +786,6 @@
   color: var(--color-ink);
   font: inherit;
   cursor: pointer;
-}
-
-@media (min-width: 36rem) {
-  .image-field {
-    display: grid;
-    /*
-     * A segunda trilha é FIXA, e não `auto`, por um motivo medido: trilha
-     * `auto` se dimensiona pelo max-content do item, e a porcentagem de
-     * `min(8rem, 100%)` na pré-visualização não resolve durante o
-     * dimensionamento intrínseco. O que sobrava era a largura NATURAL da
-     * imagem — 488px, a proporção de uma carta. A trilha reservava 488, o item
-     * pintava 128, e o resto virava buraco: os controles ao lado eram
-     * espremidos até o mínimo, que `overflow-wrap: anywhere` (herdado do
-     * `body`) reduz a UM caractere. "Remover imagem" saía uma letra por linha.
-     *
-     * `8rem` casa com a largura da própria pré-visualização, e escala com a
-     * fonte do navegador junto com o `36rem` desta media query — que é o que
-     * mantém de pé o F-050, sem reintroduzir o que ele corrigiu.
-     *
-     * `minmax(0, 1fr)` e não `1fr`: `1fr` tem mínimo `auto`, e com
-     * `overflow-wrap: anywhere` esse mínimo não protege nada.
-     */
-    grid-template-columns: minmax(0, 1fr) 8rem;
-    gap: var(--space-4);
-    align-items: start;
-  }
-
-  .image-field legend {
-    grid-column: 1 / -1;
-  }
 }
 
 /* A exclusão é discreta no cartão: ela não disputa a atenção com a ação
@@ -810,10 +822,8 @@
 }
 
 .history-header {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: baseline;
+  --cluster-gap: var(--space-2);
+
   color: var(--color-body);
   font-size: var(--text-sm);
 }
@@ -825,16 +835,21 @@
 }
 
 .history-change {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  --cluster-gap: var(--space-2);
+
   padding: var(--space-1) 0;
   font-size: var(--text-sm);
 }
 
+/*
+ * A coluna do nome do campo tem largura mínima para os valores alinharem — e
+ * `min(…, 100%)` para que esse mínimo ceda quando o contêiner for menor que
+ * ele. Um piso em `rem` sozinho vira 288px com a fonte em 200% e estoura a
+ * linha do histórico numa tela de 320.
+ */
 .history-field {
   color: var(--color-muted);
-  min-width: 9rem;
+  min-width: min(9rem, 100%);
 }
 
 /* --- Administração de catálogos ------------------------------------------ */
@@ -843,16 +858,17 @@
   max-width: 20rem;
 }
 
+/*
+ * Edições e raridades, num `.switcher` de colunas iguais.
+ *
+ * Mesmo limiar de antes, 56rem, medido agora na faixa dos painéis. Os dois
+ * painéis têm o mesmo peso — nenhum é o principal —, então nenhum declara
+ * `flex-grow` próprio.
+ */
 .catalog-panels {
-  display: grid;
-  gap: var(--space-4);
-}
+  --switcher-threshold: 56rem;
 
-@media (min-width: 56rem) {
-  .catalog-panels {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
+  align-items: flex-start;
 }
 
 .catalog-list {
@@ -862,11 +878,8 @@
 }
 
 .catalog-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-2);
+  --cluster-gap: var(--space-2);
+
   padding: var(--space-3) 0;
   border-bottom: 1px solid var(--color-line);
 }
@@ -884,11 +897,9 @@
   color: var(--color-muted);
 }
 
-.catalog-row-main {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
+.catalog-row-main,
+.catalog-row-actions {
+  --cluster-gap: var(--space-2);
 }
 
 .catalog-name {

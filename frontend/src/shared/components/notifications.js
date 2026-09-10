@@ -79,7 +79,7 @@ export function createNotifications() {
     }
 
     const item = el("div", {
-      classes: ["notification", `notification-${tone}`],
+      classes: ["cluster", "notification", `notification-${tone}`],
       // Erro interrompe de propósito; o resto espera a vez.
       attrs: { role: tone === "danger" ? "alert" : "status" },
       children,

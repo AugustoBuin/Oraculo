@@ -80,7 +80,7 @@ export function cardImageField({ scope, value = null, previewUrl = null }) {
 
   const error = el("p", { classes: ["field-error"], attrs: { hidden: true } });
   const status = el("p", { classes: ["field-hint"] });
-  const preview = el("div", { classes: ["image-preview"] });
+  const preview = el("div", { classes: ["image-preview", "sidebar-side"] });
 
   const uploadPane = el("div", {
     classes: ["field"],
@@ -319,15 +319,28 @@ export function cardImageField({ scope, value = null, previewUrl = null }) {
     },
   });
 
+  /*
+   * Controles e miniatura são um `.sidebar`: lado a lado enquanto os controles
+   * couberem no mínimo declarado, empilhados quando não couberem.
+   *
+   * A quebra não pergunta o tamanho da janela. Perguntar isso foi o OF-004 —
+   * a media query de viewport disparava a grade de duas colunas dentro de um
+   * formulário de 40rem, e a coluna dos controles ficava com um caractere.
+   */
   const node = el("fieldset", {
     classes: ["image-field"],
     children: [
       el("legend", { text: "Imagem", classes: ["field-label"] }),
       el("div", {
-        classes: ["image-field-controls"],
-        children: [modes.node, uploadPane, remotePane, status, error, remove.node],
+        classes: ["sidebar", "image-field-body"],
+        children: [
+          el("div", {
+            classes: ["image-field-controls", "sidebar-content"],
+            children: [modes.node, uploadPane, remotePane, status, error, remove.node],
+          }),
+          preview,
+        ],
       }),
-      preview,
     ],
   });
 
