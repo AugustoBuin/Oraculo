@@ -22,19 +22,21 @@
 
   /*
    * A base é a do molde novo da Liga — o da LigaPokemon, lido do próprio
-   * site em 10/09/2026: página cinza-fria, superfície branca, texto neutro.
-   * O corpo `#4a4a4a` é o mesmo de todos os portais da Liga. Os tons que o
-   * site usa como texto e reprovavam aqui foram fechados até passar
-   * (`docs/design.md` §2).
+   * site em 10/09/2026: página cinza, superfície branca, texto neutro. O
+   * corpo `#4a4a4a` é o mesmo de todos os portais da Liga (`docs/design.md`
+   * §2).
+   *
+   * O cinza leva uma névoa do violeta da ação: o mesmo matiz, com croma
+   * quase nulo. Não se lê como cor — lê-se como parte do mesmo lugar.
    */
-  --color-bg: #f0f0f2;
+  --color-bg: #f0eff5;
   --color-surface: #ffffff;
 
-  --color-ink: #1b1c1c;    /* texto primário  — 15,01:1 no fundo */
-  --color-body: #4a4a4a;   /* texto corrente  —  7,79:1 no fundo */
-  --color-muted: #67686b;  /* metadado        —  4,90:1 no fundo */
+  --color-ink: #1b1c1c;    /* texto primário  — 14,94:1 no fundo */
+  --color-body: #4a4a4a;   /* texto corrente  —  7,75:1 no fundo */
+  --color-muted: #67686b;  /* metadado        —  4,87:1 no fundo */
 
-  --color-line: #d8dddf;
+  --color-line: #dcdbe1;
 
   /*
    * A marca: violeta profundo, e SÓ no logotipo.
@@ -56,7 +58,7 @@
    * matiz dos azuis-padrão (257° em OKLCH; Tailwind 263°, Bootstrap 260°).
    * Foi girado para 290° com a mesma luminosidade e o mesmo croma, fora da
    * faixa do "blurple" de SaaS (270–280°) e longe do roxo da LigaYuGiOh
-   * (317°). Aceita branco a 6,11:1 e serve como texto sobre o fundo, a 5,37:1.
+   * (317°). Aceita branco a 6,11:1 e serve como texto sobre o fundo, a 5,35:1.
    *
    * E segue longe do perigo: o terracota antigo era quase o vermelho de
    * "Excluir", e o sinal de perigo precisa ser só dele.
@@ -167,14 +169,14 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #111317;
-    --color-surface: #1b1e23;
+    --color-bg: #131217;
+    --color-surface: #1e1d23;
 
-    --color-ink: #eef0f3;   /* 16,29:1 no fundo */
-    --color-body: #c5c9cf;  /* 11,18:1 no fundo */
-    --color-muted: #9aa0a8; /*  6,34:1 na superfície */
+    --color-ink: #eef0f3;   /* 16,33:1 no fundo */
+    --color-body: #c5c9cf;  /* 11,21:1 no fundo */
+    --color-muted: #9aa0a8; /*  6,35:1 na superfície */
 
-    --color-line: #2d3138;
+    --color-line: #313038;
 
     --color-brand: #bab3ff;
 
@@ -207,14 +209,14 @@
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #111317;
-  --color-surface: #1b1e23;
+  --color-bg: #131217;
+  --color-surface: #1e1d23;
 
   --color-ink: #eef0f3;
   --color-body: #c5c9cf;
   --color-muted: #9aa0a8;
 
-  --color-line: #2d3138;
+  --color-line: #313038;
 
   --color-brand: #bab3ff;
 
