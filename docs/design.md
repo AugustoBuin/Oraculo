@@ -89,7 +89,9 @@ noite. Continua valendo só para o que flutua (§10.4).
 para sucesso, safira para informação — e ametista, a ação. Nenhum sai da convenção
 (vermelho, âmbar, verde, azul); o que muda é o tom. A atenção deixou o marrom-alaranjado por
 um dourado (`#915b00`), o complementar do violeta, e o sucesso deixou o verde de "menor
-preço" da Liga por um jade (`#0b7643`).
+preço" da Liga por um jade (`#0b7643`). No escuro, sucesso e atenção desceram para a mesma
+luminosidade dos outros estados — L 0,75 em OKLCH, contra 0,82 e 0,84 antes —, e nenhum
+grita mais que os outros.
 
 **O que não entrou:** a Roboto do site — a fonte continua a do sistema (RNF-01, ADR-001); a
 sombra do cabeçalho, que no site existe com o cabeçalho parado e aqui contrariaria o §10.4; e
@@ -168,12 +170,12 @@ preenchimento suave medido com a própria tinta em cima.
 | Acento como texto    | `#a290fa` | fundo `#0f0f16`             | **7,19:1**  |
 | Acento como texto    | `#a290fa` | superfície `#191920`        | **6,58:1**  |
 | Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |
-| Sucesso              | `#5ee295` | fundo `#0f0f16`             | **11,62:1** |
-| Sucesso              | `#5ee295` | superfície `#191920`        | **10,65:1** |
-| Sucesso              | `#5ee295` | sucesso suave `#082313`     | **10,15:1** |
-| Atenção              | `#ffbb69` | fundo `#0f0f16`             | **11,42:1** |
-| Atenção              | `#ffbb69` | superfície `#191920`        | **10,46:1** |
-| Atenção              | `#ffbb69` | atenção suave `#2a1903`     | **10,14:1** |
+| Sucesso              | `#42cb80` | fundo `#0f0f16`             | **9,17:1**  |
+| Sucesso              | `#42cb80` | superfície `#191920`        | **8,40:1**  |
+| Sucesso              | `#42cb80` | sucesso suave `#082313`     | **8,00:1**  |
+| Atenção              | `#d9a514` | fundo `#0f0f16`             | **8,49:1**  |
+| Atenção              | `#d9a514` | superfície `#191920`        | **7,78:1**  |
+| Atenção              | `#d9a514` | atenção suave `#2a1903`     | **7,54:1**  |
 | Perigo               | `#ff6b6b` | fundo `#0f0f16`             | **6,88:1**  |
 | Perigo               | `#ff6b6b` | superfície `#191920`        | **6,30:1**  |
 | Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
