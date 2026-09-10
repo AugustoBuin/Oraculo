@@ -39,6 +39,16 @@
   --color-line: #dcdbe1;
 
   /*
+   * A borda de campo de formulário — o limite que IDENTIFICA um controle.
+   *
+   * A linha acima é decorativa (divisória, borda de cartão) e pode ser leve.
+   * Um campo branco dentro de um cartão branco só existe pela borda, e a
+   * WCAG 1.4.11 pede 3:1 para ela; a linha dava 1,38:1. Esta dá 3,96:1 na
+   * superfície e 3,46:1 no fundo.
+   */
+  --color-border: #807f87;
+
+  /*
    * A marca: violeta profundo, e SÓ no logotipo.
    *
    * O mesmo matiz da ação, mais escuro — a identidade do Oráculo é o
@@ -184,6 +194,7 @@
     --color-muted: #9aa0a8; /*  6,63:1 na superfície */
 
     --color-line: #303039;
+    --color-border: #74737c;
 
     --color-brand: #bab3ff;
 
@@ -224,6 +235,7 @@
   --color-muted: #9aa0a8;
 
   --color-line: #303039;
+  --color-border: #74737c;
 
   --color-brand: #bab3ff;
 
