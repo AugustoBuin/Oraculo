@@ -119,7 +119,7 @@ preenchimento suave medido com a própria tinta em cima.
 
 ## 3. Contraste medido
 
-48 pares. **Piso 4,5:1. Pior par: 4,75:1** — informativo sobre informativo suave, no tema claro.
+68 pares de texto: 48 da interface e 20 dos selos de raridade. **Piso 4,5:1. Pior par da interface: 4,75:1** — informativo sobre informativo suave, no tema claro. **Pior selo: 4,61:1** — turmalina, no claro.
 
 **Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 8,61:1 no escuro; borda de campo a 3,46:1 no claro e 3,54:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
 
@@ -186,6 +186,32 @@ preenchimento suave medido com a própria tinta em cima.
 | Informativo          | `#5ea4ff` | superfície `#1e1e25`        | **6,49:1**  |
 | Informativo          | `#5ea4ff` | informativo suave `#182941` | **5,75:1**  |
 | Acento em etiqueta   | `#a290fa` | acento suave `#292440`      | **5,56:1**  |
+
+### Selos de raridade
+
+Cada material é um par de fundo e tinta, e **só se mede a tinta sobre o próprio fundo**: o
+fundo do selo nunca aparece como texto na página. A chave é a de `RarityColor`
+(`api-contract.md` §4). Os matizes ficam nos vãos entre os estados — perigo 28°, atenção
+70°, sucesso 155°, informativo 257°, ação 290° —, para um selo de raridade não ser lido
+como aviso; e o selo leva uma marca redonda antes do nome, que os de estado não têm.
+
+| Material     | Claro: tinta · fundo    | Medido      | Escuro: tinta · fundo   | Medido      |
+| ------------ | ----------------------- | ----------- | ----------------------- | ----------- |
+| Grafite      | `#38373e` · `#e9e9ed`   | **9,72:1**  | `#dedde3` · `#303034`   | **9,74:1**  |
+| Prata        | `#5c6979` · `#e3eaf3`   | **4,62:1**  | `#959fae` · `#2b3138`   | **4,91:1**  |
+| Cobre        | `#a94a14` · `#ffe3d6`   | **4,68:1**  | `#d88762` · `#472718`   | **4,81:1**  |
+| Ouro         | `#7d6500` · `#ffe8a4`   | **4,64:1**  | `#b49d55` · `#3a2f0a`   | **4,96:1**  |
+| Olivina      | `#517227` · `#dcf2c8`   | **4,64:1**  | `#8caa6f` · `#29351c`   | **5,00:1**  |
+| Pátina       | `#00766e` · `#c9f4ee`   | **4,63:1**  | `#67ada5` · `#153733`   | **4,98:1**  |
+| Água-marinha | `#00718d` · `#caf1ff`   | **4,68:1**  | `#62aac2` · `#123541`   | **4,99:1**  |
+| Turmalina    | `#93499e` · `#fbdeff`   | **4,61:1**  | `#c184cb` · `#3d2641`   | **4,79:1**  |
+| Quartzo rosa | `#a4476e` · `#ffe0ea`   | **4,62:1**  | `#d283a0` · `#432631`   | **4,80:1**  |
+| Obsidiana    | `#e7e5fb` · `#242232`   | **12,59:1** | `#d0cbf6` · `#07060f`   | **13,01:1** |
+
+Grafite é o selo neutro de antes da paleta, e o padrão. Obsidiana é o único de fundo preto:
+no claro inverte, no escuro afunda abaixo da superfície. O par mais parecido entre si é
+pátina e água-marinha, e o selo mais perto de um de estado é cobre, do de atenção — os dois
+a olhar primeiro quando a paleta mudar.
 
 ---
 
@@ -292,7 +318,8 @@ Dois detalhes que parecem preciosismo e não são:
 1. Ele tem um papel semântico que nenhum token existente cobre? Se não, use o que existe.
 2. É cor de texto? **Meça** contra fundo, superfície e qualquer preenchimento em que apareça,
    **nos dois temas**, antes de escrever a primeira regra que o consome. A tela `/paleta` faz a
-   conta sozinha para todo token que siga a convenção de nome (`-soft`, `on-`, `surface`).
+   conta sozinha para todo token que siga a convenção de nome (`-soft`, `on-`, `surface`,
+   `rarity-`).
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
 
