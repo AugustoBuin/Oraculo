@@ -145,6 +145,23 @@ cortado. Esse não entra como linha: é `MEDIUM` (rótulo parcialmente cortado n
 secundário, só em 320px com a fonte dobrada), e `MEDIUM` fica fora do ledger por convenção.
 Fica registrado aqui porque nenhuma auditoria o pegou.
 
+**Verificado na tela em 10/09**, com a extensão do Chrome e a sessão de administrador, depois
+dos quatro commits da refatoração. Janela em 1264, 1000, 900, 780 e 500px, escolhidas para
+**cruzar** os limiares: os painéis de catálogo empilham a 884px de viewport e ficam lado a
+lado a 984 (56rem medidos na coluna, não na janela); a conta e a barra de filtros trocam de
+arranjo entre 764 e 984 (48rem); o campo de imagem põe a miniatura embaixo dos controles no
+piso de 500. Nos dois temas, e sempre com imagem carregada no campo, que é a condição do
+OF-004 — em nenhuma largura os controles foram espremidos nem sobrou buraco.
+
+Com a fonte do navegador em 32px (200%, o critério do F-050), em 1000 e 500px: os limiares do
+`.switcher` e da container query dobraram junto com a fonte, então catálogos e conta
+empilharam já em 1000. No pior caso, 500px, "Remover imagem" quebrou **no espaço** — duas
+palavras inteiras, e não uma letra por linha —, a miniatura de 8rem coube na coluna, e o
+histórico quebrou a linha da alteração sem passar da borda do cartão. A tabela rolou no
+próprio eixo em todos os casos, com as células quebrando só entre palavras. Console sem
+nenhum erro. Abaixo de 500px o canal de automação não alcança; 360px continua dependendo da
+barra de dispositivo do DevTools.
+
 ## Auditorias planejadas
 
 | Quando | Escopo |
