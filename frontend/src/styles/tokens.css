@@ -100,6 +100,36 @@
      É a cor da ação: foco e ação são o mesmo convite a interagir. */
   --color-focus: #6a4bc6;
 
+  /*
+   * Os selos de raridade: dez materiais, cada um um par de fundo e tinta,
+   * como a ação (`--color-accent` / `--color-on-accent`). Os estados são as
+   * pedras do oráculo; as raridades são metais e minerais, com os matizes nos
+   * vãos entre os estados — um "Ouro" não pode ser lido como atenção.
+   * A chave é a de `App\Shared\Enum\RarityColor`; a tinta passa de 4,6:1 sobre o
+   * próprio fundo nos dois temas (`docs/design.md` §3). Grafite é o selo
+   * neutro de antes da paleta, e o padrão.
+   */
+  --color-rarity-graphite: #e9e9ed;
+  --color-on-rarity-graphite: #38373e;
+  --color-rarity-silver: #e3eaf3;
+  --color-on-rarity-silver: #5c6979;
+  --color-rarity-copper: #ffe3d6;
+  --color-on-rarity-copper: #a94a14;
+  --color-rarity-gold: #ffe8a4;
+  --color-on-rarity-gold: #7d6500;
+  --color-rarity-olivine: #dcf2c8;
+  --color-on-rarity-olivine: #517227;
+  --color-rarity-patina: #c9f4ee;
+  --color-on-rarity-patina: #00766e;
+  --color-rarity-aquamarine: #caf1ff;
+  --color-on-rarity-aquamarine: #00718d;
+  --color-rarity-tourmaline: #fbdeff;
+  --color-on-rarity-tourmaline: #93499e;
+  --color-rarity-rose-quartz: #ffe0ea;
+  --color-on-rarity-rose-quartz: #a4476e;
+  --color-rarity-obsidian: #242232;
+  --color-on-rarity-obsidian: #e7e5fb;
+
   /* ---------------------------------------------------------------------
    * Tipografia — escala fechada. Não se inventa valor intermediário (§10.3).
    *
@@ -220,6 +250,27 @@
 
     --color-focus: #bcb2fc;
 
+    --color-rarity-graphite: #303034;
+    --color-on-rarity-graphite: #dedde3;
+    --color-rarity-silver: #2b3138;
+    --color-on-rarity-silver: #959fae;
+    --color-rarity-copper: #472718;
+    --color-on-rarity-copper: #d88762;
+    --color-rarity-gold: #3a2f0a;
+    --color-on-rarity-gold: #b49d55;
+    --color-rarity-olivine: #29351c;
+    --color-on-rarity-olivine: #8caa6f;
+    --color-rarity-patina: #153733;
+    --color-on-rarity-patina: #67ada5;
+    --color-rarity-aquamarine: #123541;
+    --color-on-rarity-aquamarine: #62aac2;
+    --color-rarity-tourmaline: #3d2641;
+    --color-on-rarity-tourmaline: #c184cb;
+    --color-rarity-rose-quartz: #432631;
+    --color-on-rarity-rose-quartz: #d283a0;
+    --color-rarity-obsidian: #07060f;
+    --color-on-rarity-obsidian: #d0cbf6;
+
     /* A sombra precisa ser mais densa para existir sobre fundo escuro. */
     --shadow-overlay: 0 3px 6px -4px rgb(6 3 18 / 0.5), 0 6px 16px rgb(6 3 18 / 0.34),
       0 9px 28px 8px rgb(90 64 200 / 0.16);
@@ -253,6 +304,27 @@
   --color-info-soft: #182941;
 
   --color-focus: #bcb2fc;
+
+  --color-rarity-graphite: #303034;
+  --color-on-rarity-graphite: #dedde3;
+  --color-rarity-silver: #2b3138;
+  --color-on-rarity-silver: #959fae;
+  --color-rarity-copper: #472718;
+  --color-on-rarity-copper: #d88762;
+  --color-rarity-gold: #3a2f0a;
+  --color-on-rarity-gold: #b49d55;
+  --color-rarity-olivine: #29351c;
+  --color-on-rarity-olivine: #8caa6f;
+  --color-rarity-patina: #153733;
+  --color-on-rarity-patina: #67ada5;
+  --color-rarity-aquamarine: #123541;
+  --color-on-rarity-aquamarine: #62aac2;
+  --color-rarity-tourmaline: #3d2641;
+  --color-on-rarity-tourmaline: #c184cb;
+  --color-rarity-rose-quartz: #432631;
+  --color-on-rarity-rose-quartz: #d283a0;
+  --color-rarity-obsidian: #07060f;
+  --color-on-rarity-obsidian: #d0cbf6;
 
   --shadow-overlay: 0 3px 6px -4px rgb(6 3 18 / 0.5), 0 6px 16px rgb(6 3 18 / 0.34),
     0 9px 28px 8px rgb(90 64 200 / 0.16);
