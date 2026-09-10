@@ -73,14 +73,14 @@
    * a superfície. O par `-soft` é o preenchimento de etiqueta, medido com a
    * própria tinta em cima.
    *
-   * O verde é o do "menor preço" da Liga, que já passa (5,95:1). O
-   * informativo é o azul que a ação deixou livre — azul para informação é a
-   * convenção mais comum, e este já estava medido.
+   * São as pedras do oráculo, sem sair da convenção: rubi para perigo,
+   * topázio para atenção, jade para sucesso, safira para informação — e
+   * ametista, a ação. O informativo é o azul que a ação deixou livre.
    */
-  --color-success: #167400;
-  --color-success-soft: #e2f1dc;
-  --color-attention: #854d0e;
-  --color-attention-soft: #f7eddb;
+  --color-success: #0b7643;
+  --color-success-soft: #ddf6e4;
+  --color-attention: #915b00;
+  --color-attention-soft: #ffebd5;
   --color-danger: #c30010;
   --color-danger-soft: #fde7e7;
   --color-info: #0062cc;
@@ -191,10 +191,10 @@
     --color-on-accent: #110f1e;
     --color-accent-soft: #231f36;
 
-    --color-success: #4ade80;
-    --color-success-soft: #10241a;
-    --color-attention: #fbbf24;
-    --color-attention-soft: #2a2009;
+    --color-success: #5ee295;
+    --color-success-soft: #082313;
+    --color-attention: #ffbb69;
+    --color-attention-soft: #2a1903;
     --color-danger: #ff6b6b;
     --color-danger-soft: #2d1616;
     --color-info: #5ea4ff;
@@ -224,10 +224,10 @@
   --color-on-accent: #110f1e;
   --color-accent-soft: #231f36;
 
-  --color-success: #4ade80;
-  --color-success-soft: #10241a;
-  --color-attention: #fbbf24;
-  --color-attention-soft: #2a2009;
+  --color-success: #5ee295;
+  --color-success-soft: #082313;
+  --color-attention: #ffbb69;
+  --color-attention-soft: #2a1903;
   --color-danger: #ff6b6b;
   --color-danger-soft: #2d1616;
   --color-info: #5ea4ff;
