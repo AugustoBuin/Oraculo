@@ -76,9 +76,12 @@ Liga. O creme e o texto amarronzado da paleta anterior saíram — eram, além d
 primeiro item da lista de clichês de design gerado que a revisão consultou.
 
 **5. O escuro é noite, composta e não invertida.** Fundo índigo muito escuro (`#0f0f16`) em
-vez de cinza, tinta clareada, e cada par medido de novo. O croma fica baixo de propósito: o
-conteúdo da tela é arte de carta, e um entorno muito tingido mudaria a cor que o olho
-percebe nas imagens.
+vez de cinza, e cada par medido de novo. A superfície fica um degrau claro acima dele
+(`#1e1e25`), porque no escuro a elevação é feita de luminosidade, e a tinta primária não vai
+ao branco (`#e4e4ea`) para não ofuscar. Os fundos suaves sobem junto, para as caixas de
+mensagem continuarem se distinguindo do cartão. O croma fica baixo de propósito: o conteúdo
+da tela é arte de carta, e um entorno muito tingido mudaria a cor que o olho percebe nas
+imagens.
 
 **6. A sombra do que flutua ganhou três camadas**, como no molde: uma curta e marcada junto
 da borda, duas longas e fracas. A cor é um violeta quase preto em vez de preto puro, e no
@@ -118,7 +121,7 @@ preenchimento suave medido com a própria tinta em cima.
 
 48 pares. **Piso 4,5:1. Pior par: 4,75:1** — informativo sobre informativo suave, no tema claro.
 
-**Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 9,08:1 no escuro; borda de campo a 3,46:1 no claro e 3,73:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
+**Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 8,61:1 no escuro; borda de campo a 3,46:1 no claro e 3,54:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
 
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
@@ -159,30 +162,30 @@ preenchimento suave medido com a própria tinta em cima.
 
 | Papel                | Tinta     | Sobre                       | Medido      |
 | -------------------- | --------- | --------------------------- | ----------- |
-| Texto primário       | `#eef0f3` | fundo `#0f0f16`             | **16,72:1** |
-| Texto primário       | `#eef0f3` | superfície `#191920`        | **15,31:1** |
+| Texto primário       | `#e4e4ea` | fundo `#0f0f16`             | **15,07:1** |
+| Texto primário       | `#e4e4ea` | superfície `#1e1e25`        | **13,08:1** |
 | Texto corrente       | `#c5c9cf` | fundo `#0f0f16`             | **11,48:1** |
-| Texto corrente       | `#c5c9cf` | superfície `#191920`        | **10,51:1** |
+| Texto corrente       | `#c5c9cf` | superfície `#1e1e25`        | **9,96:1**  |
 | Metadado             | `#9aa0a8` | fundo `#0f0f16`             | **7,24:1**  |
-| Metadado             | `#9aa0a8` | superfície `#191920`        | **6,63:1**  |
+| Metadado             | `#9aa0a8` | superfície `#1e1e25`        | **6,29:1**  |
 | Marca (logotipo)     | `#bab3ff` | fundo `#0f0f16`             | **9,98:1**  |
-| Marca (logotipo)     | `#bab3ff` | superfície `#191920`        | **9,14:1**  |
+| Marca (logotipo)     | `#bab3ff` | superfície `#1e1e25`        | **8,66:1**  |
 | Acento como texto    | `#a290fa` | fundo `#0f0f16`             | **7,19:1**  |
-| Acento como texto    | `#a290fa` | superfície `#191920`        | **6,58:1**  |
+| Acento como texto    | `#a290fa` | superfície `#1e1e25`        | **6,24:1**  |
 | Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |
 | Sucesso              | `#42cb80` | fundo `#0f0f16`             | **9,17:1**  |
-| Sucesso              | `#42cb80` | superfície `#191920`        | **8,40:1**  |
-| Sucesso              | `#42cb80` | sucesso suave `#082313`     | **8,00:1**  |
+| Sucesso              | `#42cb80` | superfície `#1e1e25`        | **7,96:1**  |
+| Sucesso              | `#42cb80` | sucesso suave `#152f1f`     | **6,92:1**  |
 | Atenção              | `#d9a514` | fundo `#0f0f16`             | **8,49:1**  |
-| Atenção              | `#d9a514` | superfície `#191920`        | **7,78:1**  |
-| Atenção              | `#d9a514` | atenção suave `#2a1903`     | **7,54:1**  |
+| Atenção              | `#d9a514` | superfície `#1e1e25`        | **7,37:1**  |
+| Atenção              | `#d9a514` | atenção suave `#33270c`     | **6,50:1**  |
 | Perigo               | `#ff6b6b` | fundo `#0f0f16`             | **6,88:1**  |
-| Perigo               | `#ff6b6b` | superfície `#191920`        | **6,30:1**  |
-| Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
+| Perigo               | `#ff6b6b` | superfície `#1e1e25`        | **5,97:1**  |
+| Perigo               | `#ff6b6b` | perigo suave `#401d1c`      | **5,36:1**  |
 | Informativo          | `#5ea4ff` | fundo `#0f0f16`             | **7,48:1**  |
-| Informativo          | `#5ea4ff` | superfície `#191920`        | **6,85:1**  |
-| Informativo          | `#5ea4ff` | informativo suave `#132437` | **6,16:1**  |
-| Acento em etiqueta   | `#a290fa` | acento suave `#231f36`      | **5,99:1**  |
+| Informativo          | `#5ea4ff` | superfície `#1e1e25`        | **6,49:1**  |
+| Informativo          | `#5ea4ff` | informativo suave `#182941` | **5,75:1**  |
+| Acento em etiqueta   | `#a290fa` | acento suave `#292440`      | **5,56:1**  |
 
 ---
 

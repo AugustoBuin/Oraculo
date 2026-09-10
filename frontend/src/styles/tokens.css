@@ -187,13 +187,13 @@
        de carta, e um entorno muito tingido mudaria a cor que o olho percebe
        nas imagens. */
     --color-bg: #0f0f16;
-    --color-surface: #191920;
+    --color-surface: #1e1e25;
 
-    --color-ink: #eef0f3;   /* 16,72:1 no fundo */
+    --color-ink: #e4e4ea;   /* 15,07:1 no fundo */
     --color-body: #c5c9cf;  /* 11,48:1 no fundo */
-    --color-muted: #9aa0a8; /*  6,63:1 na superfície */
+    --color-muted: #9aa0a8; /*  6,29:1 na superfície */
 
-    --color-line: #303039;
+    --color-line: #35353e;
     --color-border: #74737c;
 
     --color-brand: #bab3ff;
@@ -207,16 +207,16 @@
      */
     --color-accent: #a290fa;
     --color-on-accent: #110f1e;
-    --color-accent-soft: #231f36;
+    --color-accent-soft: #292440;
 
     --color-success: #42cb80;
-    --color-success-soft: #082313;
+    --color-success-soft: #152f1f;
     --color-attention: #d9a514;
-    --color-attention-soft: #2a1903;
+    --color-attention-soft: #33270c;
     --color-danger: #ff6b6b;
-    --color-danger-soft: #2d1616;
+    --color-danger-soft: #401d1c;
     --color-info: #5ea4ff;
-    --color-info-soft: #132437;
+    --color-info-soft: #182941;
 
     --color-focus: #bcb2fc;
 
@@ -228,29 +228,29 @@
 
 :root[data-theme="dark"] {
   --color-bg: #0f0f16;
-  --color-surface: #191920;
+  --color-surface: #1e1e25;
 
-  --color-ink: #eef0f3;
+  --color-ink: #e4e4ea;
   --color-body: #c5c9cf;
   --color-muted: #9aa0a8;
 
-  --color-line: #303039;
+  --color-line: #35353e;
   --color-border: #74737c;
 
   --color-brand: #bab3ff;
 
   --color-accent: #a290fa;
   --color-on-accent: #110f1e;
-  --color-accent-soft: #231f36;
+  --color-accent-soft: #292440;
 
   --color-success: #42cb80;
-  --color-success-soft: #082313;
+  --color-success-soft: #152f1f;
   --color-attention: #d9a514;
-  --color-attention-soft: #2a1903;
+  --color-attention-soft: #33270c;
   --color-danger: #ff6b6b;
-  --color-danger-soft: #2d1616;
+  --color-danger-soft: #401d1c;
   --color-info: #5ea4ff;
-  --color-info-soft: #132437;
+  --color-info-soft: #182941;
 
   --color-focus: #bcb2fc;
 
