@@ -40,8 +40,8 @@ export function accountPage(root, { onPasswordChanged }) {
                 el("h2", { text: "Conta" }),
                 // Nome e e-mail vão por textContent: são dado do banco, e nome
                 // de usuário é campo editável em algum lugar do sistema.
-                el("p", { text: user?.name ?? "—", classes: ["text-ink"] }),
-                el("p", { text: user?.email ?? "—", classes: ["text-muted"] }),
+                el("p", { text: user?.name ?? "—", classes: ["text-ink", "wrap-anywhere"] }),
+                el("p", { text: user?.email ?? "—", classes: ["text-muted", "wrap-anywhere"] }),
                 el("p", {
                   // O rótulo vem do mapa, não de uma comparação de papel
                   // escrita aqui — papel comparado inline é achado de

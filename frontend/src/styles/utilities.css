@@ -177,6 +177,22 @@
   flex-basis: calc((var(--switcher-threshold, 40rem) - 100%) * 999);
 }
 
+/*
+ * Quebra uma palavra em qualquer ponto, para o texto que veio de fora.
+ *
+ * O escopo é o ponto: `anywhere` zera a contribuição de min-content de tudo
+ * que o herda, então ele vale só onde a alternativa é pior — endereço, código,
+ * nome vindo do banco, dado do usuário. Aplicado à página inteira, desliga a
+ * proteção do navegador contra o colapso de coluna (ver `base.css`).
+ *
+ * `anywhere` e não `break-word`: só o primeiro entra no cálculo da largura
+ * mínima da caixa. Com `break-word`, a caixa continua reservando a palavra
+ * inteira e estoura a grade do mesmo jeito.
+ */
+.wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+
 /* Texto secundário e metadado, pelos tokens já medidos. */
 .text-muted {
   color: var(--color-muted);

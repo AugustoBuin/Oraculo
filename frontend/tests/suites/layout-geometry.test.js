@@ -32,6 +32,7 @@ import { fetchDouble } from "~/doubles/fetch.js";
 import {
   acrossWidths,
   assertNothingClipped,
+  assertWholeWords,
   assertWithinContainer,
 } from "~/support/layout.js";
 import { assertThrows, assertTrue, suite, test } from "~/runner.js";
@@ -169,8 +170,40 @@ function caixaDe300() {
  * não consegue falhar passa em tudo e não protege nada — foi exatamente o que
  * aconteceu com a primeira versão do teste do OF-004, que media uma imagem sem
  * `src` e passava sem a correção.
+ *
+ * Vale especialmente para a palavra inteira: enquanto `overflow-wrap: anywhere`
+ * morou no `body`, essa invariante pulava TODO elemento da página, porque todo
+ * elemento herdava a declaração. Ela só passou a ter dentes quando a quebra foi
+ * escopada — e é este teste que prova que os dentes existem.
  */
 suite("tests/support/layout · a rede de segurança acusa o que deve acusar", () => {
+  test("a palavra que não cabe na própria caixa é acusada", () =>
+    comCaixaDe(40, (host) => {
+      host.append(el("p", { text: "Remover imagem" }));
+
+      assertThrows(
+        () => assertWholeWords(host, "prova"),
+        Error,
+        "a coluna de 40px coube uma palavra inteira, o que não é possível",
+      );
+    }));
+
+  test("a palavra cabe quando a caixa é larga, e aí nada é acusado", () =>
+    comCaixaDe(400, (host) => {
+      host.append(el("p", { text: "Remover imagem" }));
+
+      assertWholeWords(host, "prova");
+    }));
+
+  test("quem pede a quebra de propósito não é acusado", () =>
+    comCaixaDe(40, (host) => {
+      // O texto que veio de fora declara `.wrap-anywhere` e sai da conta: a
+      // invariante existe para achar quem NÃO pediu a quebra.
+      host.append(el("p", { text: "augusto.henrique@oraculo.local", classes: ["wrap-anywhere"] }));
+
+      assertWholeWords(host, "prova");
+    }));
+
   test("o elemento mais largo que o contêiner é acusado", () =>
     comCaixaDe(100, (host) => {
       const largo = caixaDe300();
@@ -460,10 +493,13 @@ suite("styles/layout · a geometria das telas principais", () => {
               attrs: { "aria-label": "Dados da conta" },
               children: [
                 el("h2", { text: "Conta" }),
-                el("p", { text: "Augusto Henrique Buin", classes: ["text-ink"] }),
+                el("p", { text: "Augusto Henrique Buin", classes: ["text-ink", "wrap-anywhere"] }),
                 // E-mail é dado do usuário e é a cadeia longa sem espaço que
                 // mais aparece nesta tela: é ele quem prova o escopo da quebra.
-                el("p", { text: "augusto.henrique.buin@oraculo.local", classes: ["text-muted"] }),
+                el("p", {
+                  text: "augusto.henrique.buin@oraculo.local",
+                  classes: ["text-muted", "wrap-anywhere"],
+                }),
                 el("p", { text: "Perfil: Administrador", classes: ["text-muted"] }),
               ],
             }),
