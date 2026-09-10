@@ -6,6 +6,7 @@
  * lembrada (Decisão de UX nº 3 do PRD).
  */
 
+import { rarityBadge } from "@/features/catalogs/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 
 const COLUMNS = [
@@ -53,7 +54,13 @@ export function cardTable({ cards, onOpen, onDelete, scope }) {
 
   const body = el("tbody", {
     children: cards.map((card) => {
-      const cells = COLUMNS.map((column) => el("td", { text: cellText(card, column.key) }));
+      // A raridade vai no selo do material, como na galeria: a mesma cor nas
+      // duas visões, para quem alterna entre elas.
+      const cells = COLUMNS.map((column) =>
+        column.key === "rarity"
+          ? el("td", { children: [rarityBadge(card.rarity)] })
+          : el("td", { text: cellText(card, column.key) }),
+      );
 
       if (onDelete !== undefined) {
         cells.push(
