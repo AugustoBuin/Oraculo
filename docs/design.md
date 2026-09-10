@@ -42,7 +42,7 @@ Medido par a par, o site reprova em três dos tons que usa como texto:
 
 | Par no site                                   | Medido | O que foi feito                                  |
 | --------------------------------------------- | ------ | ------------------------------------------------ |
-| Branco sobre o vermelho da marca `#ef4036`    | 3,85:1 | Marca fechada para `#cc281d`, só no logotipo     |
+| Branco sobre o vermelho da marca `#ef4036`    | 3,85:1 | Não entrou: a marca é violeta (item 2)           |
 | Azul do interativo `#0085ff` sobre branco     | 3,62:1 | Fechado para `#0062cc`, e dado ao informativo    |
 | Metadado `#797a7b` sobre o fundo `#f0f0f2`    | 3,78:1 | Metadado fechado para `#67686b` — 4,90:1         |
 
@@ -60,9 +60,10 @@ do produto, não de um padrão. A faixa saiu por exclusão: 270–280° é o "bl
 padrão de SaaS, e acima de 310° o Oráculo leria como a LigaYuGiOh (317°), quando ele
 gerencia todos os jogos.
 
-**2. A marca vive num lugar só.** O vermelho da LigaPokemon entra como `--color-brand`, e
-só o logotipo "Oráculo" o usa. É identidade, não ação nem estado — espalhado, ele voltaria a
-competir com o perigo.
+**2. A marca é violeta, e vive num lugar só.** `--color-brand` é o violeta da ação, mais
+profundo (`#492c9b`, 9,92:1 no cabeçalho branco), e só o logotipo "Oráculo" o usa. A
+primeira versão trouxe o vermelho do logotipo da LigaPokemon; no escuro ele ficava a um passo
+do vermelho de perigo. Com a marca no violeta, vermelho na tela quer dizer uma coisa só.
 
 **3. O informativo ficou com o azul.** A ação em violeta deixou o azul livre, e azul para
 informação é a convenção mais comum. Ele já estava medido: é o `#0062cc` que a ação usou na
@@ -102,8 +103,7 @@ preenchimento suave medido com a própria tinta em cima.
 
 ## 3. Contraste medido
 
-48 pares. **Piso 4,5:1. Pior par: 4,74:1** — a marca sobre o fundo, onde ela nem aparece: o
-logotipo fica no cabeçalho branco, a 5,40:1.
+48 pares. **Piso 4,5:1. Pior par: 4,75:1** — informativo sobre informativo suave, no tema claro.
 
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
@@ -121,8 +121,8 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Texto corrente       | `#4a4a4a` | superfície `#ffffff`        | **8,86:1**  |
 | Metadado             | `#67686b` | fundo `#f0f0f2`             | **4,90:1**  |
 | Metadado             | `#67686b` | superfície `#ffffff`        | **5,57:1**  |
-| Marca (logotipo)     | `#cc281d` | fundo `#f0f0f2`             | **4,74:1**  |
-| Marca (logotipo)     | `#cc281d` | superfície `#ffffff`        | **5,40:1**  |
+| Marca (logotipo)     | `#492c9b` | fundo `#f0f0f2`             | **8,72:1**  |
+| Marca (logotipo)     | `#492c9b` | superfície `#ffffff`        | **9,92:1**  |
 | Acento como texto    | `#6a4bc6` | fundo `#f0f0f2`             | **5,37:1**  |
 | Acento como texto    | `#6a4bc6` | superfície `#ffffff`        | **6,11:1**  |
 | Tinta sobre o acento | `#ffffff` | acento `#6a4bc6`            | **6,11:1**  |
@@ -150,8 +150,8 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Texto corrente       | `#c5c9cf` | superfície `#1b1e23`        | **10,05:1** |
 | Metadado             | `#9aa0a8` | fundo `#111317`             | **7,06:1**  |
 | Metadado             | `#9aa0a8` | superfície `#1b1e23`        | **6,34:1**  |
-| Marca (logotipo)     | `#ff7a6e` | fundo `#111317`             | **7,31:1**  |
-| Marca (logotipo)     | `#ff7a6e` | superfície `#1b1e23`        | **6,57:1**  |
+| Marca (logotipo)     | `#bab3ff` | fundo `#111317`             | **9,72:1**  |
+| Marca (logotipo)     | `#bab3ff` | superfície `#1b1e23`        | **8,74:1**  |
 | Acento como texto    | `#a290fa` | fundo `#111317`             | **7,00:1**  |
 | Acento como texto    | `#a290fa` | superfície `#1b1e23`        | **6,29:1**  |
 | Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |

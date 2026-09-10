@@ -37,14 +37,14 @@
   --color-line: #d8dddf;
 
   /*
-   * A marca: o vermelho do logotipo da LigaPokemon, e SÓ no logotipo.
+   * A marca: violeta profundo, e SÓ no logotipo.
    *
-   * O do site (#ef4036) dá 3,85:1 com branco e 3,38:1 sobre o fundo —
-   * reprova como texto de 18px, que é o tamanho do "Oráculo" no cabeçalho.
-   * Este é o tom mais próximo que passa sobre fundo E superfície. Não é cor
-   * de ação nem de estado: é identidade, e fica num lugar só.
+   * O mesmo matiz da ação, mais escuro — a identidade do Oráculo é o
+   * violeta, e o logotipo é onde ela assina. Veio no lugar do vermelho da
+   * LigaPokemon, que no escuro ficava a um passo do vermelho de perigo:
+   * agora vermelho na tela quer dizer uma coisa só.
    */
-  --color-brand: #cc281d;
+  --color-brand: #492c9b;
 
   /*
    * A voz única de ação. Ocupa no máximo ~10% da tela e marca UMA ação
@@ -176,7 +176,7 @@
 
     --color-line: #2d3138;
 
-    --color-brand: #ff7a6e;
+    --color-brand: #bab3ff;
 
     /*
      * ESTE É O PAR QUE O §10.2 DESCREVE E QUE MAIS REPROVA.
@@ -216,7 +216,7 @@
 
   --color-line: #2d3138;
 
-  --color-brand: #ff7a6e;
+  --color-brand: #bab3ff;
 
   --color-accent: #a290fa;
   --color-on-accent: #110f1e;
