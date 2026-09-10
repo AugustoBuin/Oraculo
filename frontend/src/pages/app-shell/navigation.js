@@ -20,6 +20,9 @@ export const ROUTES = {
   editCard: (id) => `/cartas/${encodeURIComponent(id)}`,
   catalogs: "/catalogos",
   account: "/conta",
+  // Fora de `NAVIGATION` de propósito: é ferramenta de avaliação do design,
+  // não tela de trabalho. Chega-se a ela pelo endereço.
+  palette: "/paleta",
 };
 
 /** @type {ReadonlyArray<{ label: string, href: string, requires: string }>} */

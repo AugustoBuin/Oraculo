@@ -40,6 +40,17 @@ suite("pages/app-shell/navigation", () => {
     );
   });
 
+  test("a paleta tem rota própria e fica fora do menu de qualquer perfil", () => {
+    // É ferramenta para avaliar o design, não tela de trabalho: quem precisa
+    // dela chega pelo endereço, e quem opera o catálogo não a encontra entre
+    // as opções do dia a dia.
+    assertSame(ROUTES.palette, "/paleta");
+    assertTrue(
+      visibleNavigation(levelOf("ADMIN")).every((item) => item.href !== ROUTES.palette),
+      "a paleta apareceu no menu",
+    );
+  });
+
   test("devolve só rótulo e destino, sem vazar o nível para a interface", () => {
     // O cabeçalho é componente global e não pode receber regra de permissão
     // junto com o item, ou passaria a conhecê-la (§2.3).
