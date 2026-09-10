@@ -27,6 +27,7 @@ import { appHeader } from "@/shared/components/app-header.js";
 import { pagination } from "@/shared/components/pagination.js";
 import { el } from "@/shared/dom/elements.js";
 import { cardsFilters } from "@/pages/cards/cards-filters.js";
+import { palettePage } from "@/pages/palette/palette-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 import { fetchDouble } from "~/doubles/fetch.js";
 import {
@@ -480,6 +481,23 @@ suite("styles/layout · a geometria das telas principais", () => {
       rede.restore();
     }
   });
+
+  test("a paleta cruza os pontos de quebra sem estourar", () =>
+    acrossWidths(
+      {
+        label: "paleta",
+        mount: ({ scope, host }) => {
+          scope.add(palettePage(host));
+        },
+      },
+      ({ host, context }) => {
+        // A condição, afirmada: sem as linhas das duas tabelas na tela, a
+        // medida seria de uma página vazia, e passaria.
+        const linhas = host.querySelectorAll(".palette-table tbody tr").length;
+
+        assertTrue(linhas > 40, `[${context}] a paleta desenhou ${linhas} linhas de tabela`);
+      },
+    ));
 
   test("a tela de conta cruza os pontos de quebra sem espremer nenhuma coluna", () =>
     acrossWidths({

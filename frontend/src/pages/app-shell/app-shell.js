@@ -21,6 +21,7 @@ import { accountPage } from "@/pages/account/account-page.js";
 import { cardsPage } from "@/pages/cards/cards-page.js";
 import { cardFormPage } from "@/pages/cards/card-form-page.js";
 import { catalogsPage } from "@/pages/catalogs/catalogs-page.js";
+import { palettePage } from "@/pages/palette/palette-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 
 /**
@@ -88,6 +89,13 @@ export function appShell(root, { onSignedOut }) {
       path: ROUTES.catalogs,
       requires: "ADMIN",
       page: (target) => catalogsPage(target, { notify: notifications.notify }),
+    },
+    {
+      // Fora do menu (ver `navigation.js`), mas atrás do mesmo login: é tela
+      // do portal, e mostra só os tokens — nenhum dado de carta ou de conta.
+      path: ROUTES.palette,
+      requires: "VIEWER",
+      page: (target) => palettePage(target),
     },
     {
       path: ROUTES.account,
