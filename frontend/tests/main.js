@@ -26,6 +26,7 @@ import "~/suites/card-tile.test.js";
 import "~/suites/card-gallery.test.js";
 import "~/suites/catalogs-api.test.js";
 import "~/suites/image-field-layout.test.js";
+import "~/suites/layout-geometry.test.js";
 import "~/suites/feedback.test.js";
 import "~/suites/change-password-form.test.js";
 

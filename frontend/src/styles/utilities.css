@@ -65,6 +65,28 @@
   overscroll-behavior-x: contain;
 }
 
+/* --- Primitivas de layout ------------------------------------------------ */
+
+/*
+ * Quatro arranjos cobrem todas as telas deste portal, e **nenhum deles
+ * pergunta o tamanho da janela**.
+ *
+ * O motivo é o OF-004. Uma `@media` mede o viewport, mas componente nenhum
+ * ocupa o viewport: o formulário vive numa coluna de 40rem, os cartões da
+ * conta vivem em metade da página e um painel de catálogo vive em metade
+ * disso. Quando a regra pergunta uma largura e o componente tem outra, a
+ * resposta certa chega no lugar errado — foi assim que a grade de duas colunas
+ * entrou num campo estreito e espremeu os controles até um caractere.
+ *
+ * Cada primitiva decide pelo espaço que ELA tem: `flex-wrap` para as linhas,
+ * `flex-basis` calculado para as colunas. A matriz "componente × tela" deixa
+ * de existir, e com ela a chance de esquecer um caso.
+ *
+ * O ajuste vem por custom property, não por variante nova: quem usa declara
+ * `--cluster-gap` ou `--sidebar-side` na própria regra do componente, e a
+ * primitiva continua sendo uma só.
+ */
+
 /* Empilhamento vertical com espaço da escala. */
 .stack > * + * {
   margin-top: var(--space-3);
@@ -72,6 +94,87 @@
 
 .stack-loose > * + * {
   margin-top: var(--space-5);
+}
+
+/*
+ * Linha de itens que passa para a linha de baixo quando não cabe.
+ *
+ * `flex-wrap: wrap` mora aqui e não em cada barra de ações de propósito: com a
+ * fonte do navegador em 200%, uma linha sem quebra renderiza "Sair" como
+ * "S / ai / r" — legível na medição, ilegível na tela. Concentrar a regra numa
+ * primitiva é o que torna esse defeito impossível de reintroduzir por
+ * esquecimento na próxima barra que alguém escrever.
+ */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--cluster-gap, var(--space-3));
+}
+
+.cluster-between { justify-content: space-between; }
+.cluster-center { justify-content: center; }
+.cluster-end { justify-content: flex-end; }
+.cluster-baseline { align-items: baseline; }
+
+/*
+ * Conteúdo principal com uma barra ao lado que desce quando aperta.
+ *
+ * É o campo de imagem: os controles e a miniatura. A versão canônica não usa
+ * media query nenhuma — a quebra acontece quando o CONTEÚDO não alcança mais o
+ * mínimo declarado, que é a pergunta certa a fazer.
+ *
+ * As três medidas fazem o mecanismo:
+ *
+ *   `.sidebar-side`     base fixa e sem crescer — a barra vale o que declara,
+ *                       e não a largura natural do que estiver dentro dela.
+ *                       É o oposto exato da trilha `auto` que causou o OF-004.
+ *   `flex: 999 1 0`     o conteúdo absorve toda a sobra, então não existe
+ *                       buraco entre a barra e a borda.
+ *   `min-inline-size`   o piso do conteúdo, que é o que dispara a quebra. Vai
+ *                       em `min(…, 100%)` pelo mesmo motivo de `.card-grid`:
+ *                       um piso em `rem` sozinho ficaria maior que o contêiner
+ *                       em tela estreita e estouraria a linha em vez de
+ *                       quebrá-la.
+ */
+.sidebar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--sidebar-gap, var(--space-4));
+}
+
+.sidebar-side {
+  flex: 0 1 var(--sidebar-side, 8rem);
+}
+
+.sidebar-content {
+  flex: 999 1 0;
+  min-inline-size: min(var(--sidebar-content-min, 20rem), 100%);
+}
+
+/*
+ * Colunas iguais que viram uma pilha abaixo de um limiar — sem media query.
+ *
+ * O `calc` é o mecanismo: enquanto o contêiner for MENOR que o limiar, a
+ * subtração é positiva e o fator 999 leva a base de cada item para além da
+ * linha, então cada um ocupa a sua. Quando o contêiner passa do limiar, a
+ * subtração fica negativa, o valor é travado em zero (`calc` fora da faixa
+ * permitida é limitado, não descartado) e os itens dividem a linha na
+ * proporção dos seus `flex-grow`.
+ *
+ * O limiar é o mesmo número da media query que este arranjo substituiu. O que
+ * mudou não foi o valor: foi o que ele mede — a coluna, e não a janela.
+ */
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--switcher-gap, var(--space-4));
+}
+
+.switcher > * {
+  flex-grow: 1;
+  flex-basis: calc((var(--switcher-threshold, 40rem) - 100%) * 999);
 }
 
 /* Texto secundário e metadado, pelos tokens já medidos. */

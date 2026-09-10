@@ -149,10 +149,15 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     }
 
     return el("li", {
-      classes: ["catalog-row", ...(item.active ? [] : ["catalog-row-inactive"])],
+      classes: [
+        "cluster",
+        "cluster-between",
+        "catalog-row",
+        ...(item.active ? [] : ["catalog-row-inactive"]),
+      ],
       children: [
         el("div", {
-          classes: ["catalog-row-main"],
+          classes: ["cluster", "catalog-row-main"],
           children: [
             el("span", { text: item.name, classes: ["catalog-name"] }),
             // O código é mostrado porque é o identificador público — e **não**
@@ -165,7 +170,7 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
               : [el("span", { text: "Desativada", classes: ["badge", "badge-attention"] })]),
           ],
         }),
-        el("div", { classes: ["catalog-row-actions"], children: actions }),
+        el("div", { classes: ["cluster", "catalog-row-actions"], children: actions }),
       ],
     });
   }

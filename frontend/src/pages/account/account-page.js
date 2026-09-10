@@ -31,7 +31,7 @@ export function accountPage(root, { onPasswordChanged }) {
         // de página que anunciava só metade do que a tela faz (§9.2).
         el("h1", { text: "Minha conta" }),
         el("div", {
-          classes: ["account-layout"],
+          classes: ["switcher", "account-layout"],
           children: [
             el("section", {
               classes: ["card", "stack"],

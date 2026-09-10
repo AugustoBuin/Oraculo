@@ -69,7 +69,10 @@ export function cascadeSelect({
     children: [
       el("label", { text: label, attrs: { for: id }, classes: ["field-label"] }),
       select,
-      el("div", { classes: ["field-footer"], children: [status, retryButton.node] }),
+      el("div", {
+        classes: ["cluster", "cluster-between", "field-footer"],
+        children: [status, retryButton.node],
+      }),
     ],
   });
 

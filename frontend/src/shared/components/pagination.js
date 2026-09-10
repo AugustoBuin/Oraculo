@@ -36,7 +36,7 @@ export function pagination({ page, totalPages, total, onChange, scope }) {
   next.setDisabled(page >= totalPages);
 
   return el("nav", {
-    classes: ["pagination"],
+    classes: ["cluster", "cluster-center"],
     attrs: { "aria-label": "Paginação" },
     children: [
       previous.node,

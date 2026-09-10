@@ -71,7 +71,7 @@ function changeLines(changes) {
 
     lines.push(
       el("li", {
-        classes: ["history-change"],
+        classes: ["cluster", "history-change"],
         children: [
           el("span", { text: label, classes: ["history-field"] }),
           // Os valores vêm do banco e vão por `textContent`, como todo dado do
@@ -91,7 +91,7 @@ function entryNode(entry) {
 
   const children = [
     el("p", {
-      classes: ["history-header"],
+      classes: ["cluster", "cluster-baseline", "history-header"],
       children: [
         el("strong", { text: action }),
         el("span", { text: ` por ${who}` }),
