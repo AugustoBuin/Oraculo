@@ -16,6 +16,7 @@
  */
 
 import { cardGallery } from "@/features/cards/components/card-gallery.js";
+import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
@@ -392,6 +393,59 @@ suite("styles/layout · a geometria das telas principais", () => {
         `[${context}] os painéis não desenharam as três linhas`,
       );
     });
+  });
+
+  test("o histórico da carta cruza os pontos de quebra sem cortar o valor", async () => {
+    const rede = fetchDouble();
+
+    rede.onJson("GET", "/api/cards/7/history", {
+      data: [
+        {
+          action: "updated",
+          createdAt: "2026-09-09T14:32:00-03:00",
+          userName: "Augusto Henrique Buin",
+          changes: {
+            // O valor de `image` é um endereço inteiro sem espaço: é o pior
+            // caso da linha, e o que prova o escopo da quebra.
+            image: { from: null, to: "/api/media/9f8c1d4b2a7e5306f1c8b9d4e2a7f350.jpg" },
+            nameEn: { from: "Karn, Scion of Urza", to: "Karn, Silver Golem" },
+          },
+        },
+      ],
+    });
+
+    try {
+      await acrossWidths(
+        {
+          label: "histórico",
+          mount: async ({ scope }) => {
+            const history = cardHistory({ cardId: 7, scope });
+
+            // O painel só busca quando abre — é `<details>`, e medir fechado
+            // mediria a legenda, não o conteúdo.
+            history.node.open = true;
+            history.node.dispatchEvent(new Event("toggle"));
+            await ate(() => history.node.querySelectorAll(".history-change").length === 2);
+
+            // Dentro de um `.card`, como `card-form-page.js` o monta. Sem o
+            // cartão a linha ganha o respiro do padding de volta, e o piso
+            // rígido que esta tela tinha cabia por acidente — o teste passava
+            // sem a correção.
+            return el("section", { classes: ["card"], children: [history.node] });
+          },
+        },
+        ({ host, context }) => {
+          // A condição do defeito, afirmada: sem as linhas de alteração na
+          // tela, não há coluna de nome de campo para medir.
+          assertTrue(
+            host.querySelectorAll(".history-change").length === 2,
+            `[${context}] o histórico não desenhou as duas alterações`,
+          );
+        },
+      );
+    } finally {
+      rede.restore();
+    }
   });
 
   test("a tela de conta cruza os pontos de quebra sem espremer nenhuma coluna", () =>

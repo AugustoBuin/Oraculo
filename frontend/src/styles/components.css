@@ -335,8 +335,15 @@
   animation: enter-up var(--duration-base) var(--ease-out);
 }
 
+/*
+ * `min-width: 0` porque `flex: 1` não basta: item de flex nasce com mínimo
+ * `auto`, que é o min-content do texto. Sem zerar, uma mensagem sem espaço —
+ * o nome de um arquivo enviado, por exemplo — empurra o aviso para fora da
+ * faixa em vez de quebrar dentro dela.
+ */
 .notification-text {
   flex: 1;
+  min-width: 0;
   color: var(--color-ink);
 }
 
@@ -806,9 +813,15 @@
   font-size: var(--text-sm);
 }
 
+/*
+ * A coluna do nome do campo tem largura mínima para os valores alinharem — e
+ * `min(…, 100%)` para que esse mínimo ceda quando o contêiner for menor que
+ * ele. Um piso em `rem` sozinho vira 288px com a fonte em 200% e estoura a
+ * linha do histórico numa tela de 320.
+ */
 .history-field {
   color: var(--color-muted);
-  min-width: 9rem;
+  min-width: min(9rem, 100%);
 }
 
 /* --- Administração de catálogos ------------------------------------------ */
