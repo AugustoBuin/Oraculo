@@ -6,6 +6,34 @@
  * sobre um valor arbitrário neste arquivo (§10.1, §10.3).
  */
 
+/* --- Texto que veio de fora ---------------------------------------------- */
+
+/*
+ * Onde a quebra em qualquer ponto vale — e só aqui.
+ *
+ * A lista é curta de propósito e cada linha responde à mesma pergunta: este
+ * texto pode chegar sem um espaço onde quebrar? Nome de carta e de edição vêm
+ * do banco; código de catálogo é um slug inteiro; a mensagem de erro carrega
+ * nome de arquivo enviado; o estado vazio repete o termo que a pessoa buscou.
+ * Rótulo escrito por nós fica de fora: ele tem espaço, e o piso de min-content
+ * é o que impede a coluna dele de colapsar (ver `base.css`).
+ */
+.card-name,
+.card-name-pt,
+.card-meta,
+.card-image-empty-text,
+.card-table td,
+.catalog-name,
+.catalog-code,
+.notification-text,
+.field-error,
+.field-hint,
+.inline-message,
+.state-title,
+.state p {
+  overflow-wrap: anywhere;
+}
+
 /* --- Botão --------------------------------------------------------------- */
 
 .button {

@@ -76,7 +76,10 @@ function changeLines(changes) {
           el("span", { text: label, classes: ["history-field"] }),
           // Os valores vêm do banco e vão por `textContent`, como todo dado do
           // catálogo (§8.3).
-          el("span", { text: `${presentValue(change.from)} → ${presentValue(change.to)}` }),
+          el("span", {
+            text: `${presentValue(change.from)} → ${presentValue(change.to)}`,
+            classes: ["wrap-anywhere"],
+          }),
         ],
       }),
     );
