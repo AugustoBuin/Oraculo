@@ -400,3 +400,30 @@ Duas coisas que a rede não faz, registradas para ninguém confiar nela além da
    preferência do usuário — tema, movimento, ponteiro —, não de largura.
 4. A tela nova entra em `layout-geometry.test.js`, e o teste **afirma** que o estado medido é o
    estado com dado, não o de carregamento.
+
+---
+
+## 10. Para depois: os tokens escritos em `oklch()`
+
+A paleta é **derivada** em OKLCH — o violeta é o azul do molde girado para 290° com a mesma
+luminosidade e o mesmo croma, e os estados do escuro foram alinhados em L 0,75 —, mas é
+**escrita** em hexadecimal. Converter a escrita foi avaliado em 10/09 e ficou para depois.
+
+**O que a conversão daria.** A intenção ficaria no próprio token: `oklch(0.51 0.18 290)` diz
+"violeta de luminosidade média", `#6a4bc6` não diz nada, e quem ajusta um tom mexe num eixo
+só. Com a sintaxe de cor relativa (`oklch(from var(--color-accent) 0.95 0.03 h)`), os
+preenchimentos suaves sairiam do tom principal em vez de serem copiados à mão nos dois temas.
+
+**Por que não agora.**
+- Nada muda na tela: o hexadecimal já é o resultado exato da conta.
+- Uma cor em `oklch()` fora do sRGB é recortada pelo navegador **sem aviso**, e a `/paleta`
+  mediria a cor recortada, não a escrita. Hoje o recorte é resolvido na hora de derivar,
+  fora do CSS, e o que está no arquivo é o que se mede.
+- A sintaxe relativa calcula a cor em tempo de execução (e é Baseline só desde 2024): a tabela
+  da §3 deixaria de ser legível no próprio `tokens.css`.
+- Seriam os 40 valores de cor reabertos na véspera da entrega, sem ganho para quem usa.
+
+**Quando passa a valer.** Quando a paleta crescer por derivação — as cores de raridade, dez
+pares de fundo e tinta por tema, são o primeiro candidato. **O que precisa vir junto:** a
+`/paleta` avisar quando um token sai do sRGB (hoje ela só recusa cor com transparência), e a
+tabela da §3 continuar sendo o registro, em hexadecimal resolvido.
