@@ -53,7 +53,7 @@ export function openModal({ title, content, actions = [], onClose }) {
         classes: ["modal-content"],
         children: Array.isArray(content) ? content : [content],
       }),
-      el("div", { classes: ["modal-actions"], children: actions }),
+      el("div", { classes: ["cluster", "cluster-end", "modal-actions"], children: actions }),
     ],
   });
 
