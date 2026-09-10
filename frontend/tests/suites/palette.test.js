@@ -28,6 +28,7 @@ const NOMES = [
   "--color-body",
   "--color-muted",
   "--color-line",
+  "--color-border",
   "--color-brand",
   "--color-accent",
   "--color-on-accent",
@@ -188,13 +189,23 @@ suite("shared/theme/palette · os pares medidos", () => {
     assertSame(pares().find((par) => par.fg === "--color-ink").min, 4.5);
   });
 
+  test("a borda de controle é medida a 3:1, como componente — nunca como texto", () => {
+    // É o limite que identifica um campo de formulário (WCAG 1.4.11). A linha
+    // decorativa não identifica nada e não é medida; a borda de controle é.
+    const borda = pares().filter((par) => par.fg === "--color-border");
+
+    assertSame(borda.length, 2);
+    assertTrue(borda.every((par) => par.min === 3), "a borda foi medida com o piso de texto");
+    assertTrue(temPar(pares(), "--color-border", "--color-surface"), "a borda não foi medida sobre a superfície");
+  });
+
   test("fundo, superfície, linha e as versões suaves nunca entram como tinta", () => {
     for (const nome of ["--color-bg", "--color-surface", "--color-line", "--color-success-soft"]) {
       assertTrue(!pares().some((par) => par.fg === nome), `${nome} foi medido como se fosse texto`);
     }
   });
 
-  test("são os 24 pares por tema do design.md, mais os dois do foco", () => {
-    assertSame(pares().length, 26);
+  test("são os 24 pares por tema do design.md, mais os dois do foco e os dois da borda", () => {
+    assertSame(pares().length, 28);
   });
 });
