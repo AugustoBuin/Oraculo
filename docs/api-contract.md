@@ -254,8 +254,8 @@ Mesma forma, na ordem natural do jogo (comum → mítica), não alfabética.
 | `POST` | `/api/games/{gameId}/editions` | Cria edição. Corpo: `{ "code", "name", "sortOrder"? }` |
 | `PUT` | `/api/editions/{editionId}` | Atualiza `name`, `sortOrder`, `active`. **`code` é imutável** |
 | `DELETE` | `/api/editions/{editionId}` | **Desativa** — ver abaixo |
-| `POST` | `/api/games/{gameId}/rarities` | Cria raridade. Mesmo corpo |
-| `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` |
+| `POST` | `/api/games/{gameId}/rarities` | Cria raridade. Mesmo corpo, mais `color` opcional |
+| `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` e `color` — aqui obrigatória |
 | `DELETE` | `/api/rarities/{rarityId}` | **Desativa** |
 
 O `code` aceita letras minúsculas, números e hífen, até 32 caracteres — ele vira parte da
@@ -265,6 +265,36 @@ Magic. Código repetido no mesmo jogo devolve `409`.
 `code` não é alterável no `PUT`. Ele é o identificador público: aparece na URL, no contrato
 e em qualquer filtro que alguém tenha salvo. Trocá-lo quebraria tudo isso em silêncio, e o
 ganho seria corrigir um erro de digitação que o `name` já resolve.
+
+#### A cor da raridade
+
+A raridade tem uma cor, exibida no selo da carta. `color` é **uma chave da paleta**, nunca um
+hexadecimal: cada chave é um par de fundo e tinta medido nos dois temas (`design.md` §3), e
+um hexadecimal livre que passasse no claro poderia reprovar no escuro sem que quem escolheu
+soubesse.
+
+| Chave | Nome na tela |
+|---|---|
+| `graphite` | Grafite — o padrão, o selo neutro |
+| `silver` | Prata |
+| `copper` | Cobre |
+| `gold` | Ouro |
+| `olivine` | Olivina |
+| `patina` | Pátina |
+| `aquamarine` | Água-marinha |
+| `tourmaline` | Turmalina |
+| `rose-quartz` | Quartzo rosa |
+| `obsidian` | Obsidiana |
+
+- **Na criação, `color` é opcional.** Ausente, a raridade nasce `graphite`.
+- **Na alteração, `color` é obrigatória.** O `PUT` é substituição (abaixo): cor ausente
+  devolve `400` apontando `color`, em vez de repintar de grafite, em silêncio, a raridade que
+  era ouro.
+- Valor fora da tabela — ou que não seja texto — devolve `400` apontando `color`, junto dos
+  outros campos inválidos.
+
+A edição não tem cor, e a escrita das duas se separou por isso: o corpo de edição não
+aceita `color`.
 
 #### `DELETE` desativa, e nunca falha
 

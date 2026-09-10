@@ -6,27 +6,27 @@ namespace App\Modules;
 
 use App\Infra\Http\Guard;
 use App\Infra\Http\Route;
-use App\Infra\Http\Routes\Catalog\CreateCatalogItemRoute;
 use App\Infra\Http\Routes\Catalog\CreateEditionRoute;
+use App\Infra\Http\Routes\Catalog\CreateRarityRoute;
 use App\Infra\Http\Routes\Catalog\DeactivateCatalogItemRoute;
 use App\Infra\Http\Routes\Catalog\ListEditionsRoute;
 use App\Infra\Http\Routes\Catalog\ListGamesRoute;
 use App\Infra\Http\Routes\Catalog\ListRaritiesRoute;
-use App\Infra\Http\Routes\Catalog\UpdateCatalogItemRoute;
 use App\Infra\Http\Routes\Catalog\UpdateEditionRoute;
+use App\Infra\Http\Routes\Catalog\UpdateRarityRoute;
 use App\Infra\Repository\Catalog\EditionRepositoryPdo;
 use App\Infra\Repository\Catalog\GameRepositoryPdo;
 use App\Infra\Repository\Catalog\RarityRepositoryPdo;
 use App\Shared\Enum\PermissionLevel;
 use App\Shared\Observability\Logger;
-use App\UseCases\Catalog\CreateCatalogItemUseCase;
 use App\UseCases\Catalog\CreateEditionUseCase;
+use App\UseCases\Catalog\CreateRarityUseCase;
 use App\UseCases\Catalog\DeactivateCatalogItemUseCase;
 use App\UseCases\Catalog\ListEditionsUseCase;
 use App\UseCases\Catalog\ListGamesUseCase;
 use App\UseCases\Catalog\ListRaritiesUseCase;
-use App\UseCases\Catalog\UpdateCatalogItemUseCase;
 use App\UseCases\Catalog\UpdateEditionUseCase;
+use App\UseCases\Catalog\UpdateRarityUseCase;
 
 /**
  * Composition root do catálogo.
@@ -37,6 +37,10 @@ use App\UseCases\Catalog\UpdateEditionUseCase;
  * As seis escritas são o que dá conteúdo ao nível ADMIN — e a tese do produto
  * em funcionamento: uma edição nova de Pokémon entra em produção por cadastro,
  * não por deploy.
+ *
+ * Criar e alterar são próprios de cada catálogo — a raridade grava cor, a
+ * edição não. Desativar é uma operação só, montada duas vezes: é a mesma para
+ * as duas.
  *
  * **Gestão de jogos ficou fora**, e é decisão consciente: criar um jogo sem
  * raridades cadastradas deixa o sistema num estado pior do que não ter o botão
@@ -84,45 +88,18 @@ final class CatalogModule
                 ),
                 PermissionLevel::ADMIN
             ),
-            ...self::writeRoutes('rarities', $games, $rarities, $logger),
-        ];
-    }
-
-    /**
-     * As três operações de escrita da raridade, ainda pelo caminho genérico.
-     *
-     * A edição já tem criar e alterar próprios; a raridade passa para os dela
-     * quando ganhar cor — é a divergência que separou as duas escritas.
-     *
-     * @param \App\Domain\Catalog\Gateway\GameGateway $games
-     * @param \App\Domain\Catalog\Gateway\CatalogItemGateway $items
-     * @return list<Route>
-     */
-    private static function writeRoutes(
-        string $segment,
-        \App\Domain\Catalog\Gateway\GameGateway $games,
-        \App\Domain\Catalog\Gateway\CatalogItemGateway $items,
-        Logger $logger,
-    ): array {
-        return [
             Guard::protect(
-                CreateCatalogItemRoute::create(
-                    '/api/games/{gameId}/' . $segment,
-                    CreateCatalogItemUseCase::create($games, $items, $logger)
-                ),
+                CreateRarityRoute::create(CreateRarityUseCase::create($games, $rarities, $logger)),
                 PermissionLevel::ADMIN
             ),
             Guard::protect(
-                UpdateCatalogItemRoute::create(
-                    '/api/' . $segment . '/{id}',
-                    UpdateCatalogItemUseCase::create($items, $logger)
-                ),
+                UpdateRarityRoute::create(UpdateRarityUseCase::create($rarities, $logger)),
                 PermissionLevel::ADMIN
             ),
             Guard::protect(
                 DeactivateCatalogItemRoute::create(
-                    '/api/' . $segment . '/{id}',
-                    DeactivateCatalogItemUseCase::create($items, $logger)
+                    '/api/rarities/{id}',
+                    DeactivateCatalogItemUseCase::create($rarities, $logger)
                 ),
                 PermissionLevel::ADMIN
             ),

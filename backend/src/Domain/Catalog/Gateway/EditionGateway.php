@@ -38,4 +38,9 @@ interface EditionGateway extends CatalogItemGateway
     public function findByGameAndCode(int $gameId, string $code): ?Edition;
 
     public function findById(int $id): ?Edition;
+
+    public function insert(int $gameId, string $code, string $name, int $sortOrder): int;
+
+    /** `code` fica de fora: identificador público não muda. */
+    public function updateDetails(int $id, string $name, int $sortOrder, bool $active): void;
 }
