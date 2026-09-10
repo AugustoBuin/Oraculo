@@ -6,6 +6,7 @@ namespace App\UseCases\Catalog;
 
 use App\Domain\Catalog\Gateway\CatalogItemGateway;
 use App\Domain\Catalog\Gateway\GameGateway;
+use App\Domain\Catalog\Validation\CatalogItemRules;
 use App\Domain\Errors\ConflictError;
 use App\Domain\Errors\NotFoundError;
 use App\Domain\Errors\ValidationError;
@@ -19,8 +20,6 @@ use App\Shared\Observability\Logger;
  */
 final class CreateCatalogItemUseCase
 {
-    private const CODE_PATTERN = '/^[a-z0-9][a-z0-9-]{0,31}$/';
-
     private function __construct(
         private readonly GameGateway $games,
         private readonly CatalogItemGateway $items,
@@ -41,19 +40,9 @@ final class CreateCatalogItemUseCase
             throw new NotFoundError('Card game não encontrado.');
         }
 
-        $errors = [];
-        $code = strtolower(trim((string) $input->code));
+        $code = CatalogItemRules::normalizeCode((string) $input->code);
         $name = trim($input->name);
-
-        if (preg_match(self::CODE_PATTERN, $code) !== 1) {
-            // O código vira parte da URL pública e do contrato da API: letras
-            // minúsculas, números e hífen, sem espaço nem acento.
-            $errors['code'] = 'Use apenas letras minúsculas, números e hífen, até 32 caracteres.';
-        }
-
-        if ($name === '') {
-            $errors['name'] = 'O nome é obrigatório.';
-        }
+        $errors = CatalogItemRules::errors($code, $name);
 
         if ($errors !== []) {
             throw ValidationError::fields($errors);
