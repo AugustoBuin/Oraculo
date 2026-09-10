@@ -162,6 +162,15 @@ próprio eixo em todos os casos, com as células quebrando só entre palavras. C
 nenhum erro. Abaixo de 500px o canal de automação não alcança; 360px continua dependendo da
 barra de dispositivo do DevTools.
 
+**Borda de campo de formulário abaixo de 3:1 — achada na revisão de paleta, em 10/09.** Os
+campos usavam `--color-line` como contorno, a 1,38:1 sobre o branco. A WCAG 1.4.11 pede 3:1
+para o limite que identifica um controle, e um campo branco dentro de um cartão branco só
+existe pela borda. Nenhuma das três auditorias pegou. Corrigido com um token próprio,
+`--color-border`, acima de 3:1 nos dois temas; a linha decorativa continua leve, e a
+`/paleta` passou a medir a borda como componente. Entra como nota, e não como linha: é
+`MEDIUM` — o rótulo acima de cada campo continua identificando-o —, e `MEDIUM` fica fora do
+ledger por convenção.
+
 ## Auditorias planejadas
 
 | Quando | Escopo |
