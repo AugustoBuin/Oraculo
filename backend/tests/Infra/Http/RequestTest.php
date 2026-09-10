@@ -120,4 +120,76 @@ final class RequestTest extends TestCase
         $this->assertTrue($this->makeSut(['method' => HttpMethod::DELETE])->changesState());
         $this->assertFalse($this->makeSut(['method' => HttpMethod::GET])->changesState());
     }
+
+    /*
+     * OF-001, achado pela auditoria final de 09/09 e reproduzido: `?page[]=1`
+     * entrega um ARRAY em `$_GET`, e `strval` de array emite aviso. O front
+     * controller converte aviso em exceção, e isso acontece DENTRO de
+     * `fromGlobals()` — antes do pipeline, portanto antes de qualquer guard.
+     * Toda rota `/api/*` respondia 500 a quem não estava autenticado, gravando
+     * uma linha de log com a pilha inteira a cada requisição.
+     *
+     * O tipo declarado é `array<string,string>`. Quem não é string não é
+     * parâmetro: some, e a rota trata como ausente — que é o que ela já sabe
+     * fazer. Lançar aqui seria pior: `fromGlobals()` corre fora do
+     * `ErrorBoundary`, e a resposta sairia sem os cabeçalhos de segurança.
+     */
+    public function testDescartaParametroDeQueryQueNaoSejaTexto(): void
+    {
+        $this->comGlobais(
+            get: ['page' => ['1'], 'search' => 'lotus'],
+            body: function (): void {
+                $sut = Request::fromGlobals();
+
+                $this->assertNull($sut->query('page'));
+                $this->assertSame('lotus', $sut->query('search'));
+            },
+        );
+    }
+
+    public function testDescartaCookieQueNaoSejaTexto(): void
+    {
+        $this->comGlobais(
+            cookie: ['ORACULOSID' => ['a' => 'b'], 'tema' => 'escuro'],
+            body: function (): void {
+                $sut = Request::fromGlobals();
+
+                $this->assertNull($sut->cookie('ORACULOSID'));
+                $this->assertSame('escuro', $sut->cookie('tema'));
+            },
+        );
+    }
+
+    public function testNumeroEmQueryContinuaVirandoTexto(): void
+    {
+        $this->comGlobais(
+            get: ['page' => 2],
+            body: function (): void {
+                $this->assertSame('2', Request::fromGlobals()->query('page'));
+            },
+        );
+    }
+
+    /**
+     * Troca as superglobais, roda o corpo e devolve tudo ao lugar — inclusive
+     * quando o teste falha, que é quando o vazamento contaminaria o resto.
+     *
+     * @param array<mixed> $get
+     * @param array<mixed> $cookie
+     */
+    private function comGlobais(callable $body, array $get = [], array $cookie = []): void
+    {
+        $getOriginal = $_GET;
+        $cookieOriginal = $_COOKIE;
+
+        $_GET = $get;
+        $_COOKIE = $cookie;
+
+        try {
+            $body();
+        } finally {
+            $_GET = $getOriginal;
+            $_COOKIE = $cookieOriginal;
+        }
+    }
 }

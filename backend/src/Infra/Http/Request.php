@@ -86,9 +86,9 @@ final class Request
             method: $method,
             path: $path,
             rawBody: (string) file_get_contents('php://input'),
-            query: array_map('strval', $_GET),
+            query: self::onlyStrings($_GET),
             headers: self::normalizeHeaders(self::headersFromServer($_SERVER)),
-            cookies: array_map('strval', $_COOKIE),
+            cookies: self::onlyStrings($_COOKIE),
             body: [],
             routeParams: [],
             attributes: [],
@@ -238,6 +238,36 @@ final class Request
             attributes: $attributes ?? $this->attributes,
             server: $this->server,
         );
+    }
+
+    /**
+     * O que não é texto não é parâmetro.
+     *
+     * `?page[]=1` entrega um ARRAY em `$_GET`, e converter array em string
+     * emite aviso — que o front controller transforma em exceção. Como isto
+     * corre em `fromGlobals()`, ANTES do pipeline, a exceção alcançava toda
+     * rota `/api/*` sem passar por guard nenhum: 500 para quem nem estava
+     * autenticado, e uma pilha inteira no log a cada requisição (OF-001).
+     *
+     * Descartar, e não lançar, é deliberado: aqui é fora do `ErrorBoundary`, e
+     * uma exceção sairia sem os cabeçalhos de segurança que o pipeline aplica.
+     * Parâmetro descartado é parâmetro ausente, e ausente toda rota já sabe
+     * tratar — com o padrão dela, ou com o erro de validação que é dela.
+     *
+     * @param  array<mixed> $values
+     * @return array<string,string>
+     */
+    private static function onlyStrings(array $values): array
+    {
+        $strings = [];
+
+        foreach ($values as $name => $value) {
+            if (is_scalar($value)) {
+                $strings[(string) $name] = (string) $value;
+            }
+        }
+
+        return $strings;
     }
 
     /**
