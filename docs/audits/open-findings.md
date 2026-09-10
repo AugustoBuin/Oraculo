@@ -43,9 +43,14 @@ as imagens das cartas carregam, e imagem barrada registraria `Refused to load th
 sem rolagem horizontal em 360, 500, 752 e 1424px; e `/cartas/:id`, a tela que nunca tinha
 passado por inspeção, em coluna única no estreito, com pré-visualização e botões cabendo.
 
-**Continua por verificar:** zoom de página em 200% (RNF-04). Largura de janela abaixo de
-500px e zoom de página não se alcançam pelo canal de automação — 360px exigiu a barra de
-dispositivo do DevTools, ligada à mão.
+Zoom de página em 200% (RNF-04) também passou: viewport efetivo de ~493x366, nav em duas
+linhas, filtros e galeria refluindo para duas colunas, nada cortado e nenhuma rolagem
+horizontal. Largura abaixo de 500px e zoom não se alcançam pelo canal de automação — os
+360px e o zoom saíram da barra de dispositivo do DevTools e do controle do navegador,
+ligados à mão.
+
+**Com isso, todo critério mensurável de F-050 e F-051 está verificado em execução, menos
+um: a operação só por teclado, que é o OF-003 e está reprovada.**
 
 ## Auditorias planejadas
 
