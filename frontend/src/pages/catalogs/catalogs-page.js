@@ -89,8 +89,22 @@ export function catalogsPage(root, { notify }) {
   async function loadGames() {
     panels.replaceChildren(loading("Carregando os jogos…"));
 
+    const controller = life.controller();
+
     try {
-      const games = await listGames();
+      const games = await listGames({ signal: controller.signal });
+
+      /*
+       * Sair da tela antes de os jogos chegarem era pior do que desperdício
+       * aqui (OF-002): a limpeza de `life` já rodou, `panelsLife` já foi
+       * disposto, e `renderPanels` criava um escopo NOVO que nenhuma limpeza
+       * alcançava — a única que o alcançaria (`life.add`, acima) já tinha sido
+       * consumida. Esse escopo montava os dois painéis, e cada um disparava a
+       * própria leitura: duas requisições partindo DEPOIS de a tela morrer.
+       */
+      if (controller.signal.aborted) {
+        return;
+      }
 
       game.replaceChildren(
         ...games.map((item) => el("option", { text: item.name, attrs: { value: item.id } })),
@@ -101,6 +115,12 @@ export function catalogsPage(root, { notify }) {
       game.value = games[0]?.id ?? "";
       renderPanels(game.value);
     } catch (error) {
+      // Cancelar não é falhar: sem isto, sair da tela desenharia um estado de
+      // erro num DOM que ninguém mais vê.
+      if (controller.signal.aborted) {
+        return;
+      }
+
       panels.replaceChildren(failure({ message: userMessage(error) }));
     }
   }

@@ -92,8 +92,8 @@ export function invalidateCatalogs() {
  * e um catálogo com validade de uma hora mostraria o resultado da própria
  * edição só depois do prazo (§5.4).
  */
-async function listForAdmin(path) {
-  const payload = await api.get(path, { params: { incluirInativos: 1 }, silent: true });
+async function listForAdmin(path, { signal } = {}) {
+  const payload = await api.get(path, { params: { incluirInativos: 1 }, silent: true, signal });
 
   if (!Array.isArray(payload?.data)) {
     throw new ApiError(200, MALFORMED_MESSAGE, { body: payload });
@@ -127,11 +127,11 @@ async function listForAdmin(path) {
   return items;
 }
 
-export const listEditionsForAdmin = (gameId) =>
-  listForAdmin(API_ENDPOINTS.catalogs.editions(gameId));
+export const listEditionsForAdmin = (gameId, options) =>
+  listForAdmin(API_ENDPOINTS.catalogs.editions(gameId), options);
 
-export const listRaritiesForAdmin = (gameId) =>
-  listForAdmin(API_ENDPOINTS.catalogs.rarities(gameId));
+export const listRaritiesForAdmin = (gameId, options) =>
+  listForAdmin(API_ENDPOINTS.catalogs.rarities(gameId), options);
 
 /**
  * Cria um item de catálogo.
