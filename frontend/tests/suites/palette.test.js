@@ -28,6 +28,8 @@ const NOMES = [
   "--color-body",
   "--color-muted",
   "--color-line",
+  "--color-border",
+  "--color-brand",
   "--color-accent",
   "--color-on-accent",
   "--color-accent-soft",
@@ -57,10 +59,11 @@ suite("shared/theme/palette · a fórmula de contraste", () => {
     assertSame(contrastRatio([0, 0, 0], [191, 53, 32]), contrastRatio([191, 53, 32], [0, 0, 0]));
   });
 
-  test("concorda com a tabela medida do design.md: acento sobre branco dá 5,61:1", () => {
-    // O número vem da §3 do `docs/design.md`. A tela nova tem de chegar ao
-    // mesmo valor da tabela que já existe, ou uma das duas está errada.
-    assertSame(contrastRatio(resolveColor("#bf3520"), resolveColor("#ffffff")).toFixed(2), "5.61");
+  test("concorda com a tabela medida do design.md: acento sobre branco dá 6,11:1", () => {
+    // O número vem da §3 do `docs/design.md`. A tela tem de chegar ao mesmo
+    // valor da tabela, ou uma das duas está errada — e este teste muda junto
+    // com a tabela sempre que o acento mudar.
+    assertSame(contrastRatio(resolveColor("#6a4bc6"), resolveColor("#ffffff")).toFixed(2), "6.11");
   });
 });
 
@@ -186,13 +189,23 @@ suite("shared/theme/palette · os pares medidos", () => {
     assertSame(pares().find((par) => par.fg === "--color-ink").min, 4.5);
   });
 
+  test("a borda de controle é medida a 3:1, como componente — nunca como texto", () => {
+    // É o limite que identifica um campo de formulário (WCAG 1.4.11). A linha
+    // decorativa não identifica nada e não é medida; a borda de controle é.
+    const borda = pares().filter((par) => par.fg === "--color-border");
+
+    assertSame(borda.length, 2);
+    assertTrue(borda.every((par) => par.min === 3), "a borda foi medida com o piso de texto");
+    assertTrue(temPar(pares(), "--color-border", "--color-surface"), "a borda não foi medida sobre a superfície");
+  });
+
   test("fundo, superfície, linha e as versões suaves nunca entram como tinta", () => {
     for (const nome of ["--color-bg", "--color-surface", "--color-line", "--color-success-soft"]) {
       assertTrue(!pares().some((par) => par.fg === nome), `${nome} foi medido como se fosse texto`);
     }
   });
 
-  test("são os 22 pares por tema do design.md, mais os dois do foco", () => {
-    assertSame(pares().length, 24);
+  test("são os 24 pares por tema do design.md, mais os dois do foco e os dois da borda", () => {
+    assertSame(pares().length, 28);
   });
 });

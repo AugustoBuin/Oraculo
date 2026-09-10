@@ -118,7 +118,9 @@
   width: 100%;
   padding: var(--space-2) var(--space-3);
   background-color: var(--color-surface);
-  border: 1px solid var(--color-line);
+  /* A borda identifica o campo, então é a de controle (3:1, WCAG 1.4.11),
+     e não a linha decorativa — que some num campo branco sobre cartão branco. */
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-default);
   color: var(--color-ink);
   transition: border-color var(--duration-fast) var(--ease-out);
@@ -126,6 +128,13 @@
 
 .field-input:hover:not(:disabled) {
   border-color: var(--color-muted);
+}
+
+/* A busca é pílula, como no molde novo da Liga: é o campo mais usado da
+   listagem, e a forma o distingue dos filtros ao lado sem precisar de cor. */
+.field-input[type="search"] {
+  border-radius: var(--radius-pill);
+  padding-inline: var(--space-4);
 }
 
 /*
@@ -253,8 +262,9 @@
   padding-block: var(--space-3);
 }
 
+/* O único lugar da cor da marca: identidade num ponto, não espalhada. */
 .app-brand {
-  color: var(--color-ink);
+  color: var(--color-brand);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   text-decoration: none;
@@ -282,7 +292,7 @@
  * quem usa leitor de tela e para quem não distingue os tons (§9.4).
  */
 .nav-link-current {
-  background-color: var(--color-bg);
+  background-color: var(--color-accent-soft);
   color: var(--color-ink);
   font-weight: var(--weight-medium);
 }
@@ -634,7 +644,7 @@
  * a cor deixaria a informação invisível para quem não a enxerga (§9.4).
  */
 .segmented-active {
-  background-color: var(--color-bg);
+  background-color: var(--color-accent-soft);
   color: var(--color-ink);
   font-weight: var(--weight-medium);
 }
