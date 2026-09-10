@@ -539,6 +539,76 @@
   margin-top: var(--space-1);
 }
 
+/* --- Selo de raridade --------------------------------------------------- */
+
+/*
+ * O fundo e a tinta do material (tokens.css), e uma marca redonda que os
+ * selos de estado não têm: é a forma que diz "raridade", não a cor. A classe
+ * do material só aponta as duas variáveis; o desenho é um só.
+ */
+.rarity-badge {
+  background-color: var(--rarity-fill, var(--color-rarity-graphite));
+  color: var(--rarity-ink, var(--color-on-rarity-graphite));
+}
+
+.rarity-mark {
+  flex: none;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: var(--radius-pill);
+  background-color: currentColor;
+}
+
+.rarity-graphite {
+  --rarity-fill: var(--color-rarity-graphite);
+  --rarity-ink: var(--color-on-rarity-graphite);
+}
+
+.rarity-silver {
+  --rarity-fill: var(--color-rarity-silver);
+  --rarity-ink: var(--color-on-rarity-silver);
+}
+
+.rarity-copper {
+  --rarity-fill: var(--color-rarity-copper);
+  --rarity-ink: var(--color-on-rarity-copper);
+}
+
+.rarity-gold {
+  --rarity-fill: var(--color-rarity-gold);
+  --rarity-ink: var(--color-on-rarity-gold);
+}
+
+.rarity-olivine {
+  --rarity-fill: var(--color-rarity-olivine);
+  --rarity-ink: var(--color-on-rarity-olivine);
+}
+
+.rarity-patina {
+  --rarity-fill: var(--color-rarity-patina);
+  --rarity-ink: var(--color-on-rarity-patina);
+}
+
+.rarity-aquamarine {
+  --rarity-fill: var(--color-rarity-aquamarine);
+  --rarity-ink: var(--color-on-rarity-aquamarine);
+}
+
+.rarity-tourmaline {
+  --rarity-fill: var(--color-rarity-tourmaline);
+  --rarity-ink: var(--color-on-rarity-tourmaline);
+}
+
+.rarity-rose-quartz {
+  --rarity-fill: var(--color-rarity-rose-quartz);
+  --rarity-ink: var(--color-on-rarity-rose-quartz);
+}
+
+.rarity-obsidian {
+  --rarity-fill: var(--color-rarity-obsidian);
+  --rarity-ink: var(--color-on-rarity-obsidian);
+}
+
 /* --- Paginação ----------------------------------------------------------- */
 
 .pagination-status {

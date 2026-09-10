@@ -49,3 +49,16 @@ suite("features/cards/components/card-tile · hierarquia de cabeçalhos", () => 
       assertCount(tile.querySelectorAll("h1, h2, h3, h4, h5, h6"), 1);
     }));
 });
+
+suite("features/cards/components/card-tile · o selo da raridade", () => {
+  test("a raridade aparece no selo do material, com o nome escrito", () =>
+    comCartao(
+      (tile) => {
+        const selo = tile.querySelector(".rarity-badge");
+
+        assertSame(selo.textContent, "Secreta");
+        assertSame(selo.classList.contains("rarity-obsidian"), true);
+      },
+      { card: { rarity: { name: "Secreta", color: "obsidian" } } },
+    ));
+});
