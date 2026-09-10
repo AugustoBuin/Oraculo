@@ -21,7 +21,8 @@ use App\Shared\Enum\ImageType;
  * - **Nenhum id de catálogo escapa.** Jogo, edição e raridade saem com o
  *   identificador público — slug ou código —, na mesma forma `{id, name}` dos
  *   endpoints de catálogo. O frontend usa a mesma chave para exibir a carta e
- *   para preencher o `<select>` do formulário.
+ *   para preencher o `<select>` do formulário. A raridade leva também a cor
+ *   do selo.
  */
 final class CardPresenter
 {
@@ -36,7 +37,13 @@ final class CardPresenter
             'namePt' => $card->namePt,
             'game' => ['id' => $card->game->slug, 'name' => $card->game->name],
             'edition' => ['id' => $card->edition->code, 'name' => $card->edition->name],
-            'rarity' => ['id' => $card->rarity->code, 'name' => $card->rarity->name],
+            'rarity' => [
+                'id' => $card->rarity->code,
+                'name' => $card->rarity->name,
+                // A cor do selo: uma chave da paleta, que o frontend traduz em
+                // par de fundo e tinta medido nos dois temas.
+                'color' => $card->rarity->color->value,
+            ],
             'imageUrl' => self::imageUrl($card),
             'createdAt' => $card->createdAt->format(DATE_ATOM),
             'updatedAt' => $card->updatedAt?->format(DATE_ATOM),

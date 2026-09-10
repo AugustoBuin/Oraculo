@@ -34,24 +34,28 @@ final class CatalogPresenter
 
     /**
      * @param list<Edition> $editions
-     * @return list<array{id: string, name: string, active?: bool}>
+     * @return list<array{id: string, name: string, active?: bool, ref?: int, sortOrder?: int}>
      */
     public static function editions(array $editions, bool $withState = false): array
     {
         return array_map(
-            static fn(Edition $e): array => self::item($e->id, $e->code, $e->name, $e->active, $withState),
+            static fn(Edition $e): array => self::item($e->id, $e->code, $e->name, $e->active, $e->sortOrder, $withState),
             $editions
         );
     }
 
     /**
+     * A raridade da administração leva também a cor: é a tela que a escolhe, e
+     * o PUT, que é substituição, precisa mandá-la de volta.
+     *
      * @param list<Rarity> $rarities
-     * @return list<array{id: string, name: string, active?: bool}>
+     * @return list<array{id: string, name: string, active?: bool, ref?: int, sortOrder?: int, color?: string}>
      */
     public static function rarities(array $rarities, bool $withState = false): array
     {
         return array_map(
-            static fn(Rarity $r): array => self::item($r->id, $r->code, $r->name, $r->active, $withState),
+            static fn(Rarity $r): array => self::item($r->id, $r->code, $r->name, $r->active, $r->sortOrder, $withState)
+                + ($withState ? ['color' => $r->color->value] : []),
             $rarities
         );
     }
@@ -59,7 +63,7 @@ final class CatalogPresenter
     /**
      * A forma do item.
      *
-     * Os dois campos extras são ACRESCENTADOS, nunca substituídos: a forma
+     * Os campos extras são ACRESCENTADOS, nunca substituídos: a forma
      * publicada pelo enunciado continua sendo `{id, name}` para todo mundo que
      * não pediu a lista completa — e é ela que a cascata consome.
      *
@@ -74,13 +78,17 @@ final class CatalogPresenter
      * contrato público à ordem de inserção do seed. Como campo à parte, e só
      * para quem administra, ele é o que é — uma referência de escrita.
      *
-     * @return array{id: string, name: string, active?: bool, ref?: int}
+     * `sortOrder` existe porque o PUT é substituição: sem ele, a tela reativava
+     * com ordem 0, e a "Mítica" pulava para o topo da cascata.
+     *
+     * @return array{id: string, name: string, active?: bool, ref?: int, sortOrder?: int}
      */
     private static function item(
         int $id,
         string $code,
         string $name,
         bool $active,
+        int $sortOrder,
         bool $withState,
     ): array {
         $item = ['id' => $code, 'name' => $name];
@@ -88,6 +96,7 @@ final class CatalogPresenter
         if ($withState) {
             $item['active'] = $active;
             $item['ref'] = $id;
+            $item['sortOrder'] = $sortOrder;
         }
 
         return $item;

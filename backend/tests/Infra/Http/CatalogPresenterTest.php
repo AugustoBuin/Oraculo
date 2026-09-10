@@ -7,6 +7,7 @@ namespace Tests\Infra\Http;
 use App\Domain\Catalog\Entity\Edition;
 use App\Domain\Catalog\Entity\Rarity;
 use App\Infra\Http\Presenter\CatalogPresenter;
+use App\Shared\Enum\RarityColor;
 use Tests\TestCase;
 
 /**
@@ -82,5 +83,31 @@ final class CatalogPresenterTest extends TestCase
         $comEstado = CatalogPresenter::rarities($rarities, true);
         $this->assertSame(31, $comEstado[0]['ref']);
         $this->assertTrue($comEstado[0]['active']);
+    }
+
+    public function testAdministracaoRecebeAOrdemParaOPutLevarORegistroInteiro(): void
+    {
+        // O PUT é substituição. Sem a ordem na listagem, a tela reativava com
+        // `sortOrder: 0` e a "Mítica" pulava para o topo da cascata.
+        $this->assertSame(1, CatalogPresenter::editions($this->editions(), true)[0]['sortOrder']);
+
+        $rarities = [Rarity::with(31, 1, 'mythic', 'Mítica', true, 4)];
+        $this->assertSame(4, CatalogPresenter::rarities($rarities, true)[0]['sortOrder']);
+    }
+
+    public function testAdministracaoDeRaridadeRecebeACor(): void
+    {
+        $rarities = [Rarity::with(31, 1, 'mythic', 'Mítica', true, 4, RarityColor::COPPER)];
+
+        $this->assertSame('copper', CatalogPresenter::rarities($rarities, true)[0]['color']);
+    }
+
+    public function testAListagemPublicaDeRaridadeNaoGanhaCampo(): void
+    {
+        // A cascata é um `<select>` nativo e não mostra cor: a forma `{id, name}`
+        // continua a mesma para quem não administra.
+        $rarities = [Rarity::with(31, 1, 'mythic', 'Mítica', true, 4, RarityColor::COPPER)];
+
+        $this->assertSame(['id' => 'mythic', 'name' => 'Mítica'], CatalogPresenter::rarities($rarities)[0]);
     }
 }
