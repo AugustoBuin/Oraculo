@@ -51,15 +51,19 @@
    * primária por contexto — a raridade é o mecanismo que faz o usuário saber
    * onde apertar sem ler (§10.2).
    *
-   * AZUL, como o interativo do molde novo. Era um vermelho-terracota quase
-   * igual ao de perigo: "Nova carta" e "Excluir" disputavam o mesmo sinal, e
-   * o sinal de perigo precisa ser só dele. O azul do site (#0085ff) dá
-   * 3,35:1; este aceita branco a 5,80:1 e serve como texto sobre o fundo, a
-   * 5,10:1.
+   * VIOLETA, a cor do oráculo — a escolha que dá identidade ao produto, e
+   * não uma herdada de biblioteca. O azul do molde (#0062cc) caía no mesmo
+   * matiz dos azuis-padrão (257° em OKLCH; Tailwind 263°, Bootstrap 260°).
+   * Foi girado para 290° com a mesma luminosidade e o mesmo croma, fora da
+   * faixa do "blurple" de SaaS (270–280°) e longe do roxo da LigaYuGiOh
+   * (317°). Aceita branco a 6,11:1 e serve como texto sobre o fundo, a 5,37:1.
+   *
+   * E segue longe do perigo: o terracota antigo era quase o vermelho de
+   * "Excluir", e o sinal de perigo precisa ser só dele.
    */
-  --color-accent: #0062cc;
+  --color-accent: #6a4bc6;
   --color-on-accent: #ffffff;
-  --color-accent-soft: #ddeaf6;
+  --color-accent-soft: #e7e6f6;
 
   /*
    * Estados. Cada matiz tem um significado registrado e não é reaproveitado
@@ -68,8 +72,8 @@
    * própria tinta em cima.
    *
    * O verde é o do "menor preço" da Liga, que já passa (5,95:1). O
-   * informativo virou o índigo do molde novo: com a ação em azul, um
-   * informativo também azul faria dois papéis com o mesmo matiz.
+   * informativo é o azul que a ação deixou livre — azul para informação é a
+   * convenção mais comum, e este já estava medido.
    */
   --color-success: #167400;
   --color-success-soft: #e2f1dc;
@@ -77,12 +81,12 @@
   --color-attention-soft: #f7eddb;
   --color-danger: #c30010;
   --color-danger-soft: #fde7e7;
-  --color-info: #48469c;
-  --color-info-soft: #e7e7f5;
+  --color-info: #0062cc;
+  --color-info-soft: #ddeaf6;
 
   /* O anel de foco nunca é removido; só substituído por um visível (§9.2).
      É a cor da ação: foco e ação são o mesmo convite a interagir. */
-  --color-focus: #0062cc;
+  --color-focus: #6a4bc6;
 
   /* ---------------------------------------------------------------------
    * Tipografia — escala fechada. Não se inventa valor intermediário (§10.3).
@@ -178,12 +182,12 @@
      * ESTE É O PAR QUE O §10.2 DESCREVE E QUE MAIS REPROVA.
      *
      * A superfície de acento clareia no tema escuro, e branco fixo em cima
-     * dela cai para 2,55:1. A tinta troca junto com a superfície: aqui ela é
-     * escura, a 7,29:1. Branco não é tinta — é uma cor como outra qualquer.
+     * dela cai para 2,66:1. A tinta troca junto com a superfície: aqui ela é
+     * escura, a 7,12:1. Branco não é tinta — é uma cor como outra qualquer.
      */
-    --color-accent: #5ea4ff;
-    --color-on-accent: #0b1320;
-    --color-accent-soft: #132437;
+    --color-accent: #a290fa;
+    --color-on-accent: #110f1e;
+    --color-accent-soft: #231f36;
 
     --color-success: #4ade80;
     --color-success-soft: #10241a;
@@ -191,10 +195,10 @@
     --color-attention-soft: #2a2009;
     --color-danger: #ff6b6b;
     --color-danger-soft: #2d1616;
-    --color-info: #a9a7f5;
-    --color-info-soft: #1c1b33;
+    --color-info: #5ea4ff;
+    --color-info-soft: #132437;
 
-    --color-focus: #8ec1ff;
+    --color-focus: #bcb2fc;
 
     /* A sombra precisa ser mais densa para existir sobre fundo escuro. */
     --shadow-overlay: 0 3px 6px -4px rgb(0 0 0 / 0.48), 0 6px 16px rgb(0 0 0 / 0.32),
@@ -214,9 +218,9 @@
 
   --color-brand: #ff7a6e;
 
-  --color-accent: #5ea4ff;
-  --color-on-accent: #0b1320;
-  --color-accent-soft: #132437;
+  --color-accent: #a290fa;
+  --color-on-accent: #110f1e;
+  --color-accent-soft: #231f36;
 
   --color-success: #4ade80;
   --color-success-soft: #10241a;
@@ -224,10 +228,10 @@
   --color-attention-soft: #2a2009;
   --color-danger: #ff6b6b;
   --color-danger-soft: #2d1616;
-  --color-info: #a9a7f5;
-  --color-info-soft: #1c1b33;
+  --color-info: #5ea4ff;
+  --color-info-soft: #132437;
 
-  --color-focus: #8ec1ff;
+  --color-focus: #bcb2fc;
 
   --shadow-overlay: 0 3px 6px -4px rgb(0 0 0 / 0.48), 0 6px 16px rgb(0 0 0 / 0.32),
     0 9px 28px 8px rgb(0 0 0 / 0.2);

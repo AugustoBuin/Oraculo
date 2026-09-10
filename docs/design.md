@@ -43,22 +43,30 @@ Medido par a par, o site reprova em três dos tons que usa como texto:
 | Par no site                                   | Medido | O que foi feito                                  |
 | --------------------------------------------- | ------ | ------------------------------------------------ |
 | Branco sobre o vermelho da marca `#ef4036`    | 3,85:1 | Marca fechada para `#cc281d`, só no logotipo     |
-| Azul do interativo `#0085ff` sobre branco     | 3,62:1 | Ação fechada para `#0062cc` — branco a 5,80:1    |
+| Azul do interativo `#0085ff` sobre branco     | 3,62:1 | Fechado para `#0062cc`, e dado ao informativo    |
 | Metadado `#797a7b` sobre o fundo `#f0f0f2`    | 3,78:1 | Metadado fechado para `#67686b` — 4,90:1         |
 
 O que mais mudou, e por quê:
 
-**1. A ação ficou azul, e o perigo ficou só com o vermelho.** O acento antigo era um
-vermelho-terracota (`#bf3520`) quase igual ao de perigo (`#b91c1c`): "Nova carta" e
-"Excluir" disputavam o mesmo sinal. No molde novo o azul é o interativo; seguir o molde
-devolve ao vermelho o significado que ele tem de ter numa ferramenta que exclui coisas.
+**1. A ação saiu do vermelho e ficou violeta.** O acento antigo era um vermelho-terracota
+(`#bf3520`) quase igual ao de perigo (`#b91c1c`): "Nova carta" e "Excluir" disputavam o
+mesmo sinal. A primeira versão seguiu o azul interativo do molde, e o azul caiu no matiz dos
+azuis-padrão de biblioteca — 257° em OKLCH, contra 263° do Tailwind e 260° do Bootstrap. O
+autor pediu identidade própria, e o azul foi girado para **290°**, violeta, com a mesma
+luminosidade e o mesmo croma: o contraste até melhora (branco a 6,11:1).
+
+Violeta e índigo são a cor do oráculo, da adivinhação, da ametista — a escolha vem do nome
+do produto, não de um padrão. A faixa saiu por exclusão: 270–280° é o "blurple" que virou
+padrão de SaaS, e acima de 310° o Oráculo leria como a LigaYuGiOh (317°), quando ele
+gerencia todos os jogos.
 
 **2. A marca vive num lugar só.** O vermelho da LigaPokemon entra como `--color-brand`, e
 só o logotipo "Oráculo" o usa. É identidade, não ação nem estado — espalhado, ele voltaria a
 competir com o perigo.
 
-**3. O informativo virou índigo.** Com a ação em azul, um informativo também azul faria dois
-papéis com o mesmo matiz. O índigo `#48469c` também é do molde.
+**3. O informativo ficou com o azul.** A ação em violeta deixou o azul livre, e azul para
+informação é a convenção mais comum. Ele já estava medido: é o `#0062cc` que a ação usou na
+primeira versão.
 
 **4. Neutros frios, texto neutro.** Página `#f0f0f2`, superfície branca, linha `#d8dddf`.
 O texto corrente `#4a4a4a` é o mesmo em todos os portais da Liga. O creme e o texto
@@ -83,8 +91,8 @@ branco em cima. Todo acento precisa servir aos dois papéis, e é medido nos doi
 
 **Branco não é tinta.** É o erro que o §10.2 descreve: *"quando a superfície clareia no tema
 escuro, o branco reprova no contraste"*. No escuro, a superfície de acento clareia para
-`#5ea4ff`, e branco em cima dela cai para **2,55:1**. A tinta troca junto com a superfície:
-`--color-on-accent` é `#ffffff` no claro e `#0b1320` no escuro, a 7,29:1.
+`#a290fa`, e branco em cima dela cai para **2,66:1**. A tinta troca junto com a superfície:
+`--color-on-accent` é `#ffffff` no claro e `#110f1e` no escuro, a 7,12:1.
 
 **Estado se redefine por tema.** O Anexo D declarava os quatro estados uma vez só, e cada um
 reprovava em um dos temas. Todo estado tem valor próprio nos dois temas, mais um
@@ -115,9 +123,9 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Metadado             | `#67686b` | superfície `#ffffff`        | **5,57:1**  |
 | Marca (logotipo)     | `#cc281d` | fundo `#f0f0f2`             | **4,74:1**  |
 | Marca (logotipo)     | `#cc281d` | superfície `#ffffff`        | **5,40:1**  |
-| Acento como texto    | `#0062cc` | fundo `#f0f0f2`             | **5,10:1**  |
-| Acento como texto    | `#0062cc` | superfície `#ffffff`        | **5,80:1**  |
-| Tinta sobre o acento | `#ffffff` | acento `#0062cc`            | **5,80:1**  |
+| Acento como texto    | `#6a4bc6` | fundo `#f0f0f2`             | **5,37:1**  |
+| Acento como texto    | `#6a4bc6` | superfície `#ffffff`        | **6,11:1**  |
+| Tinta sobre o acento | `#ffffff` | acento `#6a4bc6`            | **6,11:1**  |
 | Sucesso              | `#167400` | fundo `#f0f0f2`             | **5,22:1**  |
 | Sucesso              | `#167400` | superfície `#ffffff`        | **5,95:1**  |
 | Sucesso              | `#167400` | sucesso suave `#e2f1dc`     | **5,05:1**  |
@@ -127,10 +135,10 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Perigo               | `#c30010` | fundo `#f0f0f2`             | **5,54:1**  |
 | Perigo               | `#c30010` | superfície `#ffffff`        | **6,31:1**  |
 | Perigo               | `#c30010` | perigo suave `#fde7e7`      | **5,34:1**  |
-| Informativo          | `#48469c` | fundo `#f0f0f2`             | **7,01:1**  |
-| Informativo          | `#48469c` | superfície `#ffffff`        | **7,98:1**  |
-| Informativo          | `#48469c` | informativo suave `#e7e7f5` | **6,52:1**  |
-| Acento em etiqueta   | `#0062cc` | acento suave `#ddeaf6`      | **4,75:1**  |
+| Informativo          | `#0062cc` | fundo `#f0f0f2`             | **5,10:1**  |
+| Informativo          | `#0062cc` | superfície `#ffffff`        | **5,80:1**  |
+| Informativo          | `#0062cc` | informativo suave `#ddeaf6` | **4,75:1**  |
+| Acento em etiqueta   | `#6a4bc6` | acento suave `#e7e6f6`      | **4,96:1**  |
 
 ### Tema escuro
 
@@ -144,9 +152,9 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Metadado             | `#9aa0a8` | superfície `#1b1e23`        | **6,34:1**  |
 | Marca (logotipo)     | `#ff7a6e` | fundo `#111317`             | **7,31:1**  |
 | Marca (logotipo)     | `#ff7a6e` | superfície `#1b1e23`        | **6,57:1**  |
-| Acento como texto    | `#5ea4ff` | fundo `#111317`             | **7,29:1**  |
-| Acento como texto    | `#5ea4ff` | superfície `#1b1e23`        | **6,55:1**  |
-| Tinta sobre o acento | `#0b1320` | acento `#5ea4ff`            | **7,29:1**  |
+| Acento como texto    | `#a290fa` | fundo `#111317`             | **7,00:1**  |
+| Acento como texto    | `#a290fa` | superfície `#1b1e23`        | **6,29:1**  |
+| Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |
 | Sucesso              | `#4ade80` | fundo `#111317`             | **10,67:1** |
 | Sucesso              | `#4ade80` | superfície `#1b1e23`        | **9,59:1**  |
 | Sucesso              | `#4ade80` | sucesso suave `#10241a`     | **9,35:1**  |
@@ -156,10 +164,10 @@ logotipo fica no cabeçalho branco, a 5,40:1.
 | Perigo               | `#ff6b6b` | fundo `#111317`             | **6,70:1**  |
 | Perigo               | `#ff6b6b` | superfície `#1b1e23`        | **6,02:1**  |
 | Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
-| Informativo          | `#a9a7f5` | fundo `#111317`             | **8,44:1**  |
-| Informativo          | `#a9a7f5` | superfície `#1b1e23`        | **7,59:1**  |
-| Informativo          | `#a9a7f5` | informativo suave `#1c1b33` | **7,60:1**  |
-| Acento em etiqueta   | `#5ea4ff` | acento suave `#132437`      | **6,16:1**  |
+| Informativo          | `#5ea4ff` | fundo `#111317`             | **7,29:1**  |
+| Informativo          | `#5ea4ff` | superfície `#1b1e23`        | **6,55:1**  |
+| Informativo          | `#5ea4ff` | informativo suave `#132437` | **6,16:1**  |
+| Acento em etiqueta   | `#a290fa` | acento suave `#231f36`      | **5,99:1**  |
 
 ---
 
@@ -177,12 +185,12 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
 | `--color-line`      | Borda e divisória                                           |
 | `--color-brand`     | A marca. Só o logotipo "Oráculo" — em nenhum outro lugar    |
-| `--color-accent`    | **A voz única de ação**, em azul. Uma ação primária por contexto |
+| `--color-accent`    | **A voz única de ação**, em violeta. Uma ação primária por contexto |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
 | `--color-success`   | Operação concluída                                          |
 | `--color-attention` | Aviso que não impede — duplicidade de nome (RN-04)          |
 | `--color-danger`    | Exclusão e erro que bloqueia                                |
-| `--color-info`      | Informação neutra — índigo, para não repetir o azul da ação |
+| `--color-info`      | Informação neutra — o azul que a ação deixou livre          |
 | `--color-focus`     | O anel de foco                                              |
 
 **A cor de acento ocupa no máximo ~10% da tela.** Se duas coisas clicáveis estão com a cor de
