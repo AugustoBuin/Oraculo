@@ -5,26 +5,19 @@ declare(strict_types=1);
 namespace App\Domain\Catalog\Gateway;
 
 /**
- * A escrita de um item de catálogo que pertence a um jogo.
+ * O que edição e raridade compartilham como itens de catálogo: desativar,
+ * conferir código repetido, saber o jogo dono e se alguma carta usa o item.
  *
- * Edição e raridade são entidades separadas de propósito — vão divergir —, mas
- * a **escrita** das duas é idêntica: criar dentro de um jogo, renomear, reordenar
- * e desativar. Esta porta expressa esse conceito compartilhado e elimina seis
- * classes quase iguais.
- *
- * É o teste do §1.3 aplicado na direção contrária: separar Edition de Rarity
- * elimina acoplamento entre conceitos que vão divergir; unificar a escrita
- * elimina duplicação de código que não vai divergir. As duas decisões olham
- * para o mesmo critério.
+ * Criar e alterar já moraram aqui, quando a escrita das duas era idêntica. A
+ * raridade ganhou cor, a escrita divergiu, e cada uma passou a declarar a sua
+ * (EditionGateway, RarityGateway). É o mesmo critério nas duas direções: unir
+ * o que não diverge, separar o que diverge. Desativar continua comum porque é
+ * a mesma operação para as duas.
  */
 interface CatalogItemGateway
 {
     /** Nome legível do tipo, para as mensagens: "edição", "raridade". */
     public function label(): string;
-
-    public function insert(int $gameId, string $code, string $name, int $sortOrder): int;
-
-    public function updateDetails(int $id, string $name, int $sortOrder, bool $active): void;
 
     public function deactivate(int $id): void;
 

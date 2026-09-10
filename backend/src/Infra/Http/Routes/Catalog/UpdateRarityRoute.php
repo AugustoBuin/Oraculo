@@ -8,24 +8,24 @@ use App\Infra\Http\Request;
 use App\Infra\Http\Response;
 use App\Infra\Http\Route;
 use App\Shared\Enum\HttpMethod;
-use App\UseCases\Catalog\UpdateCatalogItemUseCase;
+use App\UseCases\Catalog\UpdateRarityInput;
+use App\UseCases\Catalog\UpdateRarityUseCase;
 
 /**
- * Renomeia, reordena ou reativa uma edição ou raridade.
+ * Renomeia, reordena, desativa, reativa ou pinta uma raridade.
  *
  * O `code` não é lido do corpo de propósito: identificador público não muda.
  */
-final class UpdateCatalogItemRoute implements Route
+final class UpdateRarityRoute implements Route
 {
     private function __construct(
-        private readonly string $path,
-        private readonly UpdateCatalogItemUseCase $useCase,
+        private readonly UpdateRarityUseCase $useCase,
     ) {
     }
 
-    public static function create(string $path, UpdateCatalogItemUseCase $useCase): self
+    public static function create(UpdateRarityUseCase $useCase): self
     {
-        return new self($path, $useCase);
+        return new self($useCase);
     }
 
     public function method(): HttpMethod
@@ -35,19 +35,20 @@ final class UpdateCatalogItemRoute implements Route
 
     public function path(): string
     {
-        return $this->path;
+        return '/api/rarities/{id}';
     }
 
     public function handle(Request $request): Response
     {
-        $this->useCase->execute(
-            itemId: (int) $request->param('id'),
+        $this->useCase->execute(new UpdateRarityInput(
+            rarityId: (int) $request->param('id'),
             name: is_string($request->body('name')) ? $request->body('name') : '',
             sortOrder: is_int($request->body('sortOrder')) ? $request->body('sortOrder') : 0,
             // Ausente significa "mantém ativo": a reativação é explícita, e
             // esquecer o campo não pode desativar um item por acidente.
             active: $request->body('active') !== false,
-        );
+            color: ColorField::read($request),
+        ));
 
         return Response::noContent();
     }
