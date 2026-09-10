@@ -58,11 +58,11 @@ suite("shared/theme/palette · a fórmula de contraste", () => {
     assertSame(contrastRatio([0, 0, 0], [191, 53, 32]), contrastRatio([191, 53, 32], [0, 0, 0]));
   });
 
-  test("concorda com a tabela medida do design.md: acento sobre branco dá 5,80:1", () => {
+  test("concorda com a tabela medida do design.md: acento sobre branco dá 6,11:1", () => {
     // O número vem da §3 do `docs/design.md`. A tela tem de chegar ao mesmo
     // valor da tabela, ou uma das duas está errada — e este teste muda junto
     // com a tabela sempre que o acento mudar.
-    assertSame(contrastRatio(resolveColor("#0062cc"), resolveColor("#ffffff")).toFixed(2), "5.80");
+    assertSame(contrastRatio(resolveColor("#6a4bc6"), resolveColor("#ffffff")).toFixed(2), "6.11");
   });
 });
 
