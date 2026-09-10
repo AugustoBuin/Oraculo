@@ -16,6 +16,7 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
 } from "@/shared/config/constants.js";
+import { rarityColor } from "@/features/catalogs/rarity-colors.js";
 import { isSafeUrl } from "@/shared/dom/safe-url.js";
 import { cache, cacheKey } from "@/shared/store/cache.js";
 
@@ -28,6 +29,29 @@ function parseReference(raw) {
   const { id, name } = raw;
 
   return typeof id === "string" && typeof name === "string" ? { id, name } : null;
+}
+
+/**
+ * A raridade da carta, com a cor do selo.
+ *
+ * Cor fora da paleta vira grafite e fica registrada para quem desenvolve — a
+ * carta continua na galeria. Cor é enfeite de leitura; derrubar a carta por
+ * ela seria o mesmo erro de derrubar a listagem por uma linha ruim (§7.3).
+ */
+function parseRarity(raw) {
+  const reference = parseReference(raw);
+
+  if (reference === null) {
+    return null;
+  }
+
+  const color = rarityColor(raw.color);
+
+  if (raw.color !== undefined && color !== raw.color) {
+    console.error("[cards] cor de raridade fora da paleta, exibida como grafite", { raw });
+  }
+
+  return { ...reference, color };
 }
 
 /**
@@ -51,7 +75,7 @@ export function parseCard(raw) {
 
   const game = parseReference(raw.game);
   const edition = parseReference(raw.edition);
-  const rarity = parseReference(raw.rarity);
+  const rarity = parseRarity(raw.rarity);
 
   if (game === null || edition === null || rarity === null) {
     return null;

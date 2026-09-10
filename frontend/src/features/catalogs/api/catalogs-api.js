@@ -12,6 +12,7 @@
 import { api } from "@/shared/api/client.js";
 import { API_ENDPOINTS } from "@/shared/api/endpoints.js";
 import { ApiError, MALFORMED_MESSAGE } from "@/shared/api/errors.js";
+import { rarityColor } from "@/features/catalogs/rarity-colors.js";
 import { CACHE_TTL_MS } from "@/shared/config/constants.js";
 import { cache, cacheKey } from "@/shared/store/cache.js";
 
@@ -117,6 +118,13 @@ async function listForAdmin(path, { signal } = {}) {
         // `active` só vem para ADMIN. Ausente, o item é tratado como ativo —
         // que é o que a listagem comum devolve.
         active: raw.active !== false,
+        // O PUT é substituição: a ordem e a cor lidas aqui são as que voltam
+        // no corpo. Sem elas, reativar mandava `sortOrder: 0` e a "Mítica"
+        // pulava para o topo da cascata.
+        sortOrder: Number.isInteger(raw.sortOrder) ? raw.sortOrder : 0,
+        // Só a raridade tem cor. A edição fica com `null`, e a escrita dela
+        // não manda o campo.
+        color: typeof raw.color === "string" ? rarityColor(raw.color) : null,
       });
       continue;
     }
@@ -139,8 +147,8 @@ export const listRaritiesForAdmin = (gameId, options) =>
  * `code` vira parte da URL pública e é único **dentro do jogo**: o mesmo
  * código em jogos diferentes é aceito, e repetido no mesmo jogo devolve `409`.
  */
-async function createItem(path, { code, name, sortOrder }) {
-  await api.post(path, { code: code.trim(), name: name.trim(), sortOrder }, { silent: true });
+async function createItem(path, { code, name, sortOrder }, extra = {}) {
+  await api.post(path, { code: code.trim(), name: name.trim(), sortOrder, ...extra }, { silent: true });
 
   invalidateCatalogs();
 }
@@ -148,8 +156,9 @@ async function createItem(path, { code, name, sortOrder }) {
 export const createEdition = (gameId, data) =>
   createItem(API_ENDPOINTS.catalogs.editions(gameId), data);
 
+/** A raridade leva a cor do selo; ausente, o servidor a cria grafite. */
 export const createRarity = (gameId, data) =>
-  createItem(API_ENDPOINTS.catalogs.rarities(gameId), data);
+  createItem(API_ENDPOINTS.catalogs.rarities(gameId), data, { color: data.color });
 
 /**
  * Atualiza um item.
@@ -161,17 +170,22 @@ export const createRarity = (gameId, data) =>
  * `code` não vai no corpo porque é **imutável**: ele é o identificador
  * público, aparece na URL e em qualquer filtro que alguém tenha salvo.
  */
-async function updateItem(path, { name, sortOrder, active }) {
-  await api.put(path, { name: name.trim(), sortOrder, active }, { silent: true });
+async function updateItem(path, { name, sortOrder, active }, extra = {}) {
+  await api.put(path, { name: name.trim(), sortOrder, active, ...extra }, { silent: true });
 
   invalidateCatalogs();
 }
 
+/** A edição não tem cor: o campo não vai, mesmo que quem chama o tenha. */
 export const updateEdition = (id, data) =>
   updateItem(API_ENDPOINTS.catalogs.editionById(id), data);
 
+/**
+ * A cor vai sempre: na alteração ela é obrigatória, e o servidor recusa o PUT
+ * sem ela em vez de repintar de grafite a raridade que era ouro.
+ */
 export const updateRarity = (id, data) =>
-  updateItem(API_ENDPOINTS.catalogs.rarityById(id), data);
+  updateItem(API_ENDPOINTS.catalogs.rarityById(id), data, { color: data.color });
 
 /**
  * Desativa um item.
