@@ -335,6 +335,27 @@ autorização. Mais `testRecusaExclusaoDeItemEmUsoComConflictError`.
 
 ---
 
+### B-022 · Cor da raridade · 3 pontos
+**Depende de:** B-021 · **Plano:** `docs/rarity-colors-plan.md`
+
+**Entregar:** a raridade com cor (RF-44): `RarityColor` como allowlist dos dez materiais,
+migrations 0011 e 0012, criar e alterar raridade com cor, e a cor na carta e na listagem da
+administração. A escrita de edição se separa da de raridade, que é a divergência que a cor
+criou.
+
+**Aceite:**
+- [x] Cor fora da paleta, ou que não seja texto, devolve 400 em `color`, junto dos outros campos.
+- [x] Criar sem cor dá grafite; alterar sem cor dá 400 — o PUT é substituição.
+- [x] A listagem pública de raridade continua `{id, name}`; a da administração ganha `color` e `sortOrder`.
+- [x] A cor vem no mesmo `JOIN` da leitura de carta, sem consulta nova.
+- [x] O seed pinta só na inserção; um banco que já existia recebe as cores pela 0012.
+- [x] O caminho genérico de escrita sai, e com ele os campos mortos do M-3.
+
+**Testes:** `RarityColorTest`, `RarityTest`, `CatalogItemRulesTest`, criar e alterar edição e
+raridade, desativar, e os apresentadores de catálogo e de carta — este último não existia.
+
+---
+
 # Épico 3 — Cartas · 9 pontos · 06/09
 
 ---
