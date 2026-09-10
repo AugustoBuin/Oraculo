@@ -198,6 +198,11 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 acento na mesma tela, uma está errada — a raridade é o mecanismo que faz o usuário saber onde
 apertar sem ler.
 
+**A seleção leva o violeta suave.** O item atual do menu e a opção ativa do alternador usam
+`--color-accent-soft`, com o texto primário por cima (13,87:1 no claro, 13,93:1 no escuro):
+é a cor do produto marcando onde a pessoa está. O suave não conta para os ~10% do acento —
+ele não chama para a ação, só situa.
+
 **A regra dos dois sinais.** Nenhum estado depende só de cor: sempre cor **mais** rótulo,
 ícone ou forma. Cor sozinha exclui daltônicos, morre em impressão e some sob sol forte. É por
 isso que `.badge` no `utilities.css` sempre carrega texto.

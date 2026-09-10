@@ -290,7 +290,7 @@
  * quem usa leitor de tela e para quem não distingue os tons (§9.4).
  */
 .nav-link-current {
-  background-color: var(--color-bg);
+  background-color: var(--color-accent-soft);
   color: var(--color-ink);
   font-weight: var(--weight-medium);
 }
@@ -642,7 +642,7 @@
  * a cor deixaria a informação invisível para quem não a enxerga (§9.4).
  */
 .segmented-active {
-  background-color: var(--color-bg);
+  background-color: var(--color-accent-soft);
   color: var(--color-ink);
   font-weight: var(--weight-medium);
 }
