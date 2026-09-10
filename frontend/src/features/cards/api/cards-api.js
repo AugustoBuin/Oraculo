@@ -16,9 +16,9 @@ import {
   DEFAULT_PAGE_SIZE,
   MAX_PAGE_SIZE,
 } from "@/shared/config/constants.js";
-import { rarityColor } from "@/features/catalogs/rarity-colors.js";
 import { isSafeUrl } from "@/shared/dom/safe-url.js";
 import { cache, cacheKey } from "@/shared/store/cache.js";
+import { rarityColor } from "@/shared/theme/rarity-colors.js";
 
 /** Um catálogo referenciado pela carta: jogo, edição ou raridade. */
 function parseReference(raw) {

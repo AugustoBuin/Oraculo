@@ -6,10 +6,10 @@
  * tela ouve o nome, que está sempre escrito.
  */
 
-import { rarityBadge } from "@/features/catalogs/components/rarity-badge.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { assertNull, assertSame, assertTrue, suite, test } from "~/runner.js";
 
-suite("features/catalogs/components/rarity-badge · o selo", () => {
+suite("shared/components/rarity-badge · o selo", () => {
   test("leva a classe do material e o nome escrito", () => {
     const selo = rarityBadge({ name: "Rara", color: "gold" });
 

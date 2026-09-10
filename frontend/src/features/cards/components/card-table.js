@@ -6,7 +6,7 @@
  * lembrada (Decisão de UX nº 3 do PRD).
  */
 
-import { rarityBadge } from "@/features/catalogs/components/rarity-badge.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 
 const COLUMNS = [

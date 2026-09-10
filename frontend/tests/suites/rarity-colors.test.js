@@ -5,10 +5,10 @@
  * `api-contract.md` §4. A ordem importa: é a do seletor.
  */
 
-import { DEFAULT_RARITY_COLOR, RARITY_COLORS, rarityColor } from "@/features/catalogs/rarity-colors.js";
+import { DEFAULT_RARITY_COLOR, RARITY_COLORS, rarityColor } from "@/shared/theme/rarity-colors.js";
 import { assertSame, suite, test } from "~/runner.js";
 
-suite("features/catalogs · a paleta de raridade", () => {
+suite("shared/theme/rarity-colors · a paleta de raridade", () => {
   test("são dez materiais, na ordem da paleta, com o nome em português", () => {
     assertSame(
       RARITY_COLORS.map((color) => color.key).join(" "),

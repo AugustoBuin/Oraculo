@@ -7,7 +7,7 @@
  */
 
 import { button } from "@/shared/components/button.js";
-import { rarityBadge } from "@/features/catalogs/components/rarity-badge.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 
 /**
