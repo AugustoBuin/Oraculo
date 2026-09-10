@@ -171,6 +171,22 @@ existe pela borda. Nenhuma das três auditorias pegou. Corrigido com um token pr
 `MEDIUM` — o rótulo acima de cada campo continua identificando-o —, e `MEDIUM` fica fora do
 ledger por convenção.
 
+**Escrita de catálogo — achados do plano das cores de raridade, em 10/09.** Quatro coisas
+apareceram ao planejar a cor da raridade, todas no código que ela mexe, e todas `MEDIUM` ou
+abaixo — por isso notas, e não linhas:
+
+- **M-3 da auditoria de backend, fechado** (`0712f19`). A escrita de edição e a de raridade se
+  separaram; `SaveCatalogItemInput` e seus dois campos mortos saíram com o caminho genérico.
+- **Reativar zerava a ordem — corrigido** (`50ac781`). A tela mandava `sortOrder: 0` porque a
+  listagem da administração não devolvia a ordem; a "Mítica" reativada pulava para o topo da
+  cascata. A listagem passou a devolver `sortOrder` (e `color`), e o PUT leva o registro
+  inteiro. Coberto pelos testes do corpo do PUT; a verificação na tela ficou pendente — com a
+  janela do navegador oculta, o clique do canal de automação não chega à página.
+- **A escrita de catálogo não tinha teste nenhum, e o apresentador de carta também não**, apesar
+  do B-021 e do ADR-004. Ganharam (`437dd3e`, `0b3f9d9`).
+- **RF-41 e RF-42 pedem "editar", e a tela de catálogos nunca ofereceu** — só criar, desativar e
+  reativar. **Aberto**, em andamento no F-041, na `feature-cores-de-raridade`.
+
 ## Auditorias planejadas
 
 | Quando | Escopo |
