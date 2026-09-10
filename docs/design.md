@@ -75,8 +75,10 @@ lê-se como parte do mesmo lugar. O texto corrente `#4a4a4a` é o mesmo em todos
 Liga. O creme e o texto amarronzado da paleta anterior saíram — eram, além de tudo, o
 primeiro item da lista de clichês de design gerado que a revisão consultou.
 
-**5. O escuro foi composto, não invertido.** Os mesmos matizes, com a tinta clareada e a
-superfície escurecida, e cada par medido de novo.
+**5. O escuro é noite, composta e não invertida.** Fundo índigo muito escuro (`#0f0f16`) em
+vez de cinza, tinta clareada, e cada par medido de novo. O croma fica baixo de propósito: o
+conteúdo da tela é arte de carta, e um entorno muito tingido mudaria a cor que o olho
+percebe nas imagens.
 
 **6. A sombra do que flutua ganhou três camadas**, como no molde: uma curta e marcada junto
 da borda, duas longas e fracas. Continua valendo só para o que flutua (§10.4).
@@ -151,28 +153,28 @@ preenchimento suave medido com a própria tinta em cima.
 
 | Papel                | Tinta     | Sobre                       | Medido      |
 | -------------------- | --------- | --------------------------- | ----------- |
-| Texto primário       | `#eef0f3` | fundo `#131217`             | **16,33:1** |
-| Texto primário       | `#eef0f3` | superfície `#1e1d23`        | **14,65:1** |
-| Texto corrente       | `#c5c9cf` | fundo `#131217`             | **11,21:1** |
-| Texto corrente       | `#c5c9cf` | superfície `#1e1d23`        | **10,06:1** |
-| Metadado             | `#9aa0a8` | fundo `#131217`             | **7,07:1**  |
-| Metadado             | `#9aa0a8` | superfície `#1e1d23`        | **6,35:1**  |
-| Marca (logotipo)     | `#bab3ff` | fundo `#131217`             | **9,75:1**  |
-| Marca (logotipo)     | `#bab3ff` | superfície `#1e1d23`        | **8,75:1**  |
-| Acento como texto    | `#a290fa` | fundo `#131217`             | **7,02:1**  |
-| Acento como texto    | `#a290fa` | superfície `#1e1d23`        | **6,30:1**  |
+| Texto primário       | `#eef0f3` | fundo `#0f0f16`             | **16,72:1** |
+| Texto primário       | `#eef0f3` | superfície `#191920`        | **15,31:1** |
+| Texto corrente       | `#c5c9cf` | fundo `#0f0f16`             | **11,48:1** |
+| Texto corrente       | `#c5c9cf` | superfície `#191920`        | **10,51:1** |
+| Metadado             | `#9aa0a8` | fundo `#0f0f16`             | **7,24:1**  |
+| Metadado             | `#9aa0a8` | superfície `#191920`        | **6,63:1**  |
+| Marca (logotipo)     | `#bab3ff` | fundo `#0f0f16`             | **9,98:1**  |
+| Marca (logotipo)     | `#bab3ff` | superfície `#191920`        | **9,14:1**  |
+| Acento como texto    | `#a290fa` | fundo `#0f0f16`             | **7,19:1**  |
+| Acento como texto    | `#a290fa` | superfície `#191920`        | **6,58:1**  |
 | Tinta sobre o acento | `#110f1e` | acento `#a290fa`            | **7,12:1**  |
-| Sucesso              | `#5ee295` | fundo `#131217`             | **11,35:1** |
-| Sucesso              | `#5ee295` | superfície `#1e1d23`        | **10,19:1** |
+| Sucesso              | `#5ee295` | fundo `#0f0f16`             | **11,62:1** |
+| Sucesso              | `#5ee295` | superfície `#191920`        | **10,65:1** |
 | Sucesso              | `#5ee295` | sucesso suave `#082313`     | **10,15:1** |
-| Atenção              | `#ffbb69` | fundo `#131217`             | **11,15:1** |
-| Atenção              | `#ffbb69` | superfície `#1e1d23`        | **10,01:1** |
+| Atenção              | `#ffbb69` | fundo `#0f0f16`             | **11,42:1** |
+| Atenção              | `#ffbb69` | superfície `#191920`        | **10,46:1** |
 | Atenção              | `#ffbb69` | atenção suave `#2a1903`     | **10,14:1** |
-| Perigo               | `#ff6b6b` | fundo `#131217`             | **6,72:1**  |
-| Perigo               | `#ff6b6b` | superfície `#1e1d23`        | **6,03:1**  |
+| Perigo               | `#ff6b6b` | fundo `#0f0f16`             | **6,88:1**  |
+| Perigo               | `#ff6b6b` | superfície `#191920`        | **6,30:1**  |
 | Perigo               | `#ff6b6b` | perigo suave `#2d1616`      | **6,11:1**  |
-| Informativo          | `#5ea4ff` | fundo `#131217`             | **7,31:1**  |
-| Informativo          | `#5ea4ff` | superfície `#1e1d23`        | **6,56:1**  |
+| Informativo          | `#5ea4ff` | fundo `#0f0f16`             | **7,48:1**  |
+| Informativo          | `#5ea4ff` | superfície `#191920`        | **6,85:1**  |
 | Informativo          | `#5ea4ff` | informativo suave `#132437` | **6,16:1**  |
 | Acento em etiqueta   | `#a290fa` | acento suave `#231f36`      | **5,99:1**  |
 
