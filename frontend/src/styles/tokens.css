@@ -169,14 +169,17 @@
  */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-bg: #131217;
-    --color-surface: #1e1d23;
+    /* Noite: índigo muito escuro, de croma baixo. O conteúdo da tela é arte
+       de carta, e um entorno muito tingido mudaria a cor que o olho percebe
+       nas imagens. */
+    --color-bg: #0f0f16;
+    --color-surface: #191920;
 
-    --color-ink: #eef0f3;   /* 16,33:1 no fundo */
-    --color-body: #c5c9cf;  /* 11,21:1 no fundo */
-    --color-muted: #9aa0a8; /*  6,35:1 na superfície */
+    --color-ink: #eef0f3;   /* 16,72:1 no fundo */
+    --color-body: #c5c9cf;  /* 11,48:1 no fundo */
+    --color-muted: #9aa0a8; /*  6,63:1 na superfície */
 
-    --color-line: #313038;
+    --color-line: #303039;
 
     --color-brand: #bab3ff;
 
@@ -209,14 +212,14 @@
 }
 
 :root[data-theme="dark"] {
-  --color-bg: #131217;
-  --color-surface: #1e1d23;
+  --color-bg: #0f0f16;
+  --color-surface: #191920;
 
   --color-ink: #eef0f3;
   --color-body: #c5c9cf;
   --color-muted: #9aa0a8;
 
-  --color-line: #313038;
+  --color-line: #303039;
 
   --color-brand: #bab3ff;
 
