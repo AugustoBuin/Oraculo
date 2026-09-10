@@ -11,7 +11,7 @@ Contrato do formato: `backend/PADROES.md` §14.1.
 |----|-----|------|--------|-------|--------|--------|-------------|--------|---------|
 | OF-001 | HIGH | 6,5 | Parâmetro de consulta ou cookie em forma de array (`?page[]=1`) vira `ErrorException` e responde 500 em qualquer rota `/api/*`, **sem autenticação** — o erro nasce em `fromGlobals()`, antes do pipeline, e cada requisição grava uma linha de log com stack completa | `backend/src/Infra/Http/Request.php:89`, `backend/src/Infra/Http/Request.php:91` | `2026-09-09-auditoria-final-qualidade-backend.md`; `2026-09-09-auditoria-final-seguranca.md` | open | | 2026-09-09 | |
 | OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
-| OF-003 | HIGH | — | Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click` (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
+| OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
 
 ## Convenções
 
@@ -36,10 +36,16 @@ bytes de entrada produzem kilobytes de stack, sem `logging.options.max-size` no
 `docker-compose.yml`, afogando o único registro de quem tentou autenticar
 (`AuthenticateUserUseCase.php:83-86`).
 
-**Não verificado no navegador, em nenhuma das três auditorias:** a extensão do Chrome não
-estava conectada em 09/09. Ficam por observar em execução — não por leitura — o runner
-autoral do frontend (`http://localhost:8080/tests`), a CSP em vigor numa tela real e o
-console limpo em todos os fluxos. Os três são critério de aceite de F-051.
+**Verificado na tela em 09/09**, depois das auditorias, com a extensão do Chrome já
+conectada: runner autoral do frontend em `214 passou, 0 falhou`; console **sem nenhuma
+mensagem** na galeria recarregada, na tabela e na tela de carta; CSP sem violação alguma —
+as imagens das cartas carregam, e imagem barrada registraria `Refused to load the image`;
+sem rolagem horizontal em 360, 500, 752 e 1424px; e `/cartas/:id`, a tela que nunca tinha
+passado por inspeção, em coluna única no estreito, com pré-visualização e botões cabendo.
+
+**Continua por verificar:** zoom de página em 200% (RNF-04). Largura de janela abaixo de
+500px e zoom de página não se alcançam pelo canal de automação — 360px exigiu a barra de
+dispositivo do DevTools, ligada à mão.
 
 ## Auditorias planejadas
 
