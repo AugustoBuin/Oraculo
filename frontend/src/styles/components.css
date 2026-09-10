@@ -128,6 +128,13 @@
   border-color: var(--color-muted);
 }
 
+/* A busca é pílula, como no molde novo da Liga: é o campo mais usado da
+   listagem, e a forma o distingue dos filtros ao lado sem precisar de cor. */
+.field-input[type="search"] {
+  border-radius: var(--radius-pill);
+  padding-inline: var(--space-4);
+}
+
 /*
  * Erro por DOIS SINAIS: a borda muda de cor e a mensagem aparece em texto
  * (§9.4). Só a borda vermelha excluiria daltônicos e não anunciaria nada para
@@ -253,8 +260,9 @@
   padding-block: var(--space-3);
 }
 
+/* O único lugar da cor da marca: identidade num ponto, não espalhada. */
 .app-brand {
-  color: var(--color-ink);
+  color: var(--color-brand);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   text-decoration: none;

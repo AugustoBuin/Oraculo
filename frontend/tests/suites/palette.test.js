@@ -28,6 +28,7 @@ const NOMES = [
   "--color-body",
   "--color-muted",
   "--color-line",
+  "--color-brand",
   "--color-accent",
   "--color-on-accent",
   "--color-accent-soft",
@@ -57,10 +58,11 @@ suite("shared/theme/palette · a fórmula de contraste", () => {
     assertSame(contrastRatio([0, 0, 0], [191, 53, 32]), contrastRatio([191, 53, 32], [0, 0, 0]));
   });
 
-  test("concorda com a tabela medida do design.md: acento sobre branco dá 5,61:1", () => {
-    // O número vem da §3 do `docs/design.md`. A tela nova tem de chegar ao
-    // mesmo valor da tabela que já existe, ou uma das duas está errada.
-    assertSame(contrastRatio(resolveColor("#bf3520"), resolveColor("#ffffff")).toFixed(2), "5.61");
+  test("concorda com a tabela medida do design.md: acento sobre branco dá 5,80:1", () => {
+    // O número vem da §3 do `docs/design.md`. A tela tem de chegar ao mesmo
+    // valor da tabela, ou uma das duas está errada — e este teste muda junto
+    // com a tabela sempre que o acento mudar.
+    assertSame(contrastRatio(resolveColor("#0062cc"), resolveColor("#ffffff")).toFixed(2), "5.80");
   });
 });
 
@@ -192,7 +194,7 @@ suite("shared/theme/palette · os pares medidos", () => {
     }
   });
 
-  test("são os 22 pares por tema do design.md, mais os dois do foco", () => {
-    assertSame(pares().length, 24);
+  test("são os 24 pares por tema do design.md, mais os dois do foco", () => {
+    assertSame(pares().length, 26);
   });
 });
