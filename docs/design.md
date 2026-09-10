@@ -116,6 +116,8 @@ preenchimento suave medido com a própria tinta em cima.
 
 48 pares. **Piso 4,5:1. Pior par: 4,75:1** — informativo sobre informativo suave, no tema claro.
 
+**Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 9,08:1 no escuro; borda de campo a 3,46:1 no claro e 3,73:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
+
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
 > os dois pares do anel de foco, que pedem 3:1 e não 4,5. Fica fora do menu: é ferramenta
@@ -194,7 +196,8 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-ink`       | Texto primário: título, nome de carta                       |
 | `--color-body`      | Texto corrente                                              |
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
-| `--color-line`      | Borda e divisória                                           |
+| `--color-line`      | Linha decorativa: divisória, borda de cartão e de tabela    |
+| `--color-border`    | Borda de campo — o limite que identifica o controle, a 3:1  |
 | `--color-brand`     | A marca. Só o logotipo "Oráculo" — em nenhum outro lugar    |
 | `--color-accent`    | **A voz única de ação**, em violeta. Uma ação primária por contexto |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
