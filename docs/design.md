@@ -81,7 +81,9 @@ conteúdo da tela é arte de carta, e um entorno muito tingido mudaria a cor que
 percebe nas imagens.
 
 **6. A sombra do que flutua ganhou três camadas**, como no molde: uma curta e marcada junto
-da borda, duas longas e fracas. Continua valendo só para o que flutua (§10.4).
+da borda, duas longas e fracas. A cor é um violeta quase preto em vez de preto puro, e no
+escuro a camada longa vira uma aura violeta fraca — é o que faz o modal existir sobre a
+noite. Continua valendo só para o que flutua (§10.4).
 
 **7. Os estados são as pedras do oráculo.** Rubi para perigo, topázio para atenção, jade
 para sucesso, safira para informação — e ametista, a ação. Nenhum sai da convenção
