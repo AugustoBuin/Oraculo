@@ -10,7 +10,7 @@ Contrato do formato: `backend/PADROES.md` §14.1.
 | ID | Sev | CVSS | Achado | Local | Origem | Status | Responsável | Aberto | Fechado |
 |----|-----|------|--------|-------|--------|--------|-------------|--------|---------|
 | OF-001 | HIGH | 6,5 | Parâmetro de consulta ou cookie em forma de array (`?page[]=1`) vira `ErrorException` e responde 500 em qualquer rota `/api/*`, **sem autenticação** — o erro nasce em `fromGlobals()`, antes do pipeline, e cada requisição grava uma linha de log com stack completa | `backend/src/Infra/Http/Request.php:89`, `backend/src/Infra/Http/Request.php:91` | `2026-09-09-auditoria-final-qualidade-backend.md`; `2026-09-09-auditoria-final-seguranca.md` | fixed | | 2026-09-09 | 2026-09-09 |
-| OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
+| OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 | OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 
 ## Convenções
@@ -80,6 +80,26 @@ suíte do backend foi de 217 para 220.
 
 Some com isso o vetor de inundação de log que a auditoria de segurança levantou: não há mais
 pilha gravada por requisição anônima.
+
+**OF-002 corrigido em 09/09.** As cinco leituras passaram a usar `scope.controller()` — o
+auxiliar que o próprio `events.js` já oferecia e que nenhuma delas chamava — com guarda de
+`signal.aborted` depois do `await` **e** dentro do `catch`. A guarda no `catch` importa tanto
+quanto a outra: sem ela, cancelar viraria estado de erro desenhado num DOM que ninguém mais
+vê. `listForAdmin` passou a aceitar `signal` e a propagá-lo; como `api.list` é a própria
+função exportada, o objeto injetado pela página não precisou mudar.
+
+O caso grave de `catalogs-page` morre na guarda antes de `renderPanels`: sem ela, o `then`
+criava um escopo novo depois do `dispose`, montava os dois painéis e disparava duas
+requisições sobre a tela já morta.
+
+Coberto por `frontend/tests/suites/catalogs-api.test.js`; a suíte foi de 224 para 228. Os
+dois primeiros testes nasceram errados, medindo identidade de sinal — o cliente HTTP tem
+controlador próprio por causa do teto de espera e encaminha o abort por listener, então o
+sinal que chega ao `fetch` nunca é o de quem chamou. Foram reescritos para medir
+comportamento: a leitura em voo é de fato interrompida. As guardas depois do `await`, nas
+páginas, ficam no roteiro manual — camada de DOM, por ADR-004 — e foram percorridas:
+`/catalogos`, `/cartas/:id` e a galeria com filtro pela URL, todas carregando e com console
+limpo.
 
 ## Auditorias planejadas
 

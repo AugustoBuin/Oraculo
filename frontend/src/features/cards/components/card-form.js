@@ -344,8 +344,14 @@ export function cardForm({ scope, card = null, catalogs, onSaved, onCancel }) {
     game.replaceChildren(el("option", { text: "Carregando jogos…", attrs: { value: "" } }));
     game.disabled = true;
 
+    const controller = scope.controller();
+
     try {
-      const games = await catalogs.listGames();
+      const games = await catalogs.listGames({ signal: controller.signal });
+
+      if (controller.signal.aborted) {
+        return;
+      }
 
       game.replaceChildren(
         el("option", { text: "Selecione o jogo", attrs: { value: "" } }),
@@ -370,6 +376,12 @@ export function cardForm({ scope, card = null, catalogs, onSaved, onCancel }) {
         dirty = false;
       }
     } catch (error) {
+      // Cancelar não é falhar: sair do formulário não pode deixar um aviso de
+      // erro num DOM que já saiu da tela.
+      if (controller.signal.aborted) {
+        return;
+      }
+
       game.replaceChildren(el("option", { text: "Não foi possível carregar", attrs: { value: "" } }));
       alertSlot.replaceChildren(inlineMessage({ message: userMessage(error) }));
     }

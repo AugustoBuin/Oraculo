@@ -47,8 +47,16 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
   async function load() {
     renderInto(() => loading(`Carregando ${title.toLowerCase()}…`));
 
+    // Trocar de jogo descarta o painel inteiro; a leitura dele tem de ir junto,
+    // ou a resposta do jogo anterior desenha sobre o painel do novo (RNF-07).
+    const controller = scope.controller();
+
     try {
-      const items = await api.list(gameId);
+      const items = await api.list(gameId, { signal: controller.signal });
+
+      if (controller.signal.aborted) {
+        return;
+      }
 
       if (items.length === 0) {
         renderInto(() =>
@@ -62,6 +70,12 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
 
       renderInto((life) => el("ul", { classes: ["catalog-list"], children: items.map((item) => row(item, life)) }));
     } catch (error) {
+      // Cancelar não é falhar: o painel já foi descartado, e um estado de erro
+      // aqui só existiria para ninguém ver.
+      if (controller.signal.aborted) {
+        return;
+      }
+
       renderInto((life) =>
         failure({
           message: userMessage(error),

@@ -123,8 +123,14 @@ export function cardsFilters({ query, scope, onChange }) {
     game.replaceChildren(el("option", { text: "Carregando jogos…", attrs: { value: "" } }));
     game.disabled = true;
 
+    const controller = scope.controller();
+
     try {
-      const games = await listGames();
+      const games = await listGames({ signal: controller.signal });
+
+      if (controller.signal.aborted) {
+        return;
+      }
 
       game.replaceChildren(
         el("option", { text: "Todos os jogos", attrs: { value: "" } }),
@@ -146,6 +152,12 @@ export function cardsFilters({ query, scope, onChange }) {
         ]);
       }
     } catch (error) {
+      // Cancelar não é falhar: sair da tela não pode virar registro de erro
+      // nem estado de falha num controle que já foi descartado.
+      if (controller.signal.aborted) {
+        return;
+      }
+
       game.replaceChildren(el("option", { text: "Não foi possível carregar", attrs: { value: "" } }));
       console.error("[filtros] falha ao carregar os jogos", { error });
     }
