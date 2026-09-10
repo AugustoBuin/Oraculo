@@ -23,6 +23,7 @@ import "~/suites/cascade-select.test.js";
 import "~/suites/preference.test.js";
 import "~/suites/card-image.test.js";
 import "~/suites/card-tile.test.js";
+import "~/suites/card-gallery.test.js";
 import "~/suites/feedback.test.js";
 import "~/suites/change-password-form.test.js";
 

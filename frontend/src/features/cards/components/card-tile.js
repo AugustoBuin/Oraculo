@@ -35,9 +35,9 @@ function imagePlaceholder(card) {
 
 /**
  * @param {object} card já normalizado por `parseCard`
- * @param {{ scope: object, canDelete?: boolean }} config
+ * @param {{ scope: object, canDelete?: boolean, canOpen?: boolean }} config
  */
-export function cardTile(card, { scope, canDelete = false }) {
+export function cardTile(card, { scope, canDelete = false, canOpen = false }) {
   const media = el("div", { classes: ["card-media"] });
 
   if (card.imageUrl === null) {
@@ -116,9 +116,24 @@ export function cardTile(card, { scope, canDelete = false }) {
 
   return el("article", {
     classes: ["card-tile"],
-    // Lido pela delegação de evento do contêiner: um listener para a grade
-    // inteira, não um por cartão (§12.3).
-    attrs: { "data-card-id": card.id },
+    attrs: {
+      // Lido pela delegação de evento do contêiner: um listener para a grade
+      // inteira, não um por cartão (§12.3).
+      "data-card-id": card.id,
+      /*
+       * O cartão inteiro é o alvo de abrir, então o cartão inteiro precisa ser
+       * alcançável sem mouse (§9.2) — a mesma decisão que a linha da tabela já
+       * tomava. Sem isto, o Tab pulava de "Excluir" para "Excluir": a única
+       * ação alcançável por teclado em cada carta era a destrutiva (OF-003).
+       *
+       * `tabindex` só quando há o que abrir. Parada de tabulação que não faz
+       * nada é ruído: a pessoa para no cartão, aperta Enter e nada acontece.
+       * O anel de foco vem da regra global de `:focus-visible` (base.css), não
+       * de estilo próprio — cartão e linha de tabela devem parecer a mesma
+       * coisa quando focados.
+       */
+      ...(canOpen ? { tabindex: "0" } : {}),
+    },
     children: [media, el("div", { classes: ["card-body"], children: body })],
   });
 }

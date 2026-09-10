@@ -11,7 +11,7 @@ Contrato do formato: `backend/PADROES.md` §14.1.
 |----|-----|------|--------|-------|--------|--------|-------------|--------|---------|
 | OF-001 | HIGH | 6,5 | Parâmetro de consulta ou cookie em forma de array (`?page[]=1`) vira `ErrorException` e responde 500 em qualquer rota `/api/*`, **sem autenticação** — o erro nasce em `fromGlobals()`, antes do pipeline, e cada requisição grava uma linha de log com stack completa | `backend/src/Infra/Http/Request.php:89`, `backend/src/Infra/Http/Request.php:91` | `2026-09-09-auditoria-final-qualidade-backend.md`; `2026-09-09-auditoria-final-seguranca.md` | open | | 2026-09-09 | |
 | OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
-| OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | open | | 2026-09-09 | |
+| OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 
 ## Convenções
 
@@ -51,6 +51,19 @@ ligados à mão.
 
 **Com isso, todo critério mensurável de F-050 e F-051 está verificado em execução, menos
 um: a operação só por teclado, que é o OF-003 e está reprovada.**
+
+**OF-003 corrigido em 09/09**, com o padrão que a visão tabela já usava: `tabindex` no
+cartão e um `keydown` na grade tratando `Enter` e `Espaço`, com saída antecipada para o
+botão de excluir — que é nativo, traduz as duas teclas em `click` sozinho, e sem a saída
+seria contado duas vezes. O `tabindex` acompanha `onOpen`: parada de tabulação que não abre
+nada é ruído para quem navega sem mouse. Nenhum estilo novo — o anel vem da regra global de
+`:focus-visible`, então cartão e linha de tabela ficam iguais quando focados.
+
+Coberto por `frontend/tests/suites/card-gallery.test.js`, escrito antes da correção: 4
+vermelhos viraram verdes, e a suíte foi de 214 para 224. Verificado na tela, a 200% de
+zoom: a ordem de tabulação agora é busca → Jogo → Ordenar por → **cartão 1** → Excluir 1 →
+**cartão 2**, e `Enter` no cartão focado abre a carta. Fica `fixed`, não `verified` — mover
+para `verified` é da auditoria, não de quem corrigiu.
 
 ## Auditorias planejadas
 
