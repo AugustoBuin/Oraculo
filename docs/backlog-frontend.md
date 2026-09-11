@@ -594,7 +594,7 @@ cor no formulário da raridade e o **Editar** por linha no painel de catálogo.
 - [x] O seletor é um grupo de rádio nativo, e cada opção é o próprio selo, com o nome.
 - [x] Cada linha do painel tem Editar: nome e, na raridade, cor; o código aparece e não muda.
 - [x] O seletor e a edição entram na rede de geometria.
-- [ ] Verificado na tela: dois temas, 200%, teclado no grupo de rádio, `EDITOR` pela URL.
+- [x] Verificado na tela: dois temas, 200%, teclado no grupo de rádio, `EDITOR` pela URL.
 
 **Testes:** a paleta do cliente, o selo, os parsers de carta e de catálogo, a regra da
 `/paleta` para fundo de selo, e o cartão com o selo.

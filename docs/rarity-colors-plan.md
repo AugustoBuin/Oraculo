@@ -1,9 +1,9 @@
 # Plano — cores de raridade
 
 > **Estado:** aprovado em 10/09/2026 e **executado** na `feature-cores-de-raridade`, com
-> backend (B-022) e frontend (F-041) completos. Da verificação na tela faltam a fonte em
-> 200%, o tema claro visto na tela e o `EDITOR` pela URL. As cores foram medidas contra a
-> paleta que foi para `development` em `ed0785d`. **Onde a execução divergiu do plano: §11.**
+> backend (B-022) e frontend (F-041) completos e verificados na tela em 11/09. As cores foram
+> medidas contra a paleta que foi para `development` em `ed0785d`. **Onde a execução divergiu
+> do plano: §11.**
 
 ---
 
