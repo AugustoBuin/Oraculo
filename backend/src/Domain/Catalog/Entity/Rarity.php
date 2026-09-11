@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Catalog\Entity;
 
+use App\Shared\Enum\RarityColor;
+
 /**
  * Uma raridade, pertencente a exatamente um jogo.
  *
@@ -16,6 +18,9 @@ namespace App\Domain\Catalog\Entity;
  *
  * `sortOrder` existe porque raridade tem ordem natural — comum, incomum, rara,
  * mítica — que não é a alfabética.
+ *
+ * `color` é o que separou a escrita da raridade da escrita da edição: um
+ * material da paleta, que a carta exibe no selo da raridade.
  */
 final class Rarity
 {
@@ -26,6 +31,7 @@ final class Rarity
         public readonly string $name,
         public readonly bool $active,
         public readonly int $sortOrder,
+        public readonly RarityColor $color,
     ) {
     }
 
@@ -36,8 +42,9 @@ final class Rarity
         string $name,
         bool $active,
         int $sortOrder,
+        RarityColor $color = RarityColor::DEFAULT,
     ): self {
-        return new self($id, $gameId, $code, $name, $active, $sortOrder);
+        return new self($id, $gameId, $code, $name, $active, $sortOrder, $color);
     }
 
     public function belongsTo(Game $game): bool

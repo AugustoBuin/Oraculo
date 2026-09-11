@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Infra\Repository\Catalog;
 
 use App\Domain\Catalog\Entity\Rarity;
-use App\Domain\Catalog\Gateway\CatalogItemGateway;
 use App\Domain\Catalog\Gateway\RarityGateway;
+use App\Shared\Enum\RarityColor;
 
-final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
+final class RarityRepositoryPdo implements RarityGateway
 {
-    private const COLUMNS = 'id, game_id, code, name, active, sort_order';
+    private const COLUMNS = 'id, game_id, code, name, color, active, sort_order';
 
     public function __construct(
         private readonly \PDO $pdo,
@@ -77,24 +77,25 @@ final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
         return $row === false ? null : $this->toEntity($row);
     }
 
-    // --- Escrita (CatalogItemGateway) -----------------------------------------
+    // --- Escrita ----------------------------------------------------------------
 
     public function label(): string
     {
         return 'raridade';
     }
 
-    public function insert(int $gameId, string $code, string $name, int $sortOrder): int
+    public function insert(int $gameId, string $code, string $name, int $sortOrder, RarityColor $color): int
     {
         $statement = $this->pdo->prepare(
-            'INSERT INTO rarities (game_id, code, name, sort_order, active, created_at)
-             VALUES (:game_id, :code, :name, :sort_order, 1, :created_at)'
+            'INSERT INTO rarities (game_id, code, name, color, sort_order, active, created_at)
+             VALUES (:game_id, :code, :name, :color, :sort_order, 1, :created_at)'
         );
 
         $statement->execute([
             'game_id' => $gameId,
             'code' => $code,
             'name' => $name,
+            'color' => $color->value,
             'sort_order' => $sortOrder,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
@@ -102,18 +103,20 @@ final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
         return (int) $this->pdo->lastInsertId();
     }
 
-    public function updateDetails(int $id, string $name, int $sortOrder, bool $active): void
+    public function updateDetails(int $id, string $name, int $sortOrder, bool $active, RarityColor $color): void
     {
         // `code` é imutável: identificador público não muda.
         // `sort_order` importa mais aqui do que em edições — é ele que mantém
         // comum, incomum, rara e mítica na ordem natural do jogo.
         $statement = $this->pdo->prepare(
-            'UPDATE rarities SET name = :name, sort_order = :sort_order, active = :active, updated_at = :updated_at
+            'UPDATE rarities SET name = :name, color = :color, sort_order = :sort_order, active = :active,
+                    updated_at = :updated_at
              WHERE id = :id'
         );
 
         $statement->execute([
             'name' => $name,
+            'color' => $color->value,
             'sort_order' => $sortOrder,
             'active' => $active ? 1 : 0,
             'updated_at' => date('Y-m-d H:i:s'),
@@ -177,6 +180,7 @@ final class RarityRepositoryPdo implements RarityGateway, CatalogItemGateway
             name: (string) $row['name'],
             active: (bool) $row['active'],
             sortOrder: (int) $row['sort_order'],
+            color: RarityColor::fromStored($row['color']),
         );
     }
 }

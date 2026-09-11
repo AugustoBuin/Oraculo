@@ -171,6 +171,38 @@ existe pela borda. Nenhuma das três auditorias pegou. Corrigido com um token pr
 `MEDIUM` — o rótulo acima de cada campo continua identificando-o —, e `MEDIUM` fica fora do
 ledger por convenção.
 
+**Escrita de catálogo — achados do plano das cores de raridade, em 10/09.** Quatro coisas
+apareceram ao planejar a cor da raridade, todas no código que ela mexe, e todas `MEDIUM` ou
+abaixo — por isso notas, e não linhas:
+
+- **M-3 da auditoria de backend, fechado** (`0712f19`). A escrita de edição e a de raridade se
+  separaram; `SaveCatalogItemInput` e seus dois campos mortos saíram com o caminho genérico.
+- **Reativar zerava a ordem — corrigido** (`50ac781`). A tela mandava `sortOrder: 0` porque a
+  listagem da administração não devolvia a ordem; a "Mítica" reativada pulava para o topo da
+  cascata. A listagem passou a devolver `sortOrder` (e `color`), e o PUT leva o registro
+  inteiro. Coberto pelos testes do corpo do PUT, e **verificado na tela em 11/09**: a
+  "Mítica" desativada e reativada continuou em 4º, no painel e na listagem pública, e manteve
+  o cobre.
+- **A escrita de catálogo não tinha teste nenhum, e o apresentador de carta também não**, apesar
+  do B-021 e do ADR-004. Ganharam (`437dd3e`, `0b3f9d9`).
+- **RF-41 e RF-42 pedem "editar", e a tela de catálogos nunca ofereceu** — só criar, desativar e
+  reativar. **Fechado** (`fd8960f`): cada linha tem Editar, na própria linha, com o nome e, na
+  raridade, a cor. Verificado na tela em 11/09, só pelo teclado: Enter no Editar, Tab até o
+  grupo de rádio, setas, Salvar, e o foco de volta ao Editar; Esc fecha sem ir à rede.
+
+**Dois defeitos da verificação em tela do F-041, em 11/09.** Nenhum dos dois é medido pela rede
+de geometria, que mede estouro, palavra inteira e corte — por isso notas, e por isso a
+verificação em tela continua obrigatória:
+
+- **A legenda do seletor colada no campo de cima** (`0816198`). O `margin: 0` que tirava as
+  margens laterais do `fieldset` zerava também a do `.stack`, de mesma especificidade e folha
+  posterior. `LOW`.
+- **Controles nativos no esquema do sistema, não no do tema escolhido** (`eea0502`). A raiz
+  declara `color-scheme: light dark`, e o `[data-theme]` não o trocava: com o Windows no escuro
+  e o tema claro escolhido, o rádio desmarcado saía como um disco escuro cheio — o desenho de
+  "marcado". Vinha do F-002; o seletor só o tornou visível. `MEDIUM`, porque um estado de
+  controle lido ao contrário engana, mas só na combinação de sistema e tema opostos.
+
 ## Auditorias planejadas
 
 | Quando | Escopo |

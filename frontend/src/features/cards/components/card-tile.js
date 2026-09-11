@@ -7,6 +7,7 @@
  */
 
 import { button } from "@/shared/components/button.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 
 /**
@@ -87,7 +88,7 @@ export function cardTile(card, { scope, canDelete = false, canOpen = false }) {
     ...names,
     el("p", { text: card.game.name, classes: ["card-meta"] }),
     el("p", { text: card.edition.name, classes: ["card-meta"] }),
-    el("span", { text: card.rarity.name, classes: ["badge"] }),
+    rarityBadge(card.rarity),
   ];
 
   if (canDelete) {

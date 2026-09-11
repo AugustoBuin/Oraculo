@@ -74,6 +74,34 @@ suite("shared/theme", () => {
     assertSame(resolveTheme(THEME_PREFERENCES.DARK), THEME_PREFERENCES.DARK);
   });
 
+  test("a escolha explícita também escolhe o esquema dos controles nativos", () => {
+    /*
+     * Com `color-scheme: light dark`, rádio, `<select>` e barra de rolagem
+     * seguem o SISTEMA. Com o Windows no escuro e o tema claro escolhido, o
+     * rádio desmarcado saía como um disco escuro cheio — o desenho de
+     * "marcado" — numa página clara. Sem escolha, os dois continuam valendo.
+     */
+    const root = document.documentElement;
+    const previous = root.getAttribute("data-theme");
+
+    try {
+      root.setAttribute("data-theme", "light");
+      assertSame(getComputedStyle(root).colorScheme, "light");
+
+      root.setAttribute("data-theme", "dark");
+      assertSame(getComputedStyle(root).colorScheme, "dark");
+
+      root.removeAttribute("data-theme");
+      assertSame(getComputedStyle(root).colorScheme, "light dark");
+    } finally {
+      if (previous === null) {
+        root.removeAttribute("data-theme");
+      } else {
+        root.setAttribute("data-theme", previous);
+      }
+    }
+  });
+
   test("SYSTEM resolve para um dos dois temas concretos", () => {
     const resolved = resolveTheme(THEME_PREFERENCES.SYSTEM);
 

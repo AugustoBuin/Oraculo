@@ -204,17 +204,25 @@ há de onde chamar o `PUT` que reativa — desativar viraria porta de mão únic
 Com `?incluirInativos=1`:
 
 ```jsonc
-// ADMIN
-{ "data": [ { "id": "hob", "name": "The Hobbit", "active": false } ] }
+// ADMIN — edições
+{ "data": [ { "id": "hob", "name": "The Hobbit", "active": false, "ref": 14, "sortOrder": 3 } ] }
+
+// ADMIN — raridades levam também a cor
+{ "data": [ { "id": "mythic", "name": "Mítica", "active": true, "ref": 4, "sortOrder": 4, "color": "copper" } ] }
 ```
+
+`ref` é o id numérico que as rotas de escrita esperam. `sortOrder` e `color` existem porque o
+`PUT` é substituição: a tela precisa mandar de volta o registro inteiro, e sem a ordem ela
+reativava com `0` — a "Mítica" pulava para o topo da cascata.
 
 Duas garantias, e as duas são testadas:
 
 - **O parâmetro é um pedido, não uma permissão.** Ele vem da query string, que é dado do
   cliente. Quem decide se vale é o caso de uso, pelo nível da sessão: `VIEWER` e `EDITOR`
   recebem a lista de ativos mesmo mandando o parâmetro.
-- **`active` é acrescentado, nunca substituído.** Quem não pediu a lista completa continua
-  recebendo `{id, name}` — a forma do enunciado não muda para ninguém.
+- **Os campos da administração são acrescentados, nunca substituídos.** Quem não pediu a lista
+  completa continua recebendo `{id, name}` — a forma do enunciado não muda para ninguém, e a
+  cor da raridade também não aparece ali: a cascata é um `<select>` nativo, que não pinta.
 
 ### `GET /api/games/{gameId}/editions` — `VIEWER`
 
@@ -254,8 +262,8 @@ Mesma forma, na ordem natural do jogo (comum → mítica), não alfabética.
 | `POST` | `/api/games/{gameId}/editions` | Cria edição. Corpo: `{ "code", "name", "sortOrder"? }` |
 | `PUT` | `/api/editions/{editionId}` | Atualiza `name`, `sortOrder`, `active`. **`code` é imutável** |
 | `DELETE` | `/api/editions/{editionId}` | **Desativa** — ver abaixo |
-| `POST` | `/api/games/{gameId}/rarities` | Cria raridade. Mesmo corpo |
-| `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` |
+| `POST` | `/api/games/{gameId}/rarities` | Cria raridade. Mesmo corpo, mais `color` opcional |
+| `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` e `color` — aqui obrigatória |
 | `DELETE` | `/api/rarities/{rarityId}` | **Desativa** |
 
 O `code` aceita letras minúsculas, números e hífen, até 32 caracteres — ele vira parte da
@@ -265,6 +273,36 @@ Magic. Código repetido no mesmo jogo devolve `409`.
 `code` não é alterável no `PUT`. Ele é o identificador público: aparece na URL, no contrato
 e em qualquer filtro que alguém tenha salvo. Trocá-lo quebraria tudo isso em silêncio, e o
 ganho seria corrigir um erro de digitação que o `name` já resolve.
+
+#### A cor da raridade
+
+A raridade tem uma cor, exibida no selo da carta. `color` é **uma chave da paleta**, nunca um
+hexadecimal: cada chave é um par de fundo e tinta medido nos dois temas (`design.md` §3), e
+um hexadecimal livre que passasse no claro poderia reprovar no escuro sem que quem escolheu
+soubesse.
+
+| Chave | Nome na tela |
+|---|---|
+| `graphite` | Grafite — o padrão, o selo neutro |
+| `silver` | Prata |
+| `copper` | Cobre |
+| `gold` | Ouro |
+| `olivine` | Olivina |
+| `patina` | Pátina |
+| `aquamarine` | Água-marinha |
+| `tourmaline` | Turmalina |
+| `rose-quartz` | Quartzo rosa |
+| `obsidian` | Obsidiana |
+
+- **Na criação, `color` é opcional.** Ausente, a raridade nasce `graphite`.
+- **Na alteração, `color` é obrigatória.** O `PUT` é substituição (abaixo): cor ausente
+  devolve `400` apontando `color`, em vez de repintar de grafite, em silêncio, a raridade que
+  era ouro.
+- Valor fora da tabela — ou que não seja texto — devolve `400` apontando `color`, junto dos
+  outros campos inválidos.
+
+A edição não tem cor, e a escrita das duas se separou por isso: o corpo de edição não
+aceita `color`.
 
 #### `DELETE` desativa, e nunca falha
 
@@ -321,7 +359,7 @@ um formulário que envia só o campo alterado quebraria em toda reativação.
       "namePt": null,
       "game":    { "id": "magic", "name": "Magic: The Gathering" },
       "edition": { "id": "dom",   "name": "Dominaria" },
-      "rarity":  { "id": "mythic","name": "Mítica" },
+      "rarity":  { "id": "mythic","name": "Mítica", "color": "copper" },
       "imageUrl": "https://…",          // null quando não há imagem
       "createdAt": "2026-09-04T12:00:00-03:00",
       "updatedAt": null
@@ -337,6 +375,9 @@ um formulário que envia só o campo alterado quebraria em toda reativação.
 
 > **Sem N+1.** Jogo, edição e raridade vêm por `JOIN` na mesma consulta — nunca uma
 > consulta por carta dentro do laço (§7.3).
+
+> **A raridade leva a cor do selo** (`color`, uma chave da paleta do §4). Ela vem no mesmo
+> `JOIN`, sem consulta nova.
 
 ### `GET /api/cards/{id}` — `VIEWER`
 

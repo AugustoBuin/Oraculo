@@ -119,7 +119,7 @@ preenchimento suave medido com a própria tinta em cima.
 
 ## 3. Contraste medido
 
-48 pares. **Piso 4,5:1. Pior par: 4,75:1** — informativo sobre informativo suave, no tema claro.
+68 pares de texto: 48 da interface e 20 dos selos de raridade. **Piso 4,5:1. Pior par da interface: 4,75:1** — informativo sobre informativo suave, no tema claro. **Pior selo: 4,61:1** — turmalina, no claro.
 
 **Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 8,61:1 no escuro; borda de campo a 3,46:1 no claro e 3,54:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
 
@@ -187,6 +187,32 @@ preenchimento suave medido com a própria tinta em cima.
 | Informativo          | `#5ea4ff` | informativo suave `#182941` | **5,75:1**  |
 | Acento em etiqueta   | `#a290fa` | acento suave `#292440`      | **5,56:1**  |
 
+### Selos de raridade
+
+Cada material é um par de fundo e tinta, e **só se mede a tinta sobre o próprio fundo**: o
+fundo do selo nunca aparece como texto na página. A chave é a de `RarityColor`
+(`api-contract.md` §4). Os matizes ficam nos vãos entre os estados — perigo 28°, atenção
+70°, sucesso 155°, informativo 257°, ação 290° —, para um selo de raridade não ser lido
+como aviso; e o selo leva uma marca redonda antes do nome, que os de estado não têm.
+
+| Material     | Claro: tinta · fundo    | Medido      | Escuro: tinta · fundo   | Medido      |
+| ------------ | ----------------------- | ----------- | ----------------------- | ----------- |
+| Grafite      | `#38373e` · `#e9e9ed`   | **9,72:1**  | `#dedde3` · `#303034`   | **9,74:1**  |
+| Prata        | `#5c6979` · `#e3eaf3`   | **4,62:1**  | `#959fae` · `#2b3138`   | **4,91:1**  |
+| Cobre        | `#a94a14` · `#ffe3d6`   | **4,68:1**  | `#d88762` · `#472718`   | **4,81:1**  |
+| Ouro         | `#7d6500` · `#ffe8a4`   | **4,64:1**  | `#b49d55` · `#3a2f0a`   | **4,96:1**  |
+| Olivina      | `#517227` · `#dcf2c8`   | **4,64:1**  | `#8caa6f` · `#29351c`   | **5,00:1**  |
+| Pátina       | `#00766e` · `#c9f4ee`   | **4,63:1**  | `#67ada5` · `#153733`   | **4,98:1**  |
+| Água-marinha | `#00718d` · `#caf1ff`   | **4,68:1**  | `#62aac2` · `#123541`   | **4,99:1**  |
+| Turmalina    | `#93499e` · `#fbdeff`   | **4,61:1**  | `#c184cb` · `#3d2641`   | **4,79:1**  |
+| Quartzo rosa | `#a4476e` · `#ffe0ea`   | **4,62:1**  | `#d283a0` · `#432631`   | **4,80:1**  |
+| Obsidiana    | `#e7e5fb` · `#242232`   | **12,59:1** | `#d0cbf6` · `#07060f`   | **13,01:1** |
+
+Grafite é o selo neutro de antes da paleta, e o padrão. Obsidiana é o único de fundo preto:
+no claro inverte, no escuro afunda abaixo da superfície. O par mais parecido entre si é
+pátina e água-marinha, e o selo mais perto de um de estado é cobre, do de atenção — os dois
+a olhar primeiro quando a paleta mudar.
+
 ---
 
 ## 4. Papéis de cor
@@ -211,6 +237,8 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-danger`    | Exclusão e erro que bloqueia                                |
 | `--color-info`      | Informação neutra — o azul que a ação deixou livre          |
 | `--color-focus`     | O anel de foco                                              |
+| `--color-rarity-*`  | O fundo do selo de uma raridade — um material por chave. Só no selo |
+| `--color-on-rarity-*` | A tinta do selo de raridade, e a cor da marca redonda dele |
 
 **A cor de acento ocupa no máximo ~10% da tela.** Se duas coisas clicáveis estão com a cor de
 acento na mesma tela, uma está errada — a raridade é o mecanismo que faz o usuário saber onde
@@ -224,6 +252,11 @@ ele não chama para a ação, só situa.
 **A regra dos dois sinais.** Nenhum estado depende só de cor: sempre cor **mais** rótulo,
 ícone ou forma. Cor sozinha exclui daltônicos, morre em impressão e some sob sol forte. É por
 isso que `.badge` no `utilities.css` sempre carrega texto.
+
+**Raridade não é estado.** Os selos de estado e o de raridade usam o mesmo desenho de fundo e
+tinta, e o que os separa é a **forma**: o de raridade leva uma marca redonda antes do nome, e
+os de estado não. Os materiais ficam nos vãos de matiz entre os estados, e o nome está sempre
+escrito — um "Ouro" não pode ser lido como atenção, nem depender da cor para ser lido.
 
 ---
 
@@ -261,6 +294,12 @@ Três estados, e o padrão não é "claro" — é **acompanhar o sistema**.
 `system` **remove** o atributo em vez de escrever um valor. Escrever `data-theme="system"`
 deixaria as duas regras do CSS sem efeito e travaria a página no tema claro.
 
+**A escolha explícita troca também o `color-scheme`.** A raiz declara `light dark`, e com isso
+rádio, `<select>` e barra de rolagem são desenhados pelo esquema do **sistema**, não pelo
+`[data-theme]`. Sem `color-scheme: light` no claro explícito (e `dark` no escuro), o Windows no
+escuro pintava o rádio desmarcado como um disco escuro cheio — o desenho de "marcado" — numa
+página clara. Achado na verificação em tela do seletor de cor da raridade (F-041).
+
 **Sobre a piscada de tema.** Quem nunca escolheu não vê nenhuma: o CSS resolve o padrão
 sozinho, antes de qualquer script rodar. Só quem escolheu explicitamente um tema diferente do
 sistema pode ver um quadro com o tema anterior, porque o atributo é escrito por um módulo ES,
@@ -292,7 +331,8 @@ Dois detalhes que parecem preciosismo e não são:
 1. Ele tem um papel semântico que nenhum token existente cobre? Se não, use o que existe.
 2. É cor de texto? **Meça** contra fundo, superfície e qualquer preenchimento em que apareça,
    **nos dois temas**, antes de escrever a primeira regra que o consome. A tela `/paleta` faz a
-   conta sozinha para todo token que siga a convenção de nome (`-soft`, `on-`, `surface`).
+   conta sozinha para todo token que siga a convenção de nome (`-soft`, `on-`, `surface`,
+   `rarity-`).
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
 

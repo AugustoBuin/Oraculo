@@ -222,6 +222,7 @@ CREATE TABLE rarities (
     game_id    INT UNSIGNED     NOT NULL,
     code       VARCHAR(32)      NOT NULL,   -- 'mythic', 'secret-rare'...
     name       VARCHAR(80)      NOT NULL,   -- exibido ao usuário, em português
+    color      VARCHAR(16)      NOT NULL DEFAULT 'graphite',  -- material da paleta (0011)
     active     TINYINT(1)       NOT NULL DEFAULT 1,
     sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     created_at DATETIME         NOT NULL,
@@ -238,6 +239,14 @@ CREATE TABLE rarities (
 > **Esta tabela é a Decisão de UX nº 1 materializada.** Sem ela, raridade seria texto livre
 > e uma carta de Magic poderia ser cadastrada como *Secret Rare*. Note que `sort_order`
 > existe porque raridade tem ordem natural (comum → mítica) que não é alfabética.
+
+> **`color` é uma chave da paleta, não um hexadecimal.** Os dez valores aceitos são os de
+> `App\Shared\Enum\RarityColor` — `graphite`, `silver`, `copper`, `gold`, `olivine`,
+> `patina`, `aquamarine`, `tourmaline`, `rose-quartz`, `obsidian` —, cada um um par de fundo e
+> tinta medido nos dois temas. A coluna é `VARCHAR` e não `ENUM` de propósito: a allowlist
+> mora no enum, e trocar a paleta não pede migration. As raridades do seed foram pintadas
+> pela migration 0012; o seed só pinta na inserção, para não desfazer a escolha do `ADMIN`
+> a cada boot.
 
 ---
 
@@ -425,5 +434,8 @@ Regras da massa:
 | `0007_create_rarities.sql` | `rarities` |
 | `0008_create_cards.sql` | `cards` |
 | `0009_create_card_audit.sql` | `card_audit` |
+| `0010_drop_sessions_payload.sql` | Remove `sessions.payload`, que ninguém lia |
+| `0011_add_rarity_color.sql` | `rarities.color` |
+| `0012_paint_seeded_rarities.sql` | As cores das raridades do seed, num banco que já existia |
 
 **Migration aplicada nunca é editada.** Correção é sempre uma migration nova.

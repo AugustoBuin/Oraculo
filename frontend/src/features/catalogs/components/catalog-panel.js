@@ -6,8 +6,9 @@
  * o que a edição recusa — o mesmo raciocínio que fez o formulário de carta ser
  * um só para criar e editar (§4.1).
  *
- * Quem chama injeta as quatro operações. O painel não sabe se está mexendo em
- * edições ou em raridades.
+ * Quem chama injeta as quatro operações e, quando o catálogo tem cor, a
+ * aparência (`appearance`): o seletor de cor e o selo. O painel não sabe se
+ * está mexendo em edições ou em raridades — sabe só se há cor para escolher.
  */
 
 import { userMessage } from "@/shared/api/errors.js";
@@ -28,13 +29,23 @@ const CODE_PATTERN = /^[a-z0-9-]{1,32}$/;
  *   scope: object,
  *   notify: Function,
  *   api: { list: Function, create: Function, update: Function, deactivate: Function },
+ *   appearance?: {
+ *     field: (config: { id: string, value?: string }) => { wrapper: HTMLElement, value: string, setValue: Function },
+ *     badge: (item: { name: string, color?: string }) => HTMLElement,
+ *   },
  * }} config
  */
-export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
+export function catalogPanel({ title, singular, gameId, scope, notify, api, appearance }) {
   const body = el("div", { classes: ["catalog-body"] });
 
   /** A vida dos controles da lista corrente. */
   let listLife = null;
+
+  /** Os itens da última leitura: abrir e fechar a edição redesenham daqui, sem rede. */
+  let items = [];
+
+  /** A referência do item em edição. Uma linha por vez. */
+  let editingRef = null;
 
   scope.add(() => listLife?.dispose());
 
@@ -44,7 +55,18 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     body.replaceChildren(build(listLife));
   };
 
-  async function load() {
+  /** O botão Editar de uma linha — é para ele que o foco volta. */
+  const editButtonOf = (item) => `[data-edit-ref="${item.ref}"]`;
+
+  function renderList(focusSelector) {
+    renderInto((life) => el("ul", { classes: ["catalog-list"], children: items.map((item) => row(item, life)) }));
+
+    if (focusSelector !== undefined) {
+      body.querySelector(focusSelector)?.focus();
+    }
+  }
+
+  async function load(focusSelector) {
     renderInto(() => loading(`Carregando ${title.toLowerCase()}…`));
 
     // Trocar de jogo descarta o painel inteiro; a leitura dele tem de ir junto,
@@ -52,11 +74,14 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     const controller = scope.controller();
 
     try {
-      const items = await api.list(gameId, { signal: controller.signal });
+      const fresh = await api.list(gameId, { signal: controller.signal });
 
       if (controller.signal.aborted) {
         return;
       }
+
+      items = fresh;
+      editingRef = null;
 
       if (items.length === 0) {
         renderInto(() =>
@@ -68,7 +93,7 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
         return;
       }
 
-      renderInto((life) => el("ul", { classes: ["catalog-list"], children: items.map((item) => row(item, life)) }));
+      renderList(focusSelector);
     } catch (error) {
       // Cancelar não é falhar: o painel já foi descartado, e um estado de erro
       // aqui só existiria para ninguém ver.
@@ -90,9 +115,31 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     }
   }
 
+  function openEditor(item) {
+    editingRef = item.ref;
+    renderList(`#${singular}-nome-${item.ref}`);
+  }
+
+  function closeEditor(item) {
+    editingRef = null;
+    renderList(editButtonOf(item));
+  }
+
   /** Uma linha da lista, com as ações do estado em que ela está. */
   function row(item, life) {
-    const actions = [];
+    if (item.ref === editingRef) {
+      return editor(item, life);
+    }
+
+    const actions = [
+      button({
+        label: "Editar",
+        variant: "secondary",
+        scope: life,
+        attrs: { "aria-label": `Editar ${item.name}`, "data-edit-ref": String(item.ref) },
+        onClick: () => openEditor(item),
+      }).node,
+    ];
 
     if (item.active) {
       actions.push(
@@ -135,9 +182,16 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
           attrs: { "aria-label": `Reativar ${item.name}` },
           onClick: async () => {
             try {
-              // O PUT é substituição: `name` vai junto mesmo só querendo
-              // reativar, senão o servidor devolve 400 apontando `name`.
-              await api.update(item.ref, { name: item.name, sortOrder: 0, active: true });
+              // O PUT é substituição: o registro inteiro vai junto mesmo só
+              // querendo reativar. Mandar `sortOrder: 0`, como antes, jogava a
+              // "Mítica" reativada para o topo da cascata; e a raridade sem a
+              // cor seria recusada.
+              await api.update(item.ref, {
+                name: item.name,
+                sortOrder: item.sortOrder,
+                active: true,
+                color: item.color,
+              });
               notify({ message: `${item.name} foi reativada.`, tone: "success" });
               load();
             } catch (error) {
@@ -159,7 +213,11 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
         el("div", {
           classes: ["cluster", "catalog-row-main"],
           children: [
-            el("span", { text: item.name, classes: ["catalog-name"] }),
+            // Com aparência, o nome vai no selo que a carta vai mostrar: quem
+            // administra vê a cor como ela aparece, e não um nome e um código.
+            appearance === undefined
+              ? el("span", { text: item.name, classes: ["catalog-name"] })
+              : appearance.badge(item),
             // O código é mostrado porque é o identificador público — e **não**
             // é editável: trocá-lo quebraria URLs e filtros salvos em silêncio.
             el("code", { text: item.id, classes: ["catalog-code"] }),
@@ -175,6 +233,92 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     });
   }
 
+  /**
+   * A linha em edição: nome e, se houver, cor. O código aparece e não é campo.
+   *
+   * Na própria linha, e não num modal: a tarefa não precisa interromper nada
+   * nem prender o foco, e quem edita continua vendo a lista em volta. Esc e
+   * Cancelar fecham sem ir à rede, e o foco volta ao Editar de onde saiu.
+   */
+  function editor(item, life) {
+    const name = field({ id: `${singular}-nome-${item.ref}`, label: "Nome", required: true });
+    const color = appearance?.field({ id: `${singular}-cor-${item.ref}`, value: item.color });
+    const alert = el("div", { classes: ["form-alert"] });
+    const save = button({ label: "Salvar", variant: "primary", type: "submit" });
+    const cancel = button({ label: "Cancelar", variant: "ghost", scope: life, onClick: () => closeEditor(item) });
+
+    name.input.value = item.name;
+
+    const form = el("form", {
+      attrs: { novalidate: true, "aria-label": `Editar ${item.name}` },
+      classes: ["catalog-edit", "stack"],
+      children: [
+        alert,
+        el("p", {
+          classes: ["catalog-edit-code"],
+          children: [
+            el("span", { text: "Código " }),
+            el("code", { text: item.id, classes: ["catalog-code"] }),
+            el("span", { text: " · não muda depois de criado" }),
+          ],
+        }),
+        name.wrapper,
+        ...(color === undefined ? [] : [color.wrapper]),
+        el("div", { classes: ["cluster"], children: [save.node, cancel.node] }),
+      ],
+    });
+
+    let saving = false;
+
+    life.on(form, "keydown", (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeEditor(item);
+      }
+    });
+
+    life.on(form, "submit", async (event) => {
+      event.preventDefault();
+
+      if (saving) {
+        return;
+      }
+
+      alert.replaceChildren();
+      name.clearError();
+
+      if (name.value.trim() === "") {
+        name.setError("O nome é obrigatório.");
+        name.input.focus();
+        return;
+      }
+
+      saving = true;
+      save.setLoading(true, "Salvando…");
+
+      try {
+        // O PUT é substituição: a ordem e o estado vão como vieram da
+        // listagem, e a cor é a escolhida — sem seletor, a que já havia.
+        await api.update(item.ref, {
+          name: name.value,
+          sortOrder: item.sortOrder,
+          active: item.active,
+          color: color?.value ?? item.color,
+        });
+
+        notify({ message: `${name.value.trim()} foi alterada.`, tone: "success" });
+        load(editButtonOf(item));
+      } catch (error) {
+        alert.replaceChildren(inlineMessage({ message: userMessage(error) }));
+      } finally {
+        saving = false;
+        save.setLoading(false);
+      }
+    });
+
+    return el("li", { classes: ["catalog-row", "catalog-row-editing"], children: [form] });
+  }
+
   // --- criação -------------------------------------------------------------
 
   const code = field({
@@ -185,6 +329,7 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
   });
 
   const name = field({ id: `${singular}-nome`, label: "Nome", required: true });
+  const createColor = appearance?.field({ id: `${singular}-cor` });
   const createAlert = el("div", { classes: ["form-alert"] });
 
   const submit = button({ label: `Adicionar ${singular}`, variant: "primary", type: "submit" });
@@ -192,7 +337,13 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
   const form = el("form", {
     attrs: { novalidate: true },
     classes: ["catalog-form", "stack"],
-    children: [createAlert, code.wrapper, name.wrapper, submit.node],
+    children: [
+      createAlert,
+      code.wrapper,
+      name.wrapper,
+      ...(createColor === undefined ? [] : [createColor.wrapper]),
+      submit.node,
+    ],
   });
 
   let submitting = false;
@@ -229,11 +380,12 @@ export function catalogPanel({ title, singular, gameId, scope, notify, api }) {
     submit.setLoading(true, "Adicionando…");
 
     try {
-      await api.create(gameId, { code: code.value, name: name.value, sortOrder: 0 });
+      await api.create(gameId, { code: code.value, name: name.value, sortOrder: 0, color: createColor?.value });
 
       notify({ message: `${name.value.trim()} foi criada.`, tone: "success" });
       code.input.value = "";
       name.input.value = "";
+      createColor?.setValue();
       code.input.focus();
       load();
     } catch (error) {
