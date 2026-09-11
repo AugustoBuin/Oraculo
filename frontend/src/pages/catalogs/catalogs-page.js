@@ -10,6 +10,7 @@
 
 import { userMessage } from "@/shared/api/errors.js";
 import { failure, loading } from "@/shared/components/feedback.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 import { scope as createScope } from "@/shared/dom/events.js";
 import {
@@ -24,6 +25,7 @@ import {
   updateRarity,
 } from "@/features/catalogs/api/catalogs-api.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
+import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
 
 const EDITIONS_API = {
   list: listEditionsForAdmin,
@@ -38,6 +40,12 @@ const RARITIES_API = {
   update: updateRarity,
   deactivate: deactivateRarity,
 };
+
+/**
+ * A raridade tem cor, e a edição não: só o painel de raridades recebe o
+ * seletor e o selo. O painel continua sem saber qual catálogo mostra.
+ */
+const RARITY_APPEARANCE = { field: rarityColorField, badge: rarityBadge };
 
 /**
  * @param {HTMLElement} root
@@ -79,6 +87,7 @@ export function catalogsPage(root, { notify }) {
       scope: panelsLife,
       notify,
       api: RARITIES_API,
+      appearance: RARITY_APPEARANCE,
     });
 
     panels.replaceChildren(editions.node, rarities.node);
