@@ -8,6 +8,7 @@
  */
 
 import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
+import { el } from "@/shared/dom/elements.js";
 import { assertSame, assertTrue, suite, test } from "~/runner.js";
 
 const radios = (campo) => [...campo.wrapper.querySelectorAll('input[type="radio"]')];
@@ -51,5 +52,25 @@ suite("features/catalogs/components/rarity-color-field · o seletor", () => {
     const [grafite] = radios(rarityColorField({ id: "raridade-cor-4" }));
 
     assertSame(grafite.id, "raridade-cor-4-graphite");
+  });
+
+  test("num .stack, o seletor fica no mesmo ritmo dos outros campos", () => {
+    /*
+     * O painel monta o seletor dentro de um formulário `.stack`, e na tela a
+     * legenda aparecia colada no campo de cima: zerar a margem do `fieldset`
+     * também zerava a que o `.stack` dá. O vizinho comum é a régua, para o
+     * teste não depender do valor do token.
+     */
+    const campo = rarityColorField({ id: "raridade-cor" });
+    const vizinho = el("div");
+    const pilha = el("div", { classes: ["stack"], children: [el("div"), vizinho, campo.wrapper] });
+
+    document.body.append(pilha);
+
+    try {
+      assertSame(getComputedStyle(campo.wrapper).marginTop, getComputedStyle(vizinho).marginTop);
+    } finally {
+      pilha.remove();
+    }
   });
 });
