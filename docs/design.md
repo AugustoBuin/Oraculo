@@ -237,6 +237,8 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-danger`    | Exclusão e erro que bloqueia                                |
 | `--color-info`      | Informação neutra — o azul que a ação deixou livre          |
 | `--color-focus`     | O anel de foco                                              |
+| `--color-rarity-*`  | O fundo do selo de uma raridade — um material por chave. Só no selo |
+| `--color-on-rarity-*` | A tinta do selo de raridade, e a cor da marca redonda dele |
 
 **A cor de acento ocupa no máximo ~10% da tela.** Se duas coisas clicáveis estão com a cor de
 acento na mesma tela, uma está errada — a raridade é o mecanismo que faz o usuário saber onde
@@ -250,6 +252,11 @@ ele não chama para a ação, só situa.
 **A regra dos dois sinais.** Nenhum estado depende só de cor: sempre cor **mais** rótulo,
 ícone ou forma. Cor sozinha exclui daltônicos, morre em impressão e some sob sol forte. É por
 isso que `.badge` no `utilities.css` sempre carrega texto.
+
+**Raridade não é estado.** Os selos de estado e o de raridade usam o mesmo desenho de fundo e
+tinta, e o que os separa é a **forma**: o de raridade leva uma marca redonda antes do nome, e
+os de estado não. Os materiais ficam nos vãos de matiz entre os estados, e o nome está sempre
+escrito — um "Ouro" não pode ser lido como atenção, nem depender da cor para ser lido.
 
 ---
 
