@@ -201,6 +201,18 @@
 }
 
 /*
+ * A escolha explícita também escolhe o esquema dos controles nativos.
+ *
+ * Com `light dark`, rádio, `<select>` e barra de rolagem seguem o SISTEMA, não
+ * o `[data-theme]`. Com o Windows no escuro e o tema claro escolhido, o rádio
+ * desmarcado saía como um disco escuro cheio — o desenho de "marcado" — numa
+ * página clara. O escuro explícito declara o seu no próprio bloco, abaixo.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/*
  * Tema escuro.
  *
  * Aplicado por dois caminhos, e a ordem importa:
@@ -278,6 +290,8 @@
 }
 
 :root[data-theme="dark"] {
+  color-scheme: dark;
+
   --color-bg: #0f0f16;
   --color-surface: #1e1e25;
 

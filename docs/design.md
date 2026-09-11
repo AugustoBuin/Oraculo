@@ -294,6 +294,12 @@ Três estados, e o padrão não é "claro" — é **acompanhar o sistema**.
 `system` **remove** o atributo em vez de escrever um valor. Escrever `data-theme="system"`
 deixaria as duas regras do CSS sem efeito e travaria a página no tema claro.
 
+**A escolha explícita troca também o `color-scheme`.** A raiz declara `light dark`, e com isso
+rádio, `<select>` e barra de rolagem são desenhados pelo esquema do **sistema**, não pelo
+`[data-theme]`. Sem `color-scheme: light` no claro explícito (e `dark` no escuro), o Windows no
+escuro pintava o rádio desmarcado como um disco escuro cheio — o desenho de "marcado" — numa
+página clara. Achado na verificação em tela do seletor de cor da raridade (F-041).
+
 **Sobre a piscada de tema.** Quem nunca escolheu não vê nenhuma: o CSS resolve o padrão
 sozinho, antes de qualquer script rodar. Só quem escolheu explicitamente um tema diferente do
 sistema pode ver um quadro com o tema anterior, porque o atributo é escrito por um módulo ES,
