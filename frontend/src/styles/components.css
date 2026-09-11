@@ -1058,6 +1058,16 @@
   border-top: 1px solid var(--color-line);
 }
 
+/* A linha em edição ganha ar: é um formulário, não uma linha de lista. */
+.catalog-row-editing {
+  padding: var(--space-4) 0;
+}
+
+.catalog-edit-code {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
 /* --- Paleta (/paleta) ---------------------------------------------------- */
 
 /*

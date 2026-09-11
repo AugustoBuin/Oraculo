@@ -20,11 +20,13 @@ import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
+import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
 import { invalidateCatalogs } from "@/features/catalogs/api/catalogs-api.js";
 import { changePasswordForm } from "@/features/auth/components/change-password-form.js";
 import { readCardQuery } from "@/features/cards/utils/card-query.js";
 import { appHeader } from "@/shared/components/app-header.js";
 import { pagination } from "@/shared/components/pagination.js";
+import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 import { cardsFilters } from "@/pages/cards/cards-filters.js";
 import { palettePage } from "@/pages/palette/palette-page.js";
@@ -407,7 +409,10 @@ suite("styles/layout · a geometria das telas principais", () => {
           gameId: "magic-the-gathering",
           scope,
           notify: () => {},
-          api: catalogo([{ ref: 3, id: "mitica", name: "Mítica", active: true }]),
+          api: catalogo([{ ref: 3, id: "mitica", name: "Mítica", active: true, sortOrder: 4, color: "copper" }]),
+          // A mesma aparência que `catalogs-page.js` injeta: o formulário de
+          // criação traz o seletor de cor, e ele entra na medida.
+          appearance: { field: rarityColorField, badge: rarityBadge },
         });
 
         const panels = el("div", {
@@ -425,6 +430,70 @@ suite("styles/layout · a geometria das telas principais", () => {
       assertTrue(
         host.querySelectorAll(".catalog-row").length === 3,
         `[${context}] os painéis não desenharam as três linhas`,
+      );
+    });
+  });
+
+  test("a raridade em edição, com o seletor de cor, cruza os pontos de quebra sem estourar", () => {
+    /*
+     * A linha em edição é o arranjo mais apertado do painel: nome, seletor de
+     * dez opções e dois botões. "Obsidiana" é a opção de mínimo mais largo —
+     * "Água-marinha" quebra no hífen, "Quartzo rosa" no espaço.
+     *
+     * Os dois painéis entram no `.switcher`, como `catalogs-page.js` monta.
+     * Item de flex não encolhe abaixo do próprio min-content, e é esse mínimo
+     * que estoura. Montado sozinho num bloco, o painel transbordaria para
+     * dentro do próprio padding, onde a medida contra a borda do contêiner não
+     * alcança — foi assim que a moldura dupla da opção passou por aqui.
+     */
+    const catalogo = (itens) => ({
+      list: async () => itens,
+      create: async () => {},
+      update: async () => {},
+      deactivate: async () => ({ wasInUse: false }),
+    });
+
+    return acrossWidths({
+      label: "raridade em edição",
+      mount: async ({ scope }) => {
+        const edicoes = catalogPanel({
+          title: "Edições",
+          singular: "edição",
+          gameId: "magic-the-gathering",
+          scope,
+          notify: () => {},
+          api: catalogo([{ ref: 1, id: "dominaria-united", name: "Dominaria United", active: true }]),
+        });
+
+        const raridades = catalogPanel({
+          title: "Raridades",
+          singular: "raridade",
+          gameId: "magic-the-gathering",
+          scope,
+          notify: () => {},
+          api: catalogo([
+            { ref: 3, id: "ultra-rara-colecionador", name: "Ultra Rara Colecionador", active: true, sortOrder: 5, color: "rose-quartz" },
+          ]),
+          appearance: { field: rarityColorField, badge: rarityBadge },
+        });
+
+        const panels = el("div", {
+          classes: ["switcher", "catalog-panels"],
+          children: [edicoes.node, raridades.node],
+        });
+
+        await ate(() => raridades.node.querySelector('[data-edit-ref="3"]') !== null);
+        raridades.node.querySelector('[data-edit-ref="3"]').click();
+        await ate(() => raridades.node.querySelector(".catalog-edit .rarity-color-field") !== null);
+
+        return panels;
+      },
+    }, ({ host, context }) => {
+      // Mede-se o estado aberto, e não o de carregamento: sem o seletor na
+      // tela, a medida passaria vazia.
+      assertTrue(
+        host.querySelector(".catalog-edit .rarity-color-field") !== null,
+        `[${context}] a edição não abriu com o seletor`,
       );
     });
   });
