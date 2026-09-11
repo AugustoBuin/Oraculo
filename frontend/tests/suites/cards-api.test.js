@@ -377,3 +377,22 @@ suite("features/cards/api · histórico", () => {
     });
   });
 });
+
+suite("features/cards/api · a cor da raridade", () => {
+  test("a raridade da carta traz a cor do selo", () => {
+    const card = parseCard({ ...cartaValida, rarity: { id: "mythic", name: "Mítica", color: "copper" } });
+
+    assertSame(card.rarity.color, "copper");
+  });
+
+  test("cor fora da paleta vira grafite, e a carta continua na galeria", () => {
+    const card = parseCard({ ...cartaValida, rarity: { id: "mythic", name: "Mítica", color: "dourado" } });
+
+    assertSame(card.rarity.color, "graphite");
+    assertSame(card.nameEn, cartaValida.nameEn);
+  });
+
+  test("raridade sem cor é grafite", () => {
+    assertSame(parseCard(cartaValida).rarity.color, "graphite");
+  });
+});

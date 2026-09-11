@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Infra\Repository\Catalog;
 
 use App\Domain\Catalog\Entity\Edition;
-use App\Domain\Catalog\Gateway\CatalogItemGateway;
 use App\Domain\Catalog\Gateway\EditionGateway;
 
-final class EditionRepositoryPdo implements EditionGateway, CatalogItemGateway
+final class EditionRepositoryPdo implements EditionGateway
 {
     private const COLUMNS = 'id, game_id, code, name, active, sort_order';
 
@@ -78,7 +77,7 @@ final class EditionRepositoryPdo implements EditionGateway, CatalogItemGateway
         return $row === false ? null : $this->toEntity($row);
     }
 
-    // --- Escrita (CatalogItemGateway) -----------------------------------------
+    // --- Escrita ----------------------------------------------------------------
 
     public function label(): string
     {

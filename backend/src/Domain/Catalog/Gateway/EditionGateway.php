@@ -6,7 +6,11 @@ namespace App\Domain\Catalog\Gateway;
 
 use App\Domain\Catalog\Entity\Edition;
 
-interface EditionGateway
+/**
+ * A edição é um item de catálogo: herda a escrita compartilhada (desativar,
+ * conferir código, saber se está em uso) e soma as leituras da cascata.
+ */
+interface EditionGateway extends CatalogItemGateway
 {
     /** @return list<Edition> ativas do jogo, na ordem de exibição */
     public function listActiveByGame(int $gameId): array;
@@ -34,4 +38,9 @@ interface EditionGateway
     public function findByGameAndCode(int $gameId, string $code): ?Edition;
 
     public function findById(int $id): ?Edition;
+
+    public function insert(int $gameId, string $code, string $name, int $sortOrder): int;
+
+    /** `code` fica de fora: identificador público não muda. */
+    public function updateDetails(int $id, string $name, int $sortOrder, bool $active): void;
 }

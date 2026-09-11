@@ -153,6 +153,7 @@ Cortar com justificativa é parte da entrega. O anúncio pede alguém que saiba
 | RF-41 | Listar, incluir, editar e desativar edições de um jogo. |
 | RF-42 | Listar, incluir, editar e desativar raridades de um jogo. |
 | RF-43 | Um item de catálogo em uso por alguma carta não pode ser excluído — apenas desativado. Desativado, ele deixa de aparecer para novos cadastros mas continua exibido nas cartas que já o usam. |
+| RF-44 | Cada raridade tem uma cor, escolhida pelo `ADMIN` entre os dez materiais da paleta ao criar e ao editar a raridade. A carta exibe a raridade num selo com essa cor, e o nome continua escrito: cor nunca é o único sinal. |
 
 ---
 
@@ -264,7 +265,7 @@ nenhuma foi esquecida.
 | Trocar o jogo recarrega e reseta a edição | RF-24, RF-25 |
 | JSON de edições conforme especificado | Seed de `editions`, reproduzido literalmente |
 | Imagem da carta | RF-30 a RF-34 |
-| Raridade da carta | RF-27, RF-42 |
+| Raridade da carta | RF-27, RF-42, RF-44 |
 | Backend em PHP sem framework | RNF-01, ADR-001 |
 | Banco MySQL | `docs/database-schema.md` |
 | Front em HTML5/CSS3/JS vanilla, sem bibliotecas | RNF-01 |

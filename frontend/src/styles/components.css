@@ -539,6 +539,137 @@
   margin-top: var(--space-1);
 }
 
+/* --- Selo de raridade --------------------------------------------------- */
+
+/*
+ * O fundo e a tinta do material (tokens.css), e uma marca redonda que os
+ * selos de estado não têm: é a forma que diz "raridade", não a cor. A classe
+ * do material só aponta as duas variáveis; o desenho é um só.
+ */
+.rarity-badge {
+  background-color: var(--rarity-fill, var(--color-rarity-graphite));
+  color: var(--rarity-ink, var(--color-on-rarity-graphite));
+}
+
+.rarity-mark {
+  flex: none;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: var(--radius-pill);
+  background-color: currentColor;
+}
+
+.rarity-graphite {
+  --rarity-fill: var(--color-rarity-graphite);
+  --rarity-ink: var(--color-on-rarity-graphite);
+}
+
+.rarity-silver {
+  --rarity-fill: var(--color-rarity-silver);
+  --rarity-ink: var(--color-on-rarity-silver);
+}
+
+.rarity-copper {
+  --rarity-fill: var(--color-rarity-copper);
+  --rarity-ink: var(--color-on-rarity-copper);
+}
+
+.rarity-gold {
+  --rarity-fill: var(--color-rarity-gold);
+  --rarity-ink: var(--color-on-rarity-gold);
+}
+
+.rarity-olivine {
+  --rarity-fill: var(--color-rarity-olivine);
+  --rarity-ink: var(--color-on-rarity-olivine);
+}
+
+.rarity-patina {
+  --rarity-fill: var(--color-rarity-patina);
+  --rarity-ink: var(--color-on-rarity-patina);
+}
+
+.rarity-aquamarine {
+  --rarity-fill: var(--color-rarity-aquamarine);
+  --rarity-ink: var(--color-on-rarity-aquamarine);
+}
+
+.rarity-tourmaline {
+  --rarity-fill: var(--color-rarity-tourmaline);
+  --rarity-ink: var(--color-on-rarity-tourmaline);
+}
+
+.rarity-rose-quartz {
+  --rarity-fill: var(--color-rarity-rose-quartz);
+  --rarity-ink: var(--color-on-rarity-rose-quartz);
+}
+
+.rarity-obsidian {
+  --rarity-fill: var(--color-rarity-obsidian);
+  --rarity-ink: var(--color-on-rarity-obsidian);
+}
+
+/* --- Seletor de cor da raridade ----------------------------------------- */
+
+/*
+ * Um grupo de rádio nativo, uma opção por material. A grade reflui pela
+ * largura do painel, e cada opção é o rádio e o próprio selo: quem escolhe vê
+ * o que a carta vai mostrar.
+ *
+ * **Sem moldura em volta do selo.** O selo já é uma caixa, com padding
+ * próprio; borda e padding em volta dele eram moldura dupla, e custavam 33px
+ * com a fonte em 200% — o bastante para "Obsidiana" empurrar o painel para
+ * fora da tela de 320px.
+ *
+ * A opção marcada tem dois sinais — o círculo preenchido do rádio, que é do
+ * navegador, e o contorno do selo na cor da ação. Contorno e não sombra: ele
+ * não ocupa espaço, e continua de pé no modo de alto contraste, que apaga
+ * sombras. O anel de foco é o de sempre, no próprio rádio (base.css).
+ */
+/* Só as margens laterais do navegador saem: a de cima é a do `.stack` que monta
+   o formulário, e zerá-la colava a legenda no campo de cima. */
+.rarity-color-field {
+  margin-inline: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rarity-color-field legend {
+  padding: 0;
+}
+
+.rarity-color-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/*
+ * A opção ocupa a largura do rádio e do selo, e não a célula: sem moldura, o
+ * vazio à direita não mostra que é clicável, e não deve escolher nada. O alvo
+ * de 44px fica na altura do rótulo inteiro.
+ */
+.rarity-option {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  cursor: pointer;
+}
+
+.rarity-option input {
+  flex: none;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.rarity-option input:checked + .rarity-badge {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
 /* --- Paginação ----------------------------------------------------------- */
 
 .pagination-status {
@@ -927,6 +1058,16 @@
 .catalog-form {
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-line);
+}
+
+/* A linha em edição ganha ar: é um formulário, não uma linha de lista. */
+.catalog-row-editing {
+  padding: var(--space-4) 0;
+}
+
+.catalog-edit-code {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
 }
 
 /* --- Paleta (/paleta) ---------------------------------------------------- */

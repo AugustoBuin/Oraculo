@@ -184,13 +184,16 @@ export function collectTokens(rules, prefix) {
  *   começa com `--color-surface`);
  * - a tinta de uma superfície de ação (`--color-on-X`) é medida sobre ela;
  * - cada cor é medida sobre a própria versão suave (`--color-X-soft`);
+ * - o fundo de um selo de raridade (`--color-rarity-X`) só é medido com a
+ *   própria tinta em cima (`--color-on-rarity-X`) — nunca como tinta contra a
+ *   página, porque na tela ele só aparece sob o texto do selo;
  * - **componente** — o anel de foco e a borda de controle (`--color-border`)
  *   — é medido sobre as superfícies a 3:1, que é o piso da WCAG 1.4.11 para o
  *   que identifica um controle, e não o de texto.
  *
  * A linha (`--color-line`) não entra: é decorativa — divisória, borda de
  * cartão —, e não identifica controle nenhum. É tinta quem não é superfície,
- * versão suave, tinta de ação, linha nem componente. A convenção de nome é o
+ * versão suave, tinta de ação, fundo de selo, linha nem componente. A convenção de nome é o
  * que permite a um token novo entrar na conta sozinho.
  *
  * @param {string[]} names
@@ -200,9 +203,13 @@ export function contrastPairs(names) {
   const declared = new Set(names);
   const isSurface = (name) => name === "--color-bg" || name.startsWith("--color-surface");
   const isComponent = (name) => name === "--color-focus" || name.startsWith("--color-border");
+  // O fundo do selo de raridade é superfície de UM texto só, o do próprio
+  // selo: medi-lo como tinta contra a página seria medir um par que não existe.
+  const isRarityFill = (name) => name.startsWith("--color-rarity-");
   const isInk = (name) =>
     !isSurface(name) &&
     !isComponent(name) &&
+    !isRarityFill(name) &&
     !name.endsWith("-soft") &&
     !name.startsWith("--color-on-") &&
     name !== "--color-line";
@@ -221,6 +228,14 @@ export function contrastPairs(names) {
       pairs.push({ fg: name, bg: soft, min: TEXT_MINIMUM });
     }
 
+    const ink = name.replace("--color-", "--color-on-");
+
+    if (declared.has(ink)) {
+      pairs.push({ fg: ink, bg: name, min: TEXT_MINIMUM });
+    }
+  }
+
+  for (const name of names.filter(isRarityFill)) {
     const ink = name.replace("--color-", "--color-on-");
 
     if (declared.has(ink)) {

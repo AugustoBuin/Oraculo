@@ -16,7 +16,7 @@ import {
   readTokenRules,
   resolveColor,
 } from "@/shared/theme/palette.js";
-import { assertEquals, assertNull, assertSame, assertTrue, suite, test } from "~/runner.js";
+import { assertEquals, assertFalse, assertNull, assertSame, assertTrue, suite, test } from "~/runner.js";
 
 const regra = (selector, declarations) => ({ selector, declarations });
 
@@ -207,5 +207,18 @@ suite("shared/theme/palette · os pares medidos", () => {
 
   test("são os 24 pares por tema do design.md, mais os dois do foco e os dois da borda", () => {
     assertSame(pares().length, 28);
+  });
+
+  test("fundo de raridade só se mede com a própria tinta em cima, nunca contra a superfície", () => {
+    // O selo de raridade é fundo e tinta, como o botão de ação. Tratado como
+    // tinta, o fundo seria medido contra a superfície — um par que não existe
+    // na tela. E tirá-lo das tintas não basta: o par `on-X` sobre `X` só nascia
+    // quando `X` era tinta, e a medida que importa sumiria junto.
+    const comRaridade = contrastPairs([...NOMES, "--color-rarity-gold", "--color-on-rarity-gold"]);
+
+    assertTrue(temPar(comRaridade, "--color-on-rarity-gold", "--color-rarity-gold"), "a tinta sobre o selo não foi medida");
+    assertFalse(temPar(comRaridade, "--color-rarity-gold", "--color-surface"), "o fundo do selo foi medido como tinta");
+    assertFalse(temPar(comRaridade, "--color-rarity-gold", "--color-bg"), "o fundo do selo foi medido como tinta");
+    assertSame(comRaridade.length, 29);
   });
 });

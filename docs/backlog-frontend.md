@@ -577,6 +577,30 @@ em uso e conferir a carta que a usa.
 
 ---
 
+### F-041 · Cor da raridade na tela · 3 pontos
+**Depende de:** F-040, B-022 · **Plano:** `docs/rarity-colors-plan.md`
+
+**Objetivo:** RF-44 pela UI — e o "editar" de RF-41 e RF-42, que a tela de catálogos nunca
+ofereceu.
+
+**Entregar:** os dez pares de token medidos na `/paleta`, o selo de raridade, o seletor de
+cor no formulário da raridade e o **Editar** por linha no painel de catálogo.
+
+**Aceite:**
+- [x] Os dez materiais existem nos dois temas, e a `/paleta` mede cada tinta sobre o próprio fundo (76 medidas, nenhuma reprova).
+- [x] O selo de raridade tem a marca que os selos de estado não têm, e o nome sempre escrito.
+- [x] Galeria e tabela mostram o mesmo selo.
+- [x] Reativar manda o registro inteiro: a ordem e a cor não se perdem.
+- [x] O seletor é um grupo de rádio nativo, e cada opção é o próprio selo, com o nome.
+- [x] Cada linha do painel tem Editar: nome e, na raridade, cor; o código aparece e não muda.
+- [x] O seletor e a edição entram na rede de geometria.
+- [x] Verificado na tela: dois temas, 200%, teclado no grupo de rádio, `EDITOR` pela URL.
+
+**Testes:** a paleta do cliente, o selo, os parsers de carta e de catálogo, a regra da
+`/paleta` para fundo de selo, e o cartão com o selo.
+
+---
+
 # Épico 10 — Acabamento e entrega · 5 pontos · 09–10/09
 
 ---
