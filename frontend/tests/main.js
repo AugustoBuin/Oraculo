@@ -28,6 +28,7 @@ import "~/suites/card-gallery.test.js";
 import "~/suites/catalogs-api.test.js";
 import "~/suites/rarity-colors.test.js";
 import "~/suites/rarity-badge.test.js";
+import "~/suites/rarity-color-field.test.js";
 import "~/suites/image-field-layout.test.js";
 import "~/suites/layout-geometry.test.js";
 import "~/suites/feedback.test.js";
