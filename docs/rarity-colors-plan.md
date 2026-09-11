@@ -1,9 +1,9 @@
 # Plano — cores de raridade
 
-> **Estado:** aprovado em 10/09/2026 e **em execução** na `feature-cores-de-raridade`. O
-> backend está completo (B-022); no frontend faltam o seletor, o Editar por linha, a
-> geometria e a verificação na tela (F-041). As cores foram medidas contra a paleta que foi
-> para `development` em `ed0785d`.
+> **Estado:** aprovado em 10/09/2026 e **executado** na `feature-cores-de-raridade`, com
+> backend (B-022) e frontend (F-041) completos. Da verificação na tela faltam a fonte em
+> 200%, o tema claro visto na tela e o `EDITOR` pela URL. As cores foram medidas contra a
+> paleta que foi para `development` em `ed0785d`. **Onde a execução divergiu do plano: §11.**
 
 ---
 
@@ -269,3 +269,23 @@ cerca de 3h. Documentos e verificação na tela, cerca de 1h. **Seis a sete hora
 - **Cor no filtro e na cascata.** `<option>` nativo não pinta, e trocá-lo por um controle
   próprio custaria acessibilidade.
 - **`oklch()`** — ver `design.md` §10.
+
+---
+
+## 11. O que a execução mudou
+
+- **O seletor não tem moldura** (§6, item 5, dizia "borda e ícone"). A primeira versão punha
+  borda e padding em volta de um selo que já tem padding; a rede de geometria mediu a opção
+  "Obsidiana" em 223,61px contra 222 disponíveis, em 320px com a fonte em 200%. A opção
+  marcada se distingue pelo rádio e pelo contorno do selo, e o anel de foco é o de sempre,
+  no próprio rádio — sem `:has(:focus-visible)`. A legenda é "Cor do selo".
+- **A geometria da edição monta os dois painéis no `.switcher`**, como a página. Sozinho num
+  bloco, o painel transbordava para dentro do próprio padding, e a medida contra a borda do
+  contêiner não via.
+- **Dois defeitos só apareceram na tela** (notas no ledger, 11/09): a legenda colada no campo
+  de cima e os controles nativos no esquema do sistema em vez do tema escolhido — este,
+  anterior à branch.
+- **Os commits** não seguiram a lista do §8 um a um: os testes do B-021 entraram com o
+  refactor que eles cobrem (`437dd3e`), a paleta e o selo subiram para `shared/` num commit
+  próprio (`1281116`), e o seletor, o painel e as duas correções da tela saíram em quatro
+  (`6029661`, `fd8960f`, `0816198`, `eea0502`).

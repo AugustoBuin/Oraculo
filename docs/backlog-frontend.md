@@ -591,9 +591,9 @@ cor no formulário da raridade e o **Editar** por linha no painel de catálogo.
 - [x] O selo de raridade tem a marca que os selos de estado não têm, e o nome sempre escrito.
 - [x] Galeria e tabela mostram o mesmo selo.
 - [x] Reativar manda o registro inteiro: a ordem e a cor não se perdem.
-- [ ] O seletor é um grupo de rádio nativo, e cada opção é o próprio selo, com o nome.
-- [ ] Cada linha do painel tem Editar: nome e, na raridade, cor; o código aparece e não muda.
-- [ ] O seletor e a edição entram na rede de geometria.
+- [x] O seletor é um grupo de rádio nativo, e cada opção é o próprio selo, com o nome.
+- [x] Cada linha do painel tem Editar: nome e, na raridade, cor; o código aparece e não muda.
+- [x] O seletor e a edição entram na rede de geometria.
 - [ ] Verificado na tela: dois temas, 200%, teclado no grupo de rádio, `EDITOR` pela URL.
 
 **Testes:** a paleta do cliente, o selo, os parsers de carta e de catálogo, a regra da
