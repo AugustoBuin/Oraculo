@@ -229,7 +229,7 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
 | `--color-line`      | Linha decorativa: divisória, borda de cartão e de tabela    |
 | `--color-border`    | Borda de campo — o limite que identifica o controle, a 3:1  |
-| `--color-brand`     | A marca. Só o logotipo "Oráculo" — em nenhum outro lugar    |
+| `--color-brand`     | A marca: o desenho e a palavra "Oráculo" — em nenhum outro lugar |
 | `--color-accent`    | **A voz única de ação**, em violeta. Uma ação primária por contexto |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
 | `--color-success`   | Operação concluída                                          |
@@ -252,6 +252,19 @@ ele não chama para a ação, só situa.
 **A regra dos dois sinais.** Nenhum estado depende só de cor: sempre cor **mais** rótulo,
 ícone ou forma. Cor sozinha exclui daltônicos, morre em impressão e some sob sol forte. É por
 isso que `.badge` no `utilities.css` sempre carrega texto.
+
+**A marca tem duas metades, e a cor é a mesma.** A palavra "Oráculo" é texto HTML; o desenho
+(três cartas em leque, com a gema) é um elemento vazio recortado pelo SVG em `mask-image` e
+pintado com `background-color: var(--color-brand)`. Não é `<img>` de propósito: um arquivo por
+tema seguiria `prefers-color-scheme`, que obedece ao sistema operacional e **ignoraria o botão
+de tema** (§6). A medida que vale é a da §3 — 9,92:1 no claro e 8,66:1 no escuro, bem acima do
+piso de 3:1 de elemento gráfico.
+
+**O que a máscara cobra:** no alto contraste do Windows o sistema força toda cor de fundo para
+a da tela, e um desenho pintado por fundo desapareceria. A regra em `@media (forced-colors:
+active)` devolve o controle do elemento (`forced-color-adjust: none`) e volta a pintar com cor
+**do sistema** — `LinkText` dentro do link do cabeçalho, `CanvasText` fora dele. Nunca com a
+cor da paleta: é ela que o modo existe para substituir.
 
 **Raridade não é estado.** Os selos de estado e o de raridade usam o mesmo desenho de fundo e
 tinta, e o que os separa é a **forma**: o de raridade leva uma marca redonda antes do nome, e
@@ -335,6 +348,12 @@ Dois detalhes que parecem preciosismo e não são:
    `rarity-`).
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
+5. **Endereço de imagem também é token** (`--image-*`), pelo mesmo motivo: trocar o desenho
+   é trocar um token, e nenhum `url()` de imagem se escreve fora do `tokens.css`. O caminho é
+   absoluto a partir da raiz — endereço relativo dentro de variável se resolve contra a folha
+   que a **usa**, não contra a que a declara. Ele não se mede: quem se mede é a cor que pinta
+   a máscara. Arquivo que serve aos dois temas é declarado uma vez, no `:root`; arquivo que
+   muda com o tema é redefinido nos dois blocos escuros, como as cores.
 
 ---
 

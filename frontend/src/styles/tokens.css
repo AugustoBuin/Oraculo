@@ -188,6 +188,22 @@
   --target-min: 2.75rem; /* 44px */
 
   /* ---------------------------------------------------------------------
+   * Imagem — endereço de arquivo também é valor visual
+   *
+   * Nenhum `url()` de imagem é escrito fora deste arquivo (§10.1): trocar o
+   * desenho é trocar um token. O caminho é absoluto a partir da raiz, e não
+   * relativo, porque endereço dentro de variável se resolve contra a folha em
+   * que a variável é USADA, não contra esta.
+   *
+   * Estes dois não mudam com o tema: são máscara, e quem muda é a cor que os
+   * pinta (`--color-brand`). A versão com o sigilo vale de 64px em diante — a
+   * 48px as facetas da gema se fundem (medido em 11/09).
+   * ------------------------------------------------------------------- */
+
+  --image-brand-mark: url("/src/assets/brand/symbol.svg");
+  --image-brand-mark-sigil: url("/src/assets/brand/symbol-sigil.svg");
+
+  /* ---------------------------------------------------------------------
    * Movimento — nada acima de 400ms, exceto progresso (§11.2)
    * ------------------------------------------------------------------- */
 
