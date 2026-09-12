@@ -105,11 +105,19 @@ function describe(element) {
 /**
  * Percorre a árvore parando onde a medição deixa de fazer sentido.
  *
- * Um contêiner que rola no próprio eixo encerra o ramo: o que estiver dentro
- * dele pode ser mais largo de propósito — é o caso da tabela de cartas dentro
- * do `.scroll-x`, que é a promessa do RNF-04, não uma violação dela.
+ * Um contêiner que rola no próprio eixo encerra o ramo **para a medida de
+ * largura**: o que está dentro dele pode ser mais largo de propósito — é o
+ * caso da tabela de cartas dentro do `.scroll-x`, que é a promessa do RNF-04,
+ * não uma violação dela.
+ *
+ * **Para as outras medidas, encerrar o ramo era um buraco.** Rolar dá direito
+ * a ser mais LARGO; não dá direito a rachar uma palavra no meio, nem a deixar
+ * um controle sem piso, nem a esconder conteúdo. Enquanto o ramo parava aqui,
+ * a tabela de cartas inteira — cada célula, cada botão — ficava fora da rede,
+ * e foi por isso que "Excluir" saiu como "Excl / uir" sem nenhum teste
+ * reclamar. Quem mede conteúdo passa `intoScrollers`.
  */
-function walk(root, visit) {
+function walk(root, visit, { intoScrollers = false } = {}) {
   for (const child of root.children) {
     if (invisible(child) || outOfFlow(child)) {
       continue;
@@ -117,11 +125,14 @@ function walk(root, visit) {
 
     visit(child);
 
-    if (!scrollsHorizontally(child)) {
-      walk(child, visit);
+    if (intoScrollers || !scrollsHorizontally(child)) {
+      walk(child, visit, { intoScrollers });
     }
   }
 }
+
+/** O que rola é mais largo de propósito; o conteúdo dentro dele, não. */
+const DENTRO_DO_QUE_ROLA = { intoScrollers: true };
 
 /** Invariante 1: nada ultrapassa a borda do contêiner. */
 export function assertWithinContainer(host, context) {
@@ -197,7 +208,7 @@ export function assertWholeWords(host, context) {
   };
 
   check(host);
-  walk(host, check);
+  walk(host, check, DENTRO_DO_QUE_ROLA);
 }
 
 /**
@@ -248,13 +259,52 @@ export function assertNothingClipped(host, context) {
   };
 
   check(host);
-  walk(host, check);
+  walk(host, check, DENTRO_DO_QUE_ROLA);
+}
+
+/**
+ * Invariante 4: rótulo de AÇÃO nunca quebra no meio da palavra.
+ *
+ * Esta existe por causa de um ponto cego da invariante 2, e o ponto cego é
+ * necessário: ela pula quem computa `overflow-wrap: anywhere`, porque nome de
+ * carta longo DEVE quebrar em qualquer ponto — acusar isso seria acusar a
+ * decisão certa.
+ *
+ * Só que `overflow-wrap` é HERDADO. Uma regra escrita num contêiner —
+ * `.card-table td`, e não o texto dentro dele — desce para o botão que mora
+ * na célula, e a invariante 2 passa a pular o botão junto. Foi assim que
+ * "Excluir" saiu como "Excl / uir" na visão tabela sem nenhum teste reclamar.
+ *
+ * O que se afirma aqui é a regra do `design.md` §9: `anywhere` vale no texto
+ * que pode chegar sem espaço onde quebrar, e rótulo escrito por nós não é
+ * disso. Num controle, o piso de min-content é o que impede a coluna dele de
+ * colapsar — abrir mão dele é abrir mão do piso.
+ */
+export function assertControlsKeepWords(host, context) {
+  const check = (element) => {
+    if (!element.matches("button, a, select, summary, .button")) {
+      return;
+    }
+
+    if (getComputedStyle(element).overflowWrap !== "anywhere") {
+      return;
+    }
+
+    throw new Error(
+      `[${context}] ${describe(element)} herdou overflow-wrap: anywhere:` +
+        " o rótulo pode quebrar no meio e a coluna dele perde o piso de min-content",
+    );
+  };
+
+  check(host);
+  walk(host, check, DENTRO_DO_QUE_ROLA);
 }
 
 export function assertLayoutInvariants(host, context) {
   assertWithinContainer(host, context);
   assertWholeWords(host, context);
   assertNothingClipped(host, context);
+  assertControlsKeepWords(host, context);
 }
 
 /**

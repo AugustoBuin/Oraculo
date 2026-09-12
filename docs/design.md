@@ -448,6 +448,12 @@ Agora ele vale só no texto que pode chegar sem espaço onde quebrar: nome de ca
 código de catálogo, mensagem com nome de arquivo, valor do histórico, e-mail. A lista está no
 topo de `components.css`; quem não tem classe própria usa `.wrap-anywhere`.
 
+**Toda linha dessa lista mira o TEXTO, nunca o contêiner dele** — e esta frase custou um
+defeito. `.card-table td` esteve na lista, e `overflow-wrap` é herdado: a regra descia para o
+botão "Excluir" que mora na célula de ações, zerava o min-content dele, a coluna colapsava e
+a palavra rachava ao meio na visão tabela. Escopar por contêiner é escopar por acidente —
+tudo o que estiver dentro herda, controle incluído.
+
 ### A rede de geometria
 
 `frontend/tests/support/layout.js` monta as telas numa caixa de largura conhecida e **mede**,
