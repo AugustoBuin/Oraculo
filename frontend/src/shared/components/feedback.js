@@ -32,6 +32,34 @@ export function loading(message = "Carregando…") {
 }
 
 /**
+ * As ilustrações de estado.
+ *
+ * Conjunto fechado, como o dos ícones, e pelo mesmo motivo: nome de desenho é
+ * escrito por quem programa, e cada um aqui tem um token e uma regra do outro
+ * lado. Errar o nome entregaria um estado vazio com um buraco no lugar da
+ * ilustração — falhar alto conserta na hora.
+ *
+ * `search` reusa a gema do verso da carta, sem arquivo novo: o estado é
+ * frequente e já traz a ação de limpar os filtros, então ele pede um símbolo
+ * pequeno, não uma cena.
+ */
+const STATE_IMAGES = new Set(["not-found", "empty-catalog", "search"]);
+
+function stateImage(name) {
+  if (!STATE_IMAGES.has(name)) {
+    throw new TypeError(
+      `Ilustração "${name}" não existe. As que existem: ${[...STATE_IMAGES].join(", ")}.`,
+    );
+  }
+
+  // Decorativa: o título e a descrição já dizem o estado inteiro.
+  return el("div", {
+    classes: ["state-image", `state-image-${name}`],
+    attrs: { "aria-hidden": "true" },
+  });
+}
+
+/**
  * Estado vazio.
  *
  * Texto útil, não "Nenhum resultado": quem chega aqui precisa saber o que
@@ -44,8 +72,13 @@ export function loading(message = "Carregando…") {
  * página que já tem `h1`, o padrão continua certo: o estado é mensagem, não
  * seção. A aparência não muda com o nível — quem manda é `.state-title`.
  */
-export function empty({ title, description, action, as = "p" } = {}) {
+export function empty({ title, description, action, as = "p", image } = {}) {
   const children = [el(as, { text: title, classes: ["state-title"] })];
+
+  if (image !== undefined) {
+    // Antes do título: é a ordem em que a tela se lê, de cima para baixo.
+    children.unshift(stateImage(image));
+  }
 
   if (description !== undefined) {
     children.push(el("p", { text: description, classes: ["text-muted"] }));

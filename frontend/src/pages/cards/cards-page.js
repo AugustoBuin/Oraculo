@@ -288,6 +288,8 @@ export function cardsPage(root, { navigate, notify }) {
       return empty({
         title: "Nenhuma carta encontrada",
         description: "Nenhuma carta corresponde à busca e aos filtros escolhidos.",
+        // Só a gema, pequena: este estado é frequente e já traz a ação.
+        image: "search",
         action: button({
           label: "Limpar busca e filtros",
           variant: "secondary",
@@ -305,6 +307,8 @@ export function cardsPage(root, { navigate, notify }) {
       return empty({
         title: "Nenhuma carta cadastrada ainda",
         description: "Quando o catálogo receber a primeira carta, ela aparece aqui.",
+        // Uma carta tracejada: o lugar da primeira, que é o que o texto promete.
+        image: "empty-catalog",
       });
     }
 

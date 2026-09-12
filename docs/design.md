@@ -123,7 +123,7 @@ preenchimento suave medido com a própria tinta em cima.
 
 **Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 8,61:1 no escuro; borda de campo a 3,46:1 no claro e 3,54:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
 
-**O traço de arte não tem piso — e é medido mesmo assim, para o número ficar registrado:** `--color-line-art`, o verso da carta, dá **1,34:1** no claro e **1,36:1** no escuro sobre o fundo. Está abaixo de qualquer piso de propósito. Ele desenha, não escreve: nenhum texto vai por cima dele — o nome da carta fica em área lisa, em `--color-muted` —, e o verso precisa ficar abaixo de qualquer arte real, para não disputar com a carta que tem imagem ao lado. É por isso que a família `--color-line` inteira fica fora das tintas na `/paleta`, e não só o nome exato.
+**O traço de arte não tem piso — e é medido mesmo assim, para o número ficar registrado:** `--color-line-art`, o verso da carta, dá **1,34:1** no claro e **1,36:1** no escuro sobre o fundo, e `--color-line-art-strong`, a ilustração de estado, dá **2,07:1** e **2,06:1**. Os dois estão abaixo de qualquer piso de propósito. Ele desenha, não escreve: nenhum texto vai por cima dele — o nome da carta fica em área lisa, em `--color-muted` —, e o verso precisa ficar abaixo de qualquer arte real, para não disputar com a carta que tem imagem ao lado. É por isso que a família `--color-line` inteira fica fora das tintas na `/paleta`, e não só o nome exato. **São dois tons, e a diferença é a posição:** o do verso foi calibrado para ficar ATRÁS de texto; a ilustração de estado está sozinha e na frente, e naquele tom ela vira fantasma no claro.
 
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
@@ -231,6 +231,7 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
 | `--color-line`      | Linha decorativa: divisória, borda de cartão e de tabela    |
 | `--color-line-art`  | Traço de arte decorativa: o verso da carta. Nunca sob texto |
+| `--color-line-art-strong` | O mesmo traço, um degrau acima: a ilustração que está sozinha |
 | `--color-border`    | Borda de campo — o limite que identifica o controle, a 3:1  |
 | `--color-brand`     | A marca: o desenho e a palavra "Oráculo" — em nenhum outro lugar |
 | `--color-accent`    | **A voz única de ação**, em violeta. Uma ação primária por contexto |

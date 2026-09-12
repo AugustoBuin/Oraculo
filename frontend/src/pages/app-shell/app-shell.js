@@ -153,6 +153,9 @@ export function appShell(root, { onSignedOut }) {
         empty({
           title: "Página não encontrada",
           description: "O endereço não corresponde a nenhuma tela do portal.",
+          // O leque da marca com a carta do meio faltando: a carta que se
+          // pediu não está na tiragem.
+          image: "not-found",
           // Mesmo motivo do 403: aqui o estado É a tela, e sem isto ela não
           // teria cabeçalho nenhum.
           as: "h1",

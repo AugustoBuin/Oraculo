@@ -19,6 +19,7 @@ import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
+import { empty } from "@/shared/components/feedback.js";
 import { deleteCardPreview } from "@/features/cards/components/delete-card-dialog.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
 import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
@@ -26,6 +27,7 @@ import { invalidateCatalogs } from "@/features/catalogs/api/catalogs-api.js";
 import { changePasswordForm } from "@/features/auth/components/change-password-form.js";
 import { readCardQuery } from "@/features/cards/utils/card-query.js";
 import { appHeader } from "@/shared/components/app-header.js";
+import { button } from "@/shared/components/button.js";
 import { pagination } from "@/shared/components/pagination.js";
 import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
@@ -427,6 +429,63 @@ suite("styles/layout · a geometria das telas principais", () => {
           wrapper.scrollWidth > wrapper.clientWidth || wrapper.clientWidth >= 40 * rem(),
           `[${context}] a tabela nem coube nem ganhou rolagem própria`,
         );
+      },
+    ));
+
+  test("os estados vazios cruzam os pontos de quebra com a ilustração", () =>
+    acrossWidths(
+      {
+        label: "estados vazios",
+        /*
+         * Os três de uma vez: eles são blocos independentes numa coluna, e o
+         * que interessa medir é a ilustração — `min(12rem, 100%)` some da
+         * conta em tela larga e passa a valer em tela estreita, que é onde
+         * uma largura fixa estouraria.
+         */
+        mount: ({ scope: life }) =>
+          el("div", {
+            classes: ["stack"],
+            children: [
+              empty({
+                title: "Página não encontrada",
+                description: "O endereço não corresponde a nenhuma tela do portal.",
+                as: "h1",
+                image: "not-found",
+              }),
+              empty({
+                title: "Nenhuma carta cadastrada ainda",
+                description: "Quando o catálogo receber a primeira carta, ela aparece aqui.",
+                image: "empty-catalog",
+              }),
+              empty({
+                title: "Nenhuma carta encontrada",
+                description: "Nenhuma carta corresponde à busca e aos filtros escolhidos.",
+                image: "search",
+                action: button({
+                  label: "Limpar busca e filtros",
+                  variant: "secondary",
+                  scope: life,
+                  onClick: () => {},
+                }).node,
+              }),
+            ],
+          }),
+      },
+      ({ host, context }) => {
+        const caixa = host.getBoundingClientRect();
+
+        for (const desenho of host.querySelectorAll(".state-image")) {
+          const medida = desenho.getBoundingClientRect();
+
+          assertTrue(
+            medida.width > 0 && medida.height > 0,
+            `[${context}] a ilustração subiu sem caixa: ${Math.round(medida.width)}x${Math.round(medida.height)}`,
+          );
+          assertTrue(
+            medida.width <= caixa.width + 1,
+            `[${context}] a ilustração mede ${Math.round(medida.width)}px numa caixa de ${Math.round(caixa.width)}px`,
+          );
+        }
       },
     ));
 
