@@ -245,6 +245,24 @@
   --image-state-empty-catalog: url("/src/assets/states/empty-catalog.svg");
 
   /*
+   * A cena da entrada, em duas camadas e uma por tema.
+   *
+   * Cena única não serviria: a mesa cresce com a JANELA e o cartão do
+   * formulário cresce com a FONTE, então com a fonte em 200% as cartas de uma
+   * foto só ficariam debaixo do cartão. Em camadas, a carta deitada tem
+   * tamanho em `rem` e acompanha o cartão.
+   *
+   * Uma imagem por tema, e não uma só esmaecida: a virada do login revela a
+   * aplicação, e revelar um tema com a cena do outro é o defeito que a troca
+   * por token evita.
+   */
+  --image-login-table: url("/src/assets/login/table-light.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-light.webp") 1x,
+    url("/src/assets/login/card-light@2x.webp") 2x
+  );
+
+  /*
    * Os ícones de traço. Um arquivo por desenho, e nenhum por cor: quem pinta
    * é `currentColor`, então o mesmo aviso serve ao vermelho do erro e à tinta
    * do resto.
@@ -306,6 +324,12 @@
     --color-line: #35353e;
     --color-line-art: #2b293f; /* 1,36:1 no fundo — o traço do verso */
     --color-line-art-strong: #474461; /* 2,06:1 — a ilustração sozinha */
+
+    --image-login-table: url("/src/assets/login/table-dark.webp");
+    --image-login-card: image-set(
+      url("/src/assets/login/card-dark.webp") 1x,
+      url("/src/assets/login/card-dark@2x.webp") 2x
+    );
     --color-border: #74737c;
 
     --color-brand: #bab3ff;
@@ -373,6 +397,12 @@
   --color-line-art: #2b293f;
   --color-line-art-strong: #474461;
   --color-border: #74737c;
+
+  --image-login-table: url("/src/assets/login/table-dark.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-dark.webp") 1x,
+    url("/src/assets/login/card-dark@2x.webp") 2x
+  );
 
   --color-brand: #bab3ff;
 

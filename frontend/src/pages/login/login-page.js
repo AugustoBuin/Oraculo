@@ -25,17 +25,46 @@ export function loginPage(root, { onAuthenticated, notice }) {
     notice,
   });
 
+  /*
+   * A carta deitada, que aparece dos dois lados do cartão.
+   *
+   * É UMA imagem só: a da direita é a mesma, espelhada no CSS. Duas fotos
+   * diferentes custariam o dobro do peso e dariam duas luzes na mesma mesa.
+   *
+   * Decoração pura (`aria-hidden`): quem usa leitor de tela não perde nada
+   * sem elas, e o `<div>` vazio existe porque a foto entra por token de
+   * `background-image` — endereço de imagem é valor visual, e não atributo de
+   * componente.
+   */
+  const deitada = (mirrored = false) =>
+    el("div", {
+      classes: ["login-side", ...(mirrored ? ["login-side-mirrored"] : [])],
+      attrs: { "aria-hidden": "true" },
+    });
+
   root.replaceChildren(
     el("main", {
       classes: ["login-layout"],
       attrs: { id: "conteudo" },
       children: [
+        /*
+         * O palco é o contêiner da consulta: quem decide se as cartas
+         * deitadas cabem é a largura DELE, não a da janela (`design.md` §9).
+         */
         el("div", {
-          classes: ["login-card"],
-          // A marca com o sigilo, que é a versão grande: aqui ela tem 64px, e
-          // o cartão tem 384px de largura. O `<h1>` do formulário já diz
-          // "Entrar no Oráculo", então o desenho é decorativo.
-          children: [brandMark({ sigil: true }), form.node],
+          classes: ["login-stage"],
+          children: [
+            deitada(),
+            el("div", {
+              classes: ["login-card"],
+              // A carta em pé é o próprio cartão do formulário: o verso está
+              // à vista, e o formulário está sobre ele. A marca com o sigilo
+              // vem no topo; o `<h1>` do formulário já diz "Entrar no
+              // Oráculo", então o desenho é decorativo.
+              children: [brandMark({ sigil: true }), form.node],
+            }),
+            deitada(true),
+          ],
         }),
       ],
     }),

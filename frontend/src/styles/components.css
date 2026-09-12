@@ -278,21 +278,141 @@
 
 /* --- Tela de entrada ----------------------------------------------------- */
 
+/*
+ * A ENTRADA É UMA CENA, e ela tem três camadas.
+ *
+ * A mesa é o fundo do layout; a carta em pé é o próprio cartão do formulário
+ * — o verso está à vista e o formulário está sobre ele —; e as duas deitadas
+ * ficam ao lado, "na mesa". Uma foto única não serviria: a mesa cresce com a
+ * JANELA e o cartão cresce com a FONTE, então a 200% as cartas de uma cena só
+ * ficariam debaixo do formulário.
+ *
+ * `min-height: 100svh` e não `100vh`: no celular, a barra do navegador entra
+ * na conta do `vh` e a tela ganha uma rolagem que não existe. `svh` é a altura
+ * pequena, a que sobra com a barra visível.
+ */
 .login-layout {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  min-height: 100svh;
   padding: var(--space-4);
+  background-color: var(--color-bg);
+  background-image: var(--image-login-table);
+  background-size: cover;
+  background-position: center;
+}
+
+/*
+ * O palco é quem responde a consulta de contêiner: as cartas deitadas
+ * aparecem quando CABEM, e quem sabe disso é a largura dele, não a da janela
+ * (`design.md` §9).
+ */
+.login-stage {
+  container: login / inline-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  width: 100%;
 }
 
 .login-card {
+  position: relative;
   width: 100%;
   max-width: 24rem;
-  padding: var(--space-5);
+  /*
+   * O respiro nunca come mais de 9% da largura.
+   *
+   * A 320px com a fonte do navegador em 200%, `--space-5` vira 48px de cada
+   * lado e sobram 158px para o conteúdo — menos do que a palavra "Oráculo"
+   * mede naquele tamanho (184px). O cartão ficava com o próprio título
+   * rachado ao meio. Acima de ~267px de cartão o `min()` escolhe o token, e
+   * nada muda.
+   */
+  padding: min(var(--space-5), 9%);
   background-color: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+}
+
+/*
+ * A carta em pé é o cartão, e o verso está nele: a mesma moldura do P3, pelo
+ * mesmo token. A gema do verso NÃO entra — a marca com o sigilo já está no
+ * topo do cartão, no lugar dela.
+ */
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-line-art);
+  mask-image: var(--image-card-back-frame);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/*
+ * O formulário fica POR CIMA da moldura.
+ *
+ * Pseudoelemento posicionado pinta acima de conteúdo estático, então sem isto
+ * a moldura cruza o título e os campos — o verso passa na frente da carta em
+ * vez de ficar atrás dela. Mesmo motivo do texto sobre o verso na galeria.
+ */
+.login-card > * {
+  position: relative;
+}
+
+/*
+ * As cartas deitadas: a MESMA imagem dos dois lados, a da direita espelhada.
+ * Largura em `rem` para crescerem com a fonte, como o cartão ao lado.
+ *
+ * Elas nascem fora da tela e só entram quando cabem inteiras: carta cortada
+ * pela borda é pior que carta nenhuma, e a rede de geometria acusaria.
+ */
+.login-side {
+  display: none;
+  flex: none;
+  inline-size: 14rem;
+  aspect-ratio: 4 / 3;
+  background-image: var(--image-login-card);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* "Na mesa": um pouco abaixo do cartão, como se estivessem deitadas à
+     frente dele. */
+  align-self: flex-end;
+  margin-block-end: var(--space-6);
+}
+
+.login-side-mirrored {
+  scale: -1 1;
+}
+
+/*
+ * 64rem é onde as três cartas cabem lado a lado com folga: 24rem do cartão
+ * mais duas de 14rem mais os dois vãos. Abaixo disso, o formulário fica
+ * sozinho — e continua inteiro, que é o que importa.
+ */
+@container login (min-width: 64rem) {
+  .login-side {
+    display: block;
+  }
+}
+
+/*
+ * Altura baixa — celular deitado tem menos de 400px: a cena não pode empurrar
+ * o formulário para fora da tela. A mesa continua; as cartas saem.
+ */
+@media (max-height: 32rem) {
+  .login-side {
+    display: none;
+  }
+
+  .login-layout {
+    align-items: flex-start;
+  }
 }
 
 /*

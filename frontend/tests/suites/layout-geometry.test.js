@@ -20,6 +20,7 @@ import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
 import { empty } from "@/shared/components/feedback.js";
+import { loginPage } from "@/pages/login/login-page.js";
 import { deleteCardPreview } from "@/features/cards/components/delete-card-dialog.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
 import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
@@ -740,6 +741,49 @@ suite("styles/layout · a geometria das telas principais", () => {
         const linhas = host.querySelectorAll(".palette-table tbody tr").length;
 
         assertTrue(linhas > 40, `[${context}] a paleta desenhou ${linhas} linhas de tabela`);
+      },
+    ));
+
+  test("a entrada cruza os pontos de quebra, e a cena nunca empurra o formulário", () =>
+    acrossWidths(
+      {
+        label: "entrada",
+        /*
+         * O login não estava na rede. Ele é a primeira tela, tem uma cena
+         * atrás do formulário, e a cena é a única parte da interface que
+         * cresce com a JANELA enquanto o conteúdo cresce com a FONTE — que é
+         * justamente a combinação que produziu o OF-004.
+         */
+        mount: ({ scope: life, host }) => {
+          const raiz = el("div");
+
+          host.append(raiz);
+          life.add(loginPage(raiz, { onAuthenticated: () => {} }));
+
+          return raiz;
+        },
+      },
+      ({ host, context }) => {
+        const cartao = host.querySelector(".login-card").getBoundingClientRect();
+        const entrar = host.querySelector(".login-form .button").getBoundingClientRect();
+
+        // O botão é o fim do formulário: se ele couber, a cena não empurrou
+        // nada para fora do cartão.
+        assertTrue(
+          entrar.bottom <= cartao.bottom + 1,
+          `[${context}] o Entrar saiu do cartão por ${Math.round(entrar.bottom - cartao.bottom)}px`,
+        );
+
+        for (const deitada of host.querySelectorAll(".login-side")) {
+          const caixa = deitada.getBoundingClientRect();
+
+          // Carta deitada cortada pela borda é pior que carta deitada nenhuma:
+          // ela só aparece quando cabe inteira.
+          assertTrue(
+            caixa.width === 0 || caixa.left >= host.getBoundingClientRect().left - 1,
+            `[${context}] a carta deitada foi cortada pela borda`,
+          );
+        }
       },
     ));
 
