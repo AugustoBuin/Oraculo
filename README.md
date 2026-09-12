@@ -89,9 +89,9 @@ permanecer limpo do início ao fim.**
 Entre como **Administração**.
 
 1. **Os cinco estados do catálogo.** *Carregando*: recarregue a página. *Sucesso*: a galeria
-   paginada. *Vazio*: busque `zzzz` — o texto diz o que fazer em seguida. *Erro*: ligue o
-   modo offline do DevTools e recarregue; o estado traz **Tentar novamente**, que funciona ao
-   voltar a rede. *Sem permissão*: aparece no passo 9.
+   paginada. *Vazio*: busque `zzzz` — a gema aparece sobre o texto, que diz o que fazer em
+   seguida. *Erro*: ligue o modo offline do DevTools e recarregue; o estado traz **Tentar
+   novamente**, que funciona ao voltar a rede. *Sem permissão*: aparece no passo 9.
 2. **Busca e filtros.** Digite parte de um nome e encadeie Jogo → Edição → Raridade. Os
    filtros vão para a URL: recarregue e o estado volta idêntico. Edição e raridade só
    habilitam depois do jogo.
@@ -106,8 +106,10 @@ Entre como **Administração**.
    que na verdade é outro tipo é recusado pelo conteúdo, não pela extensão; SVG é recusado.
 6. **Aviso de duplicidade.** Cadastre uma carta com nome já existente na mesma edição: o
    aviso aparece com a carta existente, e reenviar confirma o cadastro.
-7. **Exclusão e desfazer.** Exclua uma carta: o modal escreve o nome dela. Confirme e clique
-   em **Desfazer** dentro de 10 segundos — a carta volta à listagem.
+7. **Exclusão e desfazer.** Exclua uma carta: o modal escreve o nome dela **e mostra a
+   carta**, ao lado do texto. Faça pelas duas visões e com uma carta sem imagem — aí a
+   miniatura é o verso, com a gema no centro. Confirme e clique em **Desfazer** dentro de 10
+   segundos: a carta volta à listagem.
 8. **Histórico.** Abra uma carta já editada e veja quem alterou o quê, com valores
    apresentáveis.
 9. **Os três perfis.** Saia e entre como **Cadastro**: some o item *Catálogos*. Entre como
@@ -117,9 +119,27 @@ Entre como **Administração**.
 10. **Catálogos (só Administração).** Desative uma edição em uso: o aviso diz que as cartas
     que já a usam continuam como estão. O item fica esmaecido **e** com a etiqueta
     "Desativada". Reative em seguida.
-11. **Os dois temas.** O botão do cabeçalho cicla *sistema → claro → escuro*. Confira as duas
-    aparências e recarregue: a preferência é lembrada.
-12. **Só pelo teclado.** Volte ao topo e pressione Tab: o primeiro foco é **Pular para o
+11. **Editar edição e raridade, na própria linha.** Clique em **Editar**: o formulário abre
+    na linha, com o nome de agora, e o código aparece travado — código não se altera. Troque
+    o nome e salve. Em **Raridades**, a linha também traz o **selo do material**, e o
+    formulário traz o seletor de cor: escolha outra cor, salve, e o selo da linha muda junto.
+    O seletor anda pelas **setas** do teclado, como todo grupo de rádio. **Esc** e
+    **Cancelar** fecham sem salvar, e o foco volta ao **Editar** da linha. Reative uma
+    raridade desativada e confira que ela volta na posição e com a cor que tinha — a escrita
+    manda o registro inteiro.
+12. **A identidade visual.** A marca fica à esquerda do nome no cabeçalho, e grande, com a
+    gema, acima do formulário de entrada. O ícone da aba é o quadrado violeta com o símbolo
+    branco: recarregue com o cache limpo e confira também que `http://localhost:8080/favicon.ico`
+    responde com a imagem, e não com o HTML da aplicação. Carta sem imagem mostra o **verso**
+    — moldura lapidada, gema acima, nome embaixo —, na galeria e na pré-visualização vazia do
+    formulário. O aviso, o cadeado e o ícone do botão de tema são desenhos de traço, e tomam
+    a cor do texto ao lado: o aviso sai vermelho dentro do estado de erro. Abra
+    `http://localhost:8080/nao-existe` e veja o leque com a carta do meio faltando.
+13. **Os dois temas.** O botão do cabeçalho cicla *sistema → claro → escuro*. Confira as duas
+    aparências e recarregue: a preferência é lembrada. **Os desenhos acompanham**: a marca, os
+    ícones, o verso e as ilustrações trocam de cor junto, porque são máscara pintada por
+    token — e trocam pelo BOTÃO, não só pelo tema do sistema.
+14. **Só pelo teclado.** Volte ao topo e pressione Tab: o primeiro foco é **Pular para o
     conteúdo**, e Enter leva o foco ao conteúdo. Percorra o roteiro inteiro sem tocar no
     mouse — o foco é sempre visível, o modal prende o foco enquanto está aberto, e Esc fecha
     devolvendo o foco ao botão que o abriu.
