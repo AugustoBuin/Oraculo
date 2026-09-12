@@ -226,6 +226,17 @@
   --image-card-back-frame: url("/src/assets/card-back/frame.svg");
   --image-card-back-gem: url("/src/assets/card-back/gem.svg");
 
+  /*
+   * Os ícones de traço. Um arquivo por desenho, e nenhum por cor: quem pinta
+   * é `currentColor`, então o mesmo aviso serve ao vermelho do erro e à tinta
+   * do resto.
+   */
+  --image-icon-warning: url("/src/assets/icons/warning.svg");
+  --image-icon-lock: url("/src/assets/icons/lock.svg");
+  --image-icon-theme-system: url("/src/assets/icons/theme-system.svg");
+  --image-icon-theme-light: url("/src/assets/icons/theme-light.svg");
+  --image-icon-theme-dark: url("/src/assets/icons/theme-dark.svg");
+
   /* ---------------------------------------------------------------------
    * Movimento — nada acima de 400ms, exceto progresso (§11.2)
    * ------------------------------------------------------------------- */
