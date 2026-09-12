@@ -266,6 +266,13 @@ active)` devolve o controle do elemento (`forced-color-adjust: none`) e volta a 
 **do sistema** — `LinkText` dentro do link do cabeçalho, `CanvasText` fora dele. Nunca com a
 cor da paleta: é ela que o modo existe para substituir.
 
+**A única cor gravada fora do `tokens.css` é a do ícone da aba**, e é uma exceção com motivo:
+o ícone vive na barra de abas, que é do navegador, e por isso tem fundo próprio e não segue o
+tema do Oráculo — um SVG que trocasse de cor com o tema do navegador precisaria de `<style>`
+dentro do arquivo, e a CSP da pasta servida não aceita. O violeta gravado é o
+`--color-brand` do tema claro (`#492c9b`) com o símbolo branco, a 9,92:1; a origem está
+anotada no `<head>` do `index.html`, junto do procedimento para refazer os três arquivos.
+
 **Raridade não é estado.** Os selos de estado e o de raridade usam o mesmo desenho de fundo e
 tinta, e o que os separa é a **forma**: o de raridade leva uma marca redonda antes do nome, e
 os de estado não. Os materiais ficam nos vãos de matiz entre os estados, e o nome está sempre
