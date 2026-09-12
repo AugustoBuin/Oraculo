@@ -6,6 +6,24 @@
   <title>Oráculo</title>
 
   <!--
+    O ícone da aba, FORA do bloco do mapa de importação logo abaixo: qualquer
+    mudança dentro dele troca o hash da CSP e a aplicação para de carregar.
+
+    Três arquivos porque são três clientes. O `.ico` vem primeiro e responde ao
+    pedido que o navegador faz sozinho por `/favicon.ico` — sem ele, o pedido
+    cai no fallback de página única e recebe o index.html inteiro. O SVG serve
+    todo tamanho a quem o entende, e o do iOS o sistema busca por conta dele.
+
+    O ícone tem fundo próprio e não segue o tema do Oráculo: ele vive na barra
+    de abas, que é do navegador. A cor está GRAVADA nos arquivos (o violeta da
+    marca no tema claro, com o símbolo branco) — se a marca mudar, os três se
+    refazem a partir do `favicon.svg` e do `assets/brand/apple-touch-icon.svg`.
+  -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!--
     O mapa de importação é o único script inline da página, e não carrega
     comportamento: ele só ensina ao navegador que "@/" é a raiz de src/.
 
