@@ -33,6 +33,7 @@ import { palettePage } from "@/pages/palette/palette-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 import { fetchDouble } from "~/doubles/fetch.js";
 import {
+  LAYOUT_WIDTHS,
   acrossWidths,
   assertNothingClipped,
   assertWholeWords,
@@ -287,14 +288,52 @@ suite("styles/layout · a geometria das telas principais", () => {
   });
 
   test("a galeria de cartas cruza os pontos de quebra sem estourar a coluna", () =>
-    acrossWidths({
-      label: "galeria",
-      // Sem `.node`: `cardGallery` devolve o próprio elemento. Com ele, o
-      // valor montado era `undefined`, nada era anexado, e esta linha da rede
-      // media uma caixa VAZIA — passava sempre, protegendo nada.
-      mount: ({ scope }) =>
-        cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }),
-    }));
+    acrossWidths(
+      {
+        label: "galeria",
+        /*
+         * As duas larguras a mais são a VIRADA DA GALERIA, e ela acontece num
+         * pixel: com 399 há uma coluna só e a carta tem 367px; com 400 são
+         * duas colunas de 176px. A carta muda de tamanho por um fator de dois
+         * de uma largura para a seguinte, e é justamente aí que um desenho em
+         * porcentagem — o verso — tem chance de quebrar. As larguras padrão
+         * da rede cercam os pontos de quebra do LAYOUT, que são outros.
+         */
+        widths: [...LAYOUT_WIDTHS, 399, 400].sort((a, b) => a - b),
+        // Sem `.node`: `cardGallery` devolve o próprio elemento. Com ele, o
+        // valor montado era `undefined`, nada era anexado, e esta linha da
+        // rede media uma caixa VAZIA — passava sempre, protegendo nada.
+        mount: ({ scope }) =>
+          cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }),
+      },
+      ({ host, context }) => {
+        /*
+         * O verso da carta é DUAS CAMADAS DE MÁSCARA, e máscara não tem nó no
+         * DOM: `querySelector` não alcança, e afirmar que a regra foi escrita
+         * no CSS não prova que ela chegou ao elemento. Medir o estilo
+         * computado do pseudoelemento é o que prova — e é o mesmo motivo pelo
+         * qual esta rede existe (OF-004).
+         *
+         * As duas cartas do cenário estão sem imagem de propósito: é assim
+         * que o seed tem The One Ring e Celebration Pikachu.
+         */
+        const verso = host.querySelector(".card-image-empty");
+
+        assertTrue(verso !== null, `[${context}] a carta sem imagem não montou o espaço reservado`);
+
+        const moldura = getComputedStyle(verso, "::before").maskImage;
+        const gema = getComputedStyle(verso, "::after").maskImage;
+
+        assertTrue(
+          moldura.includes("card-back/frame.svg"),
+          `[${context}] o verso subiu sem a moldura: ${moldura}`,
+        );
+        assertTrue(
+          gema.includes("card-back/gem.svg"),
+          `[${context}] o verso subiu sem a gema: ${gema}`,
+        );
+      },
+    ));
 
   test("a tabela de cartas rola no próprio eixo e não na página", () =>
     acrossWidths(

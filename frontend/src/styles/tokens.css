@@ -39,6 +39,20 @@
   --color-line: #dcdbe1;
 
   /*
+   * O traço de ARTE DECORATIVA — hoje, o verso da carta.
+   *
+   * Papel que nenhum token cobria: ele desenha, e não separa. Com os tokens
+   * de antes, a mesma linha dava 1,20 no claro e 1,57 no escuro — apagada num
+   * tema e marcada no outro. Aqui são 1,34:1 e 1,36:1 sobre o fundo, de
+   * propósito: o verso precisa ficar ABAIXO de qualquer arte real, para não
+   * disputar com a carta que tem imagem.
+   *
+   * Não se mede a 4,5:1, e a `/paleta` sabe disso: a família `--color-line`
+   * inteira fica fora das tintas (`shared/theme/palette.js`).
+   */
+  --color-line-art: #d1cfdf;
+
+  /*
    * A borda de campo de formulário — o limite que IDENTIFICA um controle.
    *
    * A linha acima é decorativa (divisória, borda de cartão) e pode ser leve.
@@ -203,6 +217,15 @@
   --image-brand-mark: url("/src/assets/brand/symbol.svg");
   --image-brand-mark-sigil: url("/src/assets/brand/symbol-sigil.svg");
 
+  /*
+   * O verso da carta, em duas camadas: a moldura em lapidação esmeralda e a
+   * gema acima dela. Dois arquivos e não um, porque o CSS posiciona a gema em
+   * porcentagem — e porque sem texto (a miniatura do modal) ela vai ao centro
+   * e cresce, o que um desenho só não permitiria.
+   */
+  --image-card-back-frame: url("/src/assets/card-back/frame.svg");
+  --image-card-back-gem: url("/src/assets/card-back/gem.svg");
+
   /* ---------------------------------------------------------------------
    * Movimento — nada acima de 400ms, exceto progresso (§11.2)
    * ------------------------------------------------------------------- */
@@ -252,6 +275,7 @@
     --color-muted: #9aa0a8; /*  6,29:1 na superfície */
 
     --color-line: #35353e;
+    --color-line-art: #2b293f; /* 1,36:1 no fundo — o traço do verso */
     --color-border: #74737c;
 
     --color-brand: #bab3ff;
@@ -316,6 +340,7 @@
   --color-muted: #9aa0a8;
 
   --color-line: #35353e;
+  --color-line-art: #2b293f;
   --color-border: #74737c;
 
   --color-brand: #bab3ff;
