@@ -26,6 +26,7 @@ import "~/suites/card-image.test.js";
 import "~/suites/brand-mark.test.js";
 import "~/suites/icon.test.js";
 import "~/suites/theme-toggle.test.js";
+import "~/suites/card-back.test.js";
 import "~/suites/card-tile.test.js";
 import "~/suites/card-gallery.test.js";
 import "~/suites/catalogs-api.test.js";
