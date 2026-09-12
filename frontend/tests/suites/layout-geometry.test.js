@@ -289,8 +289,11 @@ suite("styles/layout · a geometria das telas principais", () => {
   test("a galeria de cartas cruza os pontos de quebra sem estourar a coluna", () =>
     acrossWidths({
       label: "galeria",
+      // Sem `.node`: `cardGallery` devolve o próprio elemento. Com ele, o
+      // valor montado era `undefined`, nada era anexado, e esta linha da rede
+      // media uma caixa VAZIA — passava sempre, protegendo nada.
       mount: ({ scope }) =>
-        cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }).node,
+        cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }),
     }));
 
   test("a tabela de cartas rola no próprio eixo e não na página", () =>
@@ -333,8 +336,9 @@ suite("styles/layout · a geometria das telas principais", () => {
   test("a paginação cruza os pontos de quebra sem estourar", () =>
     acrossWidths({
       label: "paginação",
+      // Idem: `pagination` também devolve o elemento, e esta linha media vazio.
       mount: ({ scope }) =>
-        pagination({ page: 3, totalPages: 12, total: 237, onChange: () => {}, scope }).node,
+        pagination({ page: 3, totalPages: 12, total: 237, onChange: () => {}, scope }),
     }));
 
   test("a barra de filtros cruza os pontos de quebra sem estourar", async () => {
