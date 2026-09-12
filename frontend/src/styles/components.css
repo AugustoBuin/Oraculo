@@ -261,6 +261,62 @@
   display: none;
 }
 
+/* --- Ícones --------------------------------------------------------------- */
+
+/*
+ * UM CARACTERE, e não uma caixa flex.
+ *
+ * A mensagem de erro quebra em duas linhas, e o ícone tem de ficar preso ao
+ * começo do texto: num contêiner flex centrado ele subiria para o meio das
+ * duas linhas, longe da primeira palavra. `inline-block` de `1em` com
+ * `vertical-align: -0.125em` o trata como o caractere que ele substituiu —
+ * escala junto com a fonte, inclusive a 200%.
+ *
+ * `currentColor`: o ícone tem a cor do texto ao lado. É o que dispensa um
+ * arquivo por cor e faz o aviso sair vermelho dentro do erro sem nenhuma
+ * regra a mais.
+ */
+.icon {
+  display: inline-block;
+  inline-size: 1em;
+  block-size: 1em;
+  vertical-align: -0.125em;
+  background-color: currentcolor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.icon-warning {
+  mask-image: var(--image-icon-warning);
+}
+
+.icon-lock {
+  mask-image: var(--image-icon-lock);
+}
+
+.icon-theme-system {
+  mask-image: var(--image-icon-theme-system);
+}
+
+.icon-theme-light {
+  mask-image: var(--image-icon-theme-light);
+}
+
+.icon-theme-dark {
+  mask-image: var(--image-icon-theme-dark);
+}
+
+/*
+ * No alto contraste, `currentColor` já é a cor de sistema do texto ao lado —
+ * o que falta é o fundo não ser forçado para a cor da tela.
+ */
+@media (forced-colors: active) {
+  .icon {
+    forced-color-adjust: none;
+  }
+}
+
 /* --- A marca ------------------------------------------------------------- */
 
 /*

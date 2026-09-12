@@ -269,6 +269,15 @@ active)` devolve o controle do elemento (`forced-color-adjust: none`) e volta a 
 **do sistema** — `LinkText` dentro do link do cabeçalho, `CanvasText` fora dele. Nunca com a
 cor da paleta: é ela que o modo existe para substituir.
 
+**Ícone não tem cor própria.** Os cinco ícones de traço (aviso, cadeado, e os três do botão
+de tema) são máscara pintada com `currentColor`: cada um tem a cor do texto ao lado — vermelho
+dentro do estado de erro, tinta no botão — e não existe um arquivo por cor. Eles substituíram
+caracteres de fonte, que não obedecem a paleta nenhuma: o cadeado saía emoji colorido, e o
+sol, a lua e o meio círculo mudavam de forma conforme o sistema operacional. A família é uma
+só — grade de 24, traço 2, pontas e junções redondas, as do logo — e as formas são as
+universais, porque reinventar um sinal de aviso custa reconhecimento e a identidade fica no
+traço.
+
 **A única cor gravada fora do `tokens.css` é a do ícone da aba**, e é uma exceção com motivo:
 o ícone vive na barra de abas, que é do navegador, e por isso tem fundo próprio e não segue o
 tema do Oráculo — um SVG que trocasse de cor com o tema do navegador precisaria de `<style>`

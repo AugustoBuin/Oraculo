@@ -10,6 +10,7 @@
  * — nenhum texto técnico é construído aqui.
  */
 
+import { icon } from "@/shared/components/icon.js";
 import { el } from "@/shared/dom/elements.js";
 
 /**
@@ -73,7 +74,7 @@ export function failure({ message, action } = {}) {
     el("p", {
       classes: ["state-title"],
       children: [
-        el("span", { text: "⚠", attrs: { "aria-hidden": "true" }, classes: ["state-icon"] }),
+        icon("warning", { classes: ["state-icon"] }),
         el("span", { text: message }),
       ],
     }),
@@ -104,7 +105,7 @@ export function forbidden(message = "Você não tem permissão para ver esta tel
       el(as, {
         classes: ["state-title"],
         children: [
-          el("span", { text: "🔒", attrs: { "aria-hidden": "true" }, classes: ["state-icon"] }),
+          icon("lock", { classes: ["state-icon"] }),
           el("span", { text: message }),
         ],
       }),

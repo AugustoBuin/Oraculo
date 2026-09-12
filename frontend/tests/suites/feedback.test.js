@@ -36,4 +36,21 @@ suite("shared/components/feedback · o elemento do título do estado", () => {
     assertSame(titulo(negado).tagName, "H1");
     assertSame(titulo(negado).querySelector(".state-icon").getAttribute("aria-hidden"), "true");
   });
+
+  test("os dois ícones são DESENHO, e não caractere de fonte", () => {
+    /*
+     * O cadeado como caractere saía emoji colorido — fora da paleta, e com o
+     * desenho decidido pelo sistema operacional, não por nós. Como máscara, o
+     * ícone tem a cor do texto ao lado: vermelho dentro do erro, tinta no
+     * resto. E o texto da mensagem não ganha um caractere que o leitor de
+     * tela teria de adivinhar.
+     */
+    const negado = forbidden("Sem permissão.");
+    const falha = failure({ message: "Não foi possível carregar." });
+
+    assertTrue(titulo(negado).querySelector(".icon-lock") !== null, "o cadeado não é desenho");
+    assertTrue(titulo(falha).querySelector(".icon-warning") !== null, "o aviso não é desenho");
+    assertSame(titulo(negado).textContent, "Sem permissão.");
+    assertSame(titulo(falha).textContent, "Não foi possível carregar.");
+  });
 });
