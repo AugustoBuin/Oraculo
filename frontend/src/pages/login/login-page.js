@@ -7,6 +7,7 @@
  */
 
 import { loginForm } from "@/features/auth/components/login-form.js";
+import { brandMark } from "@/shared/components/brand-mark.js";
 import { el } from "@/shared/dom/elements.js";
 import { scope } from "@/shared/dom/events.js";
 
@@ -28,7 +29,15 @@ export function loginPage(root, { onAuthenticated, notice }) {
     el("main", {
       classes: ["login-layout"],
       attrs: { id: "conteudo" },
-      children: [el("div", { classes: ["login-card"], children: [form.node] })],
+      children: [
+        el("div", {
+          classes: ["login-card"],
+          // A marca com o sigilo, que é a versão grande: aqui ela tem 64px, e
+          // o cartão tem 384px de largura. O `<h1>` do formulário já diz
+          // "Entrar no Oráculo", então o desenho é decorativo.
+          children: [brandMark({ sigil: true }), form.node],
+        }),
+      ],
     }),
   );
 
