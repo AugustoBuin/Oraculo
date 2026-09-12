@@ -650,8 +650,23 @@
   background-color: var(--color-bg);
 }
 
-.card-image-empty {
+/* A divisória é do CARTÃO da grade, não do verso: no modal ele é miniatura, e
+   uma linha solta embaixo dela não separa nada. */
+.card-media .card-image-empty {
   border-bottom: 1px solid var(--color-line);
+}
+
+/*
+ * Sem texto, a gema vai ao centro e cresce.
+ *
+ * `:empty` e não uma classe modificadora: a diferença entre os dois versos é
+ * literalmente haver ou não conteúdo embaixo da gema, e é isso que o seletor
+ * diz. O `cardBack` sem nome não monta nem um `<span>` vazio — há um teste
+ * para isso, porque um filho invisível desligaria esta regra em silêncio.
+ */
+.card-image-empty:empty::after {
+  inset-block-start: 50%;
+  inline-size: 40%;
 }
 
 /* Ela é `<p>` dentro de uma caixa que centraliza: sem esticar, o verso teria
@@ -1105,6 +1120,26 @@
 
 .inline-message-attention .button {
   margin-top: var(--space-2);
+}
+
+/*
+ * A miniatura do modal de exclusão.
+ *
+ * 4rem de largura — 128px com a fonte em 200% —, e a proporção declarada em
+ * CSS para o espaço existir antes de a imagem chegar: um modal que salta com
+ * ele já aberto move o botão debaixo do dedo de quem ia clicar.
+ */
+.delete-card-preview {
+  --sidebar-side: 4rem;
+  --sidebar-content-min: 14rem;
+}
+
+.card-thumb {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 488 / 680;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
 }
 
 /* --- Campo de imagem ----------------------------------------------------- */

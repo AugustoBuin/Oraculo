@@ -19,6 +19,7 @@ import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
+import { deleteCardPreview } from "@/features/cards/components/delete-card-dialog.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
 import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
 import { invalidateCatalogs } from "@/features/catalogs/api/catalogs-api.js";
@@ -331,6 +332,49 @@ suite("styles/layout · a geometria das telas principais", () => {
         assertTrue(
           gema.includes("card-back/gem.svg"),
           `[${context}] o verso subiu sem a gema: ${gema}`,
+        );
+      },
+    ));
+
+  test("o modal de exclusão põe a miniatura ao lado do texto, ou embaixo dele", () =>
+    acrossWidths(
+      {
+        label: "exclusão",
+        /*
+         * O modal em si não entra na rede: o `openModal` prende a caixa ao
+         * `document.body` e a largura dela vem da JANELA, não do contêiner
+         * que esta rede controla. O que tem geometria é o arranjo do
+         * conteúdo, e é ele que se monta aqui — o nó real que o modal
+         * recebe, não uma cópia parecida.
+         *
+         * O nome mais longo do seed de propósito: é ele que empurra o título
+         * e obriga a explicação a caber ao lado da miniatura.
+         */
+        mount: ({ scope }) =>
+          deleteCardPreview({
+            card: {
+              nameEn: "Blue-Eyes Alternative Ultimate Dragon",
+              imageUrl: null,
+            },
+            scope,
+          }),
+      },
+      ({ host, context }) => {
+        const miniatura = host.querySelector(".sidebar-side").getBoundingClientRect();
+        const texto = host.querySelector(".sidebar-content").getBoundingClientRect();
+        const caixa = host.querySelector(".sidebar").getBoundingClientRect();
+
+        // O mesmo contrato da primitiva que o OF-004 quebrou: ou a barra
+        // desceu, ou o que está ao lado dela tem pelo menos o piso declarado.
+        if (Math.abs(miniatura.top - texto.top) > MESMA_LINHA) {
+          return;
+        }
+
+        const minimo = Math.min(14 * rem(), caixa.width);
+
+        assertTrue(
+          texto.width >= minimo - MESMA_LINHA,
+          `[${context}] a explicação ficou com ${Math.round(texto.width)}px ao lado da miniatura; o mínimo é ${Math.round(minimo)}px`,
         );
       },
     ));

@@ -7,6 +7,7 @@
  */
 
 import { button } from "@/shared/components/button.js";
+import { cardBack } from "@/features/cards/components/card-back.js";
 import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
 
@@ -21,17 +22,13 @@ const CARD_WIDTH = 488;
 const CARD_HEIGHT = 680;
 
 /**
- * Espaço reservado legível.
+ * O espaço reservado da grade: o verso da carta, com o nome.
  *
- * Nunca um ícone de imagem quebrada (RF-34). Mostra o nome, que é a informação
- * que a arte daria — quem procura a carta continua encontrando.
+ * O desenho e a decisão de acessibilidade moram no `cardBack`, que o modal de
+ * exclusão também usa — na galeria ele se apresenta e leva o nome; lá, cala.
  */
 function imagePlaceholder(card) {
-  return el("div", {
-    classes: ["card-image", "card-image-empty"],
-    attrs: { role: "img", "aria-label": `Sem imagem para ${card.nameEn}` },
-    children: [el("span", { text: card.nameEn, classes: ["card-image-empty-text"] })],
-  });
+  return cardBack({ name: card.nameEn, classes: ["card-image"] });
 }
 
 /**
