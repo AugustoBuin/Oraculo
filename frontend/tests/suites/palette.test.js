@@ -28,6 +28,7 @@ const NOMES = [
   "--color-body",
   "--color-muted",
   "--color-line",
+  "--color-line-art",
   "--color-border",
   "--color-brand",
   "--color-accent",
@@ -202,6 +203,28 @@ suite("shared/theme/palette · os pares medidos", () => {
   test("fundo, superfície, linha e as versões suaves nunca entram como tinta", () => {
     for (const nome of ["--color-bg", "--color-surface", "--color-line", "--color-success-soft"]) {
       assertTrue(!pares().some((par) => par.fg === nome), `${nome} foi medido como se fosse texto`);
+    }
+  });
+
+  test("a família da linha inteira fica de fora, e não só o nome exato", () => {
+    /*
+     * `--color-line-art` é o traço do verso da carta: decorativo, como a
+     * divisória, e por isso medido a nada — não a 4,5:1, que ele reprovaria
+     * por projeto (1,34:1 no claro). A regra é a FAMÍLIA, e não o nome exato:
+     * escrita como igualdade, cada tom de arte novo entrava como texto e
+     * derrubava a `/paleta` no dia em que nascesse.
+     */
+    for (const nome of ["--color-line-art", "--color-line-art-strong"]) {
+      const comArte = contrastPairs([...NOMES, nome]);
+
+      assertFalse(
+        comArte.some((par) => par.fg === nome),
+        `${nome} foi medido como se fosse texto`,
+      );
+      assertFalse(
+        comArte.some((par) => par.bg === nome),
+        `${nome} virou superfície de alguma tinta`,
+      );
     }
   });
 
