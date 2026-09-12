@@ -38,6 +38,7 @@ import "~/suites/image-field-layout.test.js";
 import "~/suites/layout-geometry.test.js";
 import "~/suites/feedback.test.js";
 import "~/suites/change-password-form.test.js";
+import "~/suites/login-page.test.js";
 
 const root = document.getElementById("results");
 
