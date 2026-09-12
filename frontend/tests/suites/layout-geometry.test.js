@@ -36,6 +36,7 @@ import { fetchDouble } from "~/doubles/fetch.js";
 import {
   LAYOUT_WIDTHS,
   acrossWidths,
+  assertControlsKeepWords,
   assertNothingClipped,
   assertWholeWords,
   assertWithinContainer,
@@ -207,6 +208,34 @@ suite("tests/support/layout · a rede de segurança acusa o que deve acusar", ()
       host.append(el("p", { text: "augusto.henrique@oraculo.local", classes: ["wrap-anywhere"] }));
 
       assertWholeWords(host, "prova");
+    }));
+
+  test("o controle que HERDOU a quebra em qualquer ponto é acusado", () =>
+    comCaixaDe(400, (host) => {
+      /*
+       * O ponto cego que este caso fecha: a invariante da palavra inteira
+       * PULA quem computa `anywhere`, e a propriedade é herdada — uma regra
+       * escrita na célula desce para o botão dentro dela, e o botão sai da
+       * conta junto. Foi assim que "Excluir" saiu como "Excl / uir" na visão
+       * tabela sem nenhum teste reclamar.
+       */
+      const celula = el("div", { classes: ["wrap-anywhere"] });
+
+      celula.append(el("button", { text: "Excluir", classes: ["button"] }));
+      host.append(celula);
+
+      assertThrows(
+        () => assertControlsKeepWords(host, "prova"),
+        Error,
+        "o botão herdou a quebra em qualquer ponto e ninguém acusou",
+      );
+    }));
+
+  test("o controle que NÃO herdou a quebra passa", () =>
+    comCaixaDe(400, (host) => {
+      host.append(el("button", { text: "Excluir", classes: ["button"] }));
+
+      assertControlsKeepWords(host, "prova");
     }));
 
   test("o elemento mais largo que o contêiner é acusado", () =>

@@ -17,12 +17,17 @@
  * nome de arquivo enviado; o estado vazio repete o termo que a pessoa buscou.
  * Rótulo escrito por nós fica de fora: ele tem espaço, e o piso de min-content
  * é o que impede a coluna dele de colapsar (ver `base.css`).
+ *
+ * **Toda linha desta lista mira o TEXTO, nunca o contêiner dele.** `.card-table
+ * td` já esteve aqui, e `overflow-wrap` é herdado: a regra descia para o botão
+ * "Excluir" que mora na célula de ações, zerava o min-content dele, e a coluna
+ * colapsava até a palavra rachar ao meio. As células de dado da tabela pedem a
+ * quebra pelo utilitário, uma a uma.
  */
 .card-name,
 .card-name-pt,
 .card-meta,
 .card-image-empty-text,
-.card-table td,
 .catalog-name,
 .catalog-code,
 .notification-text,
