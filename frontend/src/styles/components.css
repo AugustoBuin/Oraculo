@@ -177,6 +177,57 @@
   margin-right: var(--space-2);
 }
 
+/*
+ * A ilustração do estado vazio.
+ *
+ * Tom mais forte que o do verso: ali o traço fica ATRÁS do nome da carta;
+ * aqui ele está sozinho e na frente, e no tom do verso viraria fantasma no
+ * claro (`design.md` §3).
+ *
+ * A proporção vem do `viewBox` de cada desenho e é declarada aqui para a
+ * caixa existir antes de a máscara carregar — estado vazio que salta é pior
+ * que estado vazio, porque a pessoa já está procurando o que fazer.
+ */
+.state-image {
+  background-color: var(--color-line-art-strong);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* `min(12rem, 100%)` e não 12rem: em tela estreita, a largura fixa estouraria
+   a coluna em vez de encolher com ela. */
+.state-image-not-found,
+.state-image-empty-catalog {
+  inline-size: min(12rem, 100%);
+}
+
+.state-image-not-found {
+  aspect-ratio: 197.33 / 172.33;
+  mask-image: var(--image-state-not-found);
+}
+
+.state-image-empty-catalog {
+  aspect-ratio: 116 / 156;
+  mask-image: var(--image-state-empty-catalog);
+}
+
+/* A busca sem resultado é o estado frequente: símbolo pequeno, não cena. */
+.state-image-search {
+  block-size: 4rem;
+  aspect-ratio: 16 / 22;
+  mask-image: var(--image-card-back-gem);
+}
+
+/* Mesma dívida da máscara do verso: sem isto o alto contraste do Windows
+   apaga a ilustração junto com o fundo forçado. */
+@media (forced-colors: active) {
+  .state-image {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+}
+
 .state-failure .state-title {
   color: var(--color-danger);
 }

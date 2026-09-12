@@ -29,6 +29,7 @@ const NOMES = [
   "--color-muted",
   "--color-line",
   "--color-line-art",
+  "--color-line-art-strong",
   "--color-border",
   "--color-brand",
   "--color-accent",

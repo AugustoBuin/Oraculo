@@ -53,6 +53,16 @@
   --color-line-art: #d1cfdf;
 
   /*
+   * O mesmo papel, um degrau mais forte: 2,07:1 no claro e 2,06:1 no escuro.
+   *
+   * O tom acima foi calibrado para ficar ATRÁS de texto (o nome da carta, no
+   * verso). A ilustração de estado está sozinha e na frente, e naquele tom
+   * ela vira fantasma no claro. Dois tons e não um: quem está atrás de texto
+   * e quem está sozinho não podem ter o mesmo peso.
+   */
+  --color-line-art-strong: #a9a6bd;
+
+  /*
    * A borda de campo de formulário — o limite que IDENTIFICA um controle.
    *
    * A linha acima é decorativa (divisória, borda de cartão) e pode ser leve.
@@ -227,6 +237,14 @@
   --image-card-back-gem: url("/src/assets/card-back/gem.svg");
 
   /*
+   * As ilustrações de estado. A busca sem resultado não tem arquivo: ela
+   * reusa a gema do verso, menor — o estado é frequente, e já traz a ação de
+   * limpar os filtros.
+   */
+  --image-state-not-found: url("/src/assets/states/not-found.svg");
+  --image-state-empty-catalog: url("/src/assets/states/empty-catalog.svg");
+
+  /*
    * Os ícones de traço. Um arquivo por desenho, e nenhum por cor: quem pinta
    * é `currentColor`, então o mesmo aviso serve ao vermelho do erro e à tinta
    * do resto.
@@ -287,6 +305,7 @@
 
     --color-line: #35353e;
     --color-line-art: #2b293f; /* 1,36:1 no fundo — o traço do verso */
+    --color-line-art-strong: #474461; /* 2,06:1 — a ilustração sozinha */
     --color-border: #74737c;
 
     --color-brand: #bab3ff;
@@ -352,6 +371,7 @@
 
   --color-line: #35353e;
   --color-line-art: #2b293f;
+  --color-line-art-strong: #474461;
   --color-border: #74737c;
 
   --color-brand: #bab3ff;
