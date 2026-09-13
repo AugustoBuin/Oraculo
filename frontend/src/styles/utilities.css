@@ -242,3 +242,37 @@
   background-color: var(--color-info-soft);
   color: var(--color-info);
 }
+
+/*
+ * Entrada por esmaecimento.
+ *
+ * **É uma transição, e não uma animação, de propósito.** O bloco de movimento
+ * reduzido zera toda animação e mantém `opacity` entre as propriedades que
+ * continuam transicionando (§11.3): quem pede menos movimento perde a virada
+ * da carta, não a passagem de uma tela para a outra.
+ *
+ * **São duas classes, e a ordem entre elas é o pulo do gato.** O estado de
+ * chegada não pode transicionar, senão a tela ESMAECE PARA invisível — meio
+ * segundo a mais e nenhuma entrada. Quem monta marca as duas, desenha, deixa o
+ * navegador calcular esse quadro e só então tira o começo.
+ */
+.enter-fade-start {
+  opacity: 0;
+
+  /*
+   * O terceiro `!important` do projeto, e pela mesma razão dos outros dois:
+   * reforçar um padrão que outra regra sobrepõe.
+   *
+   * Com movimento reduzido, o bloco de `tokens.css` declara `transition:
+   * opacity` em **todo** elemento, com `!important`. Sem esta linha, o estado
+   * de chegada é ele próprio uma transição: a tela esmaece para invisível em
+   * 120ms e volta, e quem pediu menos movimento fica sem virada E sem
+   * esmaecimento. Foi a suíte rodada com `--force-prefers-reduced-motion` que
+   * mostrou.
+   */
+  transition-property: none !important;
+}
+
+.enter-fade {
+  transition: opacity var(--duration-base) var(--ease-out);
+}

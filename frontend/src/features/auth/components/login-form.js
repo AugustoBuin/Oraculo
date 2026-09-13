@@ -18,7 +18,11 @@ import { login } from "@/features/auth/api/auth-api.js";
 const MIN_PASSWORD_LENGTH = 8;
 
 /**
- * @param {{ scope: object, onSuccess: (user: object) => void, notice?: string }} config
+ * @param {{
+ *   scope: object,
+ *   onSuccess: (user: object) => void | Promise<void>,
+ *   notice?: string,
+ * }} config
  */
 export function loginForm({ scope, onSuccess, notice }) {
   const email = field({
@@ -140,7 +144,12 @@ export function loginForm({ scope, onSuccess, notice }) {
         password: password.value,
       });
 
-      onSuccess(user);
+      /*
+       * A espera é o que mantém o formulário travado enquanto a tela sai de
+       * cena. Sem ela, o botão volta a dizer "Entrar" no meio da virada e
+       * aceita um segundo envio de uma sessão que já começou.
+       */
+      await onSuccess(user);
     } catch (error) {
       /*
        * A MESMA MENSAGEM PARA CREDENCIAL ERRADA E USUÁRIO INATIVO (RF-02).

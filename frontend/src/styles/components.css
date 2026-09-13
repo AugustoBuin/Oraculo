@@ -310,6 +310,11 @@
  */
 .login-stage {
   container: login / inline-size;
+  /*
+   * A profundidade mora no palco, não na carta. Sem perspectiva, o `rotateY`
+   * da virada é um achatamento horizontal — a carta encolhe em vez de girar.
+   */
+  perspective: 60rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -362,6 +367,43 @@
  */
 .login-card > * {
   position: relative;
+}
+
+/*
+ * A VIRADA — depois da resposta do servidor, e só depois dela.
+ *
+ * A carta que a pessoa acabou de preencher vira, e a aplicação entra atrás
+ * dela. Virar antes da resposta seria prometer uma entrada que o 401 ainda
+ * pode desmentir.
+ *
+ * **Meia volta, não uma inteira:** a 90° a carta já está de perfil e some
+ * sozinha. A volta completa mostraria o formulário espelhado, porque esta
+ * carta não tem uma segunda face desenhada — a face que ela revela é a
+ * aplicação.
+ *
+ * Enquanto vira, ela não recebe mais clique: já não é o assunto.
+ */
+.login-card[data-state="turning"] {
+  animation: leave-flip var(--duration-slow) var(--ease-in-out) forwards;
+  pointer-events: none;
+}
+
+/*
+ * O nome descreve o PAPEL — sair virando —, não o primeiro consumidor (§11.2):
+ * é a irmã de `enter-up`.
+ *
+ * **É a única animação do projeto que termina invisível**, e a exceção tem
+ * motivo: é o fim dela que troca a tela, então o estado final dura um quadro e
+ * o elemento sai junto. Com movimento reduzido a virada dura 1ms e sobra o
+ * esmaecimento da entrada, que é transição e sobrevive (§11.3).
+ */
+@keyframes leave-flip {
+  from {
+    transform: rotateY(0);
+  }
+  to {
+    transform: rotateY(90deg);
+  }
 }
 
 /*

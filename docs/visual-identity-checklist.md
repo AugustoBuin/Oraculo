@@ -1,9 +1,12 @@
 # Identidade visual — checklist das imagens
 
-> **Estado (12/09/2026):** **P1, P2, P3, P5, P6 e P7 implementados** na branch
+> **Estado (13/09/2026):** **as sete peças implementadas** na branch
 > `feature-identidade-visual`, cada peça em um commit, com teste antes e verificação na tela.
-> Falta o **P4**, que espera as quatro imagens do agente, e o alto contraste do Windows, que
-> nenhum teste alcança. Registrado em 10/09; logo e login escolhidos em 11/09.
+> O P4 fechou em duas partes: a cena em 12/09 e a virada da entrada em 13/09. **Falta o que
+> nenhum teste alcança:** o alto contraste do Windows, o arranjo largo visto de verdade (as
+> cartas deitadas só entram a partir de 1024px, e a janela do autor tem 643px) e a decisão
+> sobre a moldura esticada do cartão (P4). Registrado em 10/09; logo e login escolhidos em
+> 11/09.
 >
 > Cada peça abaixo termina com o que a implementação fechou, o que foi conferido na tela e o
 > que ficou faltando.
@@ -405,45 +408,75 @@ e as laterais somem quando não cabem. Provado no esboço de composição de 11/
 **Por que tecido.** A arte usa a família violeta e os neutros (§4). Madeira traria o marrom, um
 matiz novo, vizinho do topázio da atenção.
 
-- [ ] Arranjo estreito e largo: a 360px não cabem três cartas ao lado do formulário. A troca é
+- [x] Arranjo estreito e largo: a 360px não cabem três cartas ao lado do formulário. A troca é
       por `@container` no `.login-layout`, não por `@media`. O login não tem nada fixo dentro
       dele, então a contenção não esbarra no aviso do `design.md` §9.
-- [ ] Altura baixa também: celular deitado tem menos de 400px de altura, e a arte não pode
+- [x] Altura baixa também: celular deitado tem menos de 400px de altura, e a arte não pode
       empurrar o formulário para fora da tela.
-- [ ] Logotipo (P1) acima do formulário.
-- [ ] O campo de e-mail continua recebendo o foco ao abrir (`login-page.js:35`), e o
+- [x] Logotipo (P1) acima do formulário.
+- [x] O campo de e-mail continua recebendo o foco ao abrir (`login-page.js:35`), e o
       formulário funciona antes de a arte chegar.
-- [ ] Imagem do login sem `loading="lazy"`: é a primeira tela.
-- [ ] O formulário já sobre a carta central ao abrir, sem botão antes, e como conteúdo da
+- [x] Imagem do login sem `loading="lazy"`: é a primeira tela.
+- [x] O formulário já sobre a carta central ao abrir, sem botão antes, e como conteúdo da
       página (`<main>`), não como modal.
-- [ ] A virada só depois da resposta do servidor: a carta vira (~350ms) e a aplicação entra
+- [x] A virada só depois da resposta do servidor: a carta vira (~350ms) e a aplicação entra
       por esmaecimento (~200ms), cada movimento abaixo de 400ms. Erro não vira a carta. Com
       movimento reduzido, só o esmaecimento. O foco do teclado não se perde no meio.
-- [ ] A mesa: uma cena por tema, pelo token `--image-*`, para a virada não revelar a aplicação
+- [x] A mesa: uma cena por tema, pelo token `--image-*`, para a virada não revelar a aplicação
       num tema diferente do da cena.
-- [ ] O login **não** está na rede de geometria hoje. Entra, afirmando o estado com a arte.
+- [x] O login **não** está na rede de geometria hoje. Entra, afirmando o estado com a arte.
 - [ ] Verificar a 360, 500, 752 e 1424px, com fonte em 200%, nos dois temas e com o celular
       deitado. **Largura de celular não se testa no navegador sem janela**: ele tem piso de
       ~500px e recorta a foto — dentro de um `<iframe>` de 390px a medida é a real.
-- [ ] **A carta em pé** é o cartão do formulário: fundo `--color-surface`, a moldura do P3 em
+- [x] **A carta em pé** é o cartão do formulário: fundo `--color-surface`, a moldura do P3 em
       `--color-line-art` e o logo com a gema (P1, 4rem) no topo. A gema solta do P3 não entra
       — o logo está no lugar dela.
 - [ ] **A proporção de carta vale só no arranjo largo.** No estreito, a altura é a do
       conteúdo: presa à proporção, a 200% o cartão tinha 1.070px e empurrava o Entrar para
       fora da primeira tela. Se a moldura, esticada a outra proporção, deformar os chanfros
       visivelmente, fatiá-la em nove (cantos fixos, lados que esticam) — decidir medindo.
-- [ ] **As laterais:** a mesma imagem nos dois lados, a da direita espelhada no CSS
+- [x] **As laterais:** a mesma imagem nos dois lados, a da direita espelhada no CSS
       (`scale: -1 1`); largura em `rem`, ao lado do cartão e um pouco abaixo dele, "na mesa";
       aparecem por `@container` quando cabem inteiras (no esboço, a partir de 64rem) — cortadas
       pela borda, a rede de geometria acusaria.
-- [ ] **A mesa** é o fundo do `.login-layout`: `background-size: cover`, centro no centro — ela
+- [x] **A mesa** é o fundo do `.login-layout`: `background-size: cover`, centro no centro — ela
       não precisa se alinhar a nada, só as cartas precisam.
-- [ ] Tokens: `--image-login-table` e `--image-login-card`, redefinidos nos três blocos de
+- [x] Tokens: `--image-login-table` e `--image-login-card`, redefinidos nos três blocos de
       tema (§3); a carta com `image-set()` para 1× e 2×.
 - **Entregar:** do agente, `login-table-light.webp` e `login-table-dark.webp` (1920×1080, sem
   alfa, até ~120 KB cada) e `login-card-light.webp`, `login-card-light@2x.webp`,
   `login-card-dark.webp` e `login-card-dark@2x.webp` (480×360 e 960×720, com alfa, até ~40 KB
   o 2×). A mesa não tem 2×: ela é desfocada de propósito, e o desfoque esconde a ampliação.
+
+**Implementado em 12/09** (`fe8e6bf`), a cena: a mesa como fundo do `.login-layout`, a carta em
+pé sendo o próprio `.login-card` (moldura do verso atrás, marca com sigilo no topo) e as duas
+deitadas ao lado, a da direita espelhada. Camadas, não cena única. `@container login
+(min-width: 64rem)` decide se as deitadas cabem; `@media (max-height: 32rem)` as tira no
+celular deitado. As seis imagens em `frontend/src/assets/login/`. **A rede de geometria achou
+dois defeitos assim que o login entrou nela** — a 320px com fonte em 200% o cartão rachava o
+próprio título, e a moldura pintava por cima do formulário.
+
+**Implementado em 13/09**, a virada: `data-state="turning"` no cartão dispara `leave-flip`
+(meia volta em `--duration-slow`, com perspectiva no palco), e a página espera a animação
+**terminar** — por `getAnimations()`, não por `animationend`: sem folha de estilo a lista vem
+vazia e a entrada acontece na hora, em vez de prender a pessoa esperando um evento que não
+vem. Depois, a aplicação entra por **transição** de opacidade (`.enter-fade`), que é o que
+sobrevive ao movimento reduzido. O formulário fica travado enquanto a carta vira, e o foco vai
+para o `<main>` da tela que entrou. Seis testes antes; suíte 353.
+
+**Duas curvas, e não uma:** a virada usa `--ease-in-out`, token novo. Com `--ease-out`, medido,
+a carta chegava a 80° — já de perfil, já invisível — com 51% do tempo, e os 156ms restantes
+eram tela parada antes de a aplicação entrar.
+
+**Dois defeitos que só a suíte pegou**, os dois no esmaecimento: declarar a transição junto com
+o estado invisível faz a tela esmaecer PARA invisível (o navegador decide pela transição do
+estilo de chegada); e, com movimento reduzido, a regra global do `tokens.css` declara transição
+de `opacity` em todo elemento, então o estado de chegada precisa de
+`transition-property: none !important` — o terceiro `!important` do projeto. A suíte roda
+verde também com `--force-prefers-reduced-motion`.
+
+**Falta:** o arranjo largo visto de verdade, a moldura esticada (a caixa acima, que é decisão do
+autor), o alto contraste do Windows e a virada vista na tela com senha de verdade.
 
 #### O pedido ao agente de imagem
 
