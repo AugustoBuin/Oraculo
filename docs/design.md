@@ -309,8 +309,11 @@ zoom de 200% funcione sem perda de conteúdo.
 **Profundidade** — vem de tom e borda. Sombra é reservada ao que flutua de verdade: modal,
 popover, menu. **Cartão em repouso não tem sombra.**
 
-**Movimento** — 120 · 200 · 320ms, com `cubic-bezier(0.2, 0, 0, 1)`. Nada acima de 400ms,
-exceto indicador de progresso.
+**Movimento** — 120 · 200 · 320ms, com **duas** curvas: `cubic-bezier(0.2, 0, 0, 1)` para o
+que entra e assenta, e `cubic-bezier(0.4, 0, 0.6, 1)` para o que sai do repouso e volta a ele
+— um objeto que gira. A primeira desacelera no fim: usada numa rotação, ela gasta metade do
+tempo com a coisa já de perfil e invisível. Nada acima de 400ms, exceto indicador de
+progresso.
 
 ---
 

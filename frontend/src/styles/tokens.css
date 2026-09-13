@@ -282,6 +282,17 @@
   --duration-slow: 320ms;
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
 
+  /*
+   * A curva de quem sai do repouso e volta ao repouso.
+   *
+   * `--ease-out` desacelera no fim, e é o certo para o que ENTRA: a coisa
+   * chega e assenta. Para um objeto que GIRA, ela desperdiça o movimento —
+   * medido na virada da entrada, a carta chegava a 80° (já de perfil, já
+   * invisível) com 51% do tempo, e os 156ms restantes eram tela parada. Com a
+   * curva simétrica, o mesmo ponto cai em 77% do tempo.
+   */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
   /* Diz ao navegador quais esquemas a página sabe pintar. */
   color-scheme: light dark;
 }
