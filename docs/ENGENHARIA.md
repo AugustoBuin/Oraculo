@@ -96,8 +96,7 @@ verificador é sugestão.
 5. **Nenhum `SELECT *` e nenhuma leitura sem `LIMIT`.** Toda listagem é paginada (§7.3).
 6. **Dado externo nunca vira HTML.** No frontend, `textContent` e `document.createElement`;
    `innerHTML` só com literal do próprio código (`PADROES-ENGENHARIA.md` §8.3).
-7. **Toda função de montagem do frontend devolve uma função de limpeza**, e quem monta
-   guarda. Listener, timer e requisição pendente sem cancelamento são vazamento (§12.4).
+7. **Toda função de montagem do frontend devolve uma função de limpeza**, e quem monta também guarda. Listener, timer e requisição pendente sem cancelamento são vazamento (§12.4).
 8. **Nenhum valor visual fora de `tokens.css`.** Todo token de cor existe nos dois temas
    ou não existe (§10).
 9. **Handler de evento nunca lança.** Corpo inteiro em try/catch, só log (`PADROES.md` §2.4).
@@ -145,9 +144,9 @@ verificador é sugestão.
 - **Layout se prova medindo, não lendo.** `frontend/tests/suites/layout-geometry.test.js`
   monta as telas em larguras que cruzam os pontos de quebra e mede três invariantes. Tela
   nova entra lá, afirmando que o estado medido é o com dado — não o de carregamento.
-- **O JSON de edições do desafio é reproduzido literalmente**, inclusive as edições que
-  não existem no mundo real (`The Hobbit`, `Marvel Super Heroes`, `Chaos Rising`,
-  `Blazing Dominion`). Não "corrija" a massa de dados — ela é o contrato.
+- **O JSON de edições do desafio é reproduzido literalmente**, inclusive as quatro edições
+  mais recentes (`The Hobbit`, `Marvel Super Heroes`, `Chaos Rising`, `Blazing Dominion`).
+  Não "corrija" a massa de dados — ela é o contrato.
 
 ---
 
@@ -187,6 +186,8 @@ Comentário explica **por quê**, nunca **o quê**.
 - `docs/api-contract.md` — todos os endpoints, envelopes e códigos de erro.
 - `docs/database-schema.md` — tabelas, índices e massa inicial.
 - `docs/backlog-backend.md` — as tarefas com critério de aceite.
+- `docs/PROCESSO.md` — como o projeto foi construído: ferramentas, quem decidiu o quê e a
+  linha do tempo.
 - `docs/decisions/` — **por que não foi feito do jeito óbvio.** Leia antes de propor
   mudança estrutural.
 - `docs/audits/open-findings.md` — achados abertos. Leia antes de começar qualquer

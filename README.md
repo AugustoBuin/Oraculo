@@ -173,7 +173,7 @@ Cortar com justificativa é parte da entrega.
 | Importação em massa (CSV) | Alto valor real, alto custo: validação linha a linha, relatório de erro parcial e desfazer de lote. Fica como evolução declarada. |
 | Variações da mesma carta (foil, promo, alternate art) | Exigiria uma tabela de variações e mudaria a tela inteira. O desafio pede a carta, não a impressão. |
 | Internacionalização da interface | O produto é interno e em português. Os **dados** já são bilíngues (nome EN/PT), que é o que o desafio pede. |
-| Testes automatizados de interface | Custo desproporcional na janela de cinco dias. O roteiro acima cobre a verificação. |
+| Testes automatizados de interface | Custo desproporcional na janela de dez dias. O roteiro acima cobre a verificação. |
 
 ## Documentação
 
@@ -187,3 +187,16 @@ Cortar com justificativa é parte da entrega.
 | [Design](docs/design.md) | Tokens, escalas e a tabela de contraste dos dois temas |
 | [Auditorias](docs/audits/) | Achados abertos e relatórios datados |
 | [Backlog do backend](docs/backlog-backend.md) · [do frontend](docs/backlog-frontend.md) | Tarefas com critérios de aceite |
+| [Processo](docs/PROCESSO.md) | Como foi construído: ferramentas, quem decidiu o quê e a linha do tempo |
+
+## Como foi construído
+
+Construí o Oráculo usando agentes de IA como ferramenta de engenharia. O código foi escrito em
+sessões com o Claude Code, sob as regras deste repositório — nenhuma dependência de terceiros,
+teste antes da implementação e um portão de validação que não usa IA —, e as auditorias de
+qualidade e segurança foram feitas por agentes. As imagens da mesa e da carta, na tela de
+entrada, foram geradas com o Gemini. O escopo, as decisões de arquitetura e de produto, o
+desenho, a aprovação de cada entrega e a verificação na tela foram meus.
+
+O que foi delegado e o que não foi, as travas, os erros da IA e como foram pegos, e a linha do
+tempo dia a dia estão em [docs/PROCESSO.md](docs/PROCESSO.md).
