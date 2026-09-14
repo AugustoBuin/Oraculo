@@ -4,6 +4,11 @@ Registro do sistema visual: as escalas, os papéis de cor, **a medição de cont
 exigida pelo RNF-05 e os arranjos de layout. A fonte da verdade é `frontend/src/styles/tokens.css`; este documento
 explica as decisões e guarda os números.
 
+> **A paleta pode ser conferida ao vivo em `/paleta`** — `http://localhost:8080/paleta`, com a
+> sessão aberta. A tela lê o `tokens.css` que o navegador carregou, mostra os dois temas lado
+> a lado e mede cada par pela fórmula da WCAG. Fica fora do menu: é ferramenta de avaliação,
+> e se chega a ela pelo endereço (§3).
+
 > **Por que a medição vem antes do primeiro componente.** O PRD §11 lista "contraste do tema
 > escuro reprovar" como risco de probabilidade média e impacto médio, com a mitigação escrita
 > assim: *"tokens medidos antes do primeiro componente, não depois"*. Corrigir contraste
@@ -36,7 +41,7 @@ O motivo é de produto. Os portais da Liga trocam a cor da marca por jogo — la
 roxo na YuGiOh, vermelho na Pokemon — e compartilham o resto: neutros, texto, verde de ação,
 vocabulário de componente. O Oráculo gerencia **todos** os jogos (PRD §1.1: o jogo é o
 tenant), então veste o que é compartilhado, não a cor de um jogo só. Entre os dois moldes
-que a Liga usa hoje, o autor escolheu o novo.
+que a Liga usa hoje, foi escolhido o novo.
 
 Medido par a par, o site reprova em três dos tons que usa como texto:
 
@@ -360,6 +365,13 @@ Dois detalhes que parecem preciosismo e não são:
 - Toda animação termina em estado **visível**. Uma que termina oculta desapareceria de vez
   quando o movimento fosse desligado.
 
+**A única exceção é a virada da tela de entrada** (`leave-flip`). Ela termina com a carta de
+perfil, invisível, porque é o fim dela que troca a tela: o estado final dura um quadro, e o
+elemento sai junto. A página espera a animação terminar por `getAnimations()`, não pelo
+evento — sem folha de estilo a lista vem vazia e a entrada acontece na hora, em vez de
+prender a pessoa esperando um evento que não vem. Com movimento reduzido a virada dura 1ms, e
+sobra o esmaecimento com que a aplicação entra, que é transição e sobrevive.
+
 ---
 
 ## 8. Quando um token novo entra
@@ -515,3 +527,26 @@ preenchimentos suaves sairiam do tom principal em vez de serem copiados à mão 
 pares de fundo e tinta por tema, são o primeiro candidato. **O que precisa vir junto:** a
 `/paleta` avisar quando um token sai do sRGB (hoje ela só recusa cor com transparência), e a
 tabela da §3 continuar sendo o registro, em hexadecimal resolvido.
+
+---
+
+## 11. Imagens da interface
+
+Todo endereço de imagem é token (§8), e o que muda com o tema é redefinido nos dois blocos
+escuros. Os desenhos em SVG foram escritos como código e são pintados por token, pela máscara;
+só a cena da tela de entrada é raster. As peças, os tamanhos e a verificação estão em
+`docs/visual-identity-checklist.md`.
+
+| Token | O que é | Formato | Cor |
+|---|---|---|---|
+| `--image-brand-mark`, `--image-brand-mark-sigil` | A marca: três cartas em leque, sem e com a gema | SVG, máscara | `--color-brand` |
+| `--image-card-back-frame`, `--image-card-back-gem` | O verso da carta: a moldura e a gema | SVG, máscara | `--color-line-art` |
+| `--image-state-not-found`, `--image-state-empty-catalog` | As ilustrações dos estados vazios | SVG, máscara | `--color-line-art-strong` |
+| `--image-icon-*` | Os cinco ícones de traço | SVG, máscara | a do texto ao lado |
+| `--image-login-table` | A mesa da tela de entrada, uma por tema | WebP | gravada no arquivo |
+| `--image-login-card` | A carta deitada ao lado do formulário, uma por tema, em 1× e 2× | WebP com alfa | gravada no arquivo |
+
+**As duas imagens raster foram geradas com o Gemini**, a partir dos pedidos registrados no
+checklist. A cor delas está gravada no arquivo, e por isso existe uma versão por tema: se a
+paleta mudar, elas precisam ser refeitas. O ícone da aba fica fora dos tokens, pelo motivo da
+§4.
