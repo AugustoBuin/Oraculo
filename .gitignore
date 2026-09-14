@@ -2,11 +2,6 @@
 #     ferramentas sem pedir confirmação. As travas ficam em .claude/settings.json. ---
 /.claude/settings.local.json
 
-# --- Padrões de engenharia de referência: versionados depois de anonimizados
-#     (ADR-011). Até a revisão integral terminar, ficam de fora. ---
-/backend/PADROES.md
-/frontend/PADROES-ENGENHARIA.md
-
 # --- Segredos: nunca versionados; só o exemplo entra ---
 .env
 .env.*
