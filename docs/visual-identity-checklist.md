@@ -1,11 +1,11 @@
 # Identidade visual — checklist das imagens
 
-> **Estado (13/09/2026):** **as sete peças implementadas** na branch
+> **Estado (14/09/2026):** **as sete peças implementadas** na branch
 > `feature-identidade-visual`, cada peça em um commit, com teste antes e verificação na tela.
 > O P4 fechou em duas partes: a cena em 12/09 e a virada da entrada em 13/09. **Falta o que
 > nenhum teste alcança:** o alto contraste do Windows, o arranjo largo visto de verdade (as
-> cartas deitadas só entram a partir de 1024px, e a janela do autor tem 643px) e a decisão
-> sobre a moldura esticada do cartão (P4). Registrado em 10/09; logo e login escolhidos em
+> cartas deitadas só entram a partir de 1024px, e a janela do autor tem 643px). A moldura
+> do cartão de entrada fica como está, por decisão de 14/09 (P4). Registrado em 10/09; logo e login escolhidos em
 > 11/09.
 >
 > Cada peça abaixo termina com o que a implementação fechou, o que foi conferido na tela e o
@@ -431,10 +431,16 @@ matiz novo, vizinho do topázio da atenção.
 - [x] **A carta em pé** é o cartão do formulário: fundo `--color-surface`, a moldura do P3 em
       `--color-line-art` e o logo com a gema (P1, 4rem) no topo. A gema solta do P3 não entra
       — o logo está no lugar dela.
-- [ ] **A proporção de carta vale só no arranjo largo.** No estreito, a altura é a do
-      conteúdo: presa à proporção, a 200% o cartão tinha 1.070px e empurrava o Entrar para
-      fora da primeira tela. Se a moldura, esticada a outra proporção, deformar os chanfros
-      visivelmente, fatiá-la em nove (cantos fixos, lados que esticam) — decidir medindo.
+- [x] **A moldura fica como está (decidido em 14/09).** O cartão não tem proporção: a altura
+      é a do conteúdo, porque presa à proporção, a 200% ele tinha 1.070px e empurrava o Entrar
+      para fora da primeira tela. **A premissa "esticada" estava errada:** o `mask-size: 100%
+      100%` não estica o `frame.svg` — o `preserveAspectRatio` padrão do SVG vence, e o desenho
+      fica em 488:680, centrado: a 1280px sobram 45px de cada lado; a 320px com fonte em 200%,
+      ele flutua no meio do cartão. Medido no cartão real, o fatiamento em nove funciona (sem
+      emenda a 100% nem a 125%), mas não resolve o que pesa mais: nas duas versões o traço de
+      dentro passa sob o texto (a 1280px, a 72px da borda na atual e a 35px na fatiada, com o
+      texto começando em 24px). Tirar o texto de cima pediria mudar o respiro ou a proporção do
+      cartão, e isso não entra nesta entrega.
 - [x] **As laterais:** a mesma imagem nos dois lados, a da direita espelhada no CSS
       (`scale: -1 1`); largura em `rem`, ao lado do cartão e um pouco abaixo dele, "na mesa";
       aparecem por `@container` quando cabem inteiras (no esboço, a partir de 64rem) — cortadas
@@ -475,8 +481,8 @@ de `opacity` em todo elemento, então o estado de chegada precisa de
 `transition-property: none !important` — o terceiro `!important` do projeto. A suíte roda
 verde também com `--force-prefers-reduced-motion`.
 
-**Falta:** o arranjo largo visto de verdade, a moldura esticada (a caixa acima, que é decisão do
-autor), o alto contraste do Windows e a virada vista na tela com senha de verdade.
+**Falta:** o arranjo largo visto de verdade, o alto contraste do Windows e a virada vista na
+tela com senha de verdade. A moldura fica como está (a caixa acima, 14/09).
 
 #### O pedido ao agente de imagem
 
