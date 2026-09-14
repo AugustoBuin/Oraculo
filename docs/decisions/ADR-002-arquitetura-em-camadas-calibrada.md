@@ -13,7 +13,7 @@ e Debug Mode por canal expirável, `traceId`, ledger de achados, métricas de au
 JSONL append-only e três agentes especializados.
 
 Este projeto é uma entrega de **dez dias, feita por uma pessoa**, com escopo de um
-portal administrativo: 5 features (User/Session, Game, Edition, Rarity, Card) e 24 rotas.
+portal administrativo: 5 features (User/Session, Game, Edition, Rarity, Card) e 22 rotas.
 
 O próprio documento oferece o critério para calibrar isso, no §1.3:
 
@@ -73,9 +73,10 @@ pede uma explicação que a reescrita torna desnecessária.
 
 ## Consequências
 
-- O dia 04 inteiro é fundação: esqueleto de camadas, autoloader, router, middleware,
-  ErrorHandler, PDO, migrations, seed, micro-runner e verificador de fronteiras. Nenhuma
-  feature. **Isso é intencional** — o custo de retrofit da fundação no dia 3 seria maior.
+- O primeiro dia de código, 05/09, começa pela fundação: esqueleto de camadas, autoloader,
+  router, middleware, ErrorHandler, PDO, migrations, seed, micro-runner e verificador de
+  fronteiras. Nenhuma feature entra antes dela. **Isso é intencional** — o custo de
+  retrofit da fundação depois seria maior.
 - Um leitor que conhece o `PADROES.md` vai notar as ausências. Elas estão aqui documentadas,
   com o motivo — que é a diferença entre poda e esquecimento.
 
