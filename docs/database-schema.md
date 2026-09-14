@@ -364,9 +364,9 @@ no primeiro acesso — a regra existe porque um seed que reescreve senha de admi
 
 ### 4.3 Edições — **reproduzidas literalmente do enunciado**
 
-> ⚠️ Quatro destas edições não existem no mundo real (`The Hobbit`, `Marvel Super Heroes`,
-> `Chaos Rising`, `Blazing Dominion`). **Não corrigir.** A massa é o contrato do desafio, e
-> "corrigir" seria entregar algo diferente do que foi pedido.
+> **Não corrigir.** Códigos e nomes são os do JSON do enunciado, inclusive as quatro edições
+> mais recentes (`The Hobbit`, `Marvel Super Heroes`, `Chaos Rising`, `Blazing Dominion`). A
+> massa é o contrato do desafio, e "corrigir" seria entregar algo diferente do que foi pedido.
 
 | Jogo | code | name |
 |---|---|---|
@@ -389,30 +389,31 @@ no primeiro acesso — a regra existe porque um seed que reescreve senha de admi
 ### 4.4 Raridades
 
 Código em inglês (identificador), nome em português (exibido ao usuário), na ordem natural
-do jogo — não alfabética.
+do jogo — não alfabética. A cor é a chave do material do selo (§3.7), gravada só na
+inserção.
 
-| Jogo | code | name | ordem |
-|---|---|---|---|
-| magic | `common` | Comum | 1 |
-| magic | `uncommon` | Incomum | 2 |
-| magic | `rare` | Rara | 3 |
-| magic | `mythic` | Mítica | 4 |
-| pokemon | `common` | Comum | 1 |
-| pokemon | `uncommon` | Incomum | 2 |
-| pokemon | `rare` | Rara | 3 |
-| pokemon | `rare-holo` | Rara Holo | 4 |
-| pokemon | `ultra-rare` | Ultra Rara | 5 |
-| pokemon | `secret-rare` | Secreta | 6 |
-| yugioh | `common` | Comum | 1 |
-| yugioh | `rare` | Rara | 2 |
-| yugioh | `super-rare` | Super Rara | 3 |
-| yugioh | `ultra-rare` | Ultra Rara | 4 |
-| yugioh | `secret-rare` | Secreta | 5 |
+| Jogo | code | name | ordem | cor |
+|---|---|---|---|---|
+| magic | `common` | Comum | 1 | `graphite` |
+| magic | `uncommon` | Incomum | 2 | `silver` |
+| magic | `rare` | Rara | 3 | `gold` |
+| magic | `mythic` | Mítica | 4 | `copper` |
+| pokemon | `common` | Comum | 1 | `graphite` |
+| pokemon | `uncommon` | Incomum | 2 | `silver` |
+| pokemon | `rare` | Rara | 3 | `gold` |
+| pokemon | `rare-holo` | Rara Holo | 4 | `aquamarine` |
+| pokemon | `ultra-rare` | Ultra Rara | 5 | `tourmaline` |
+| pokemon | `secret-rare` | Secreta | 6 | `obsidian` |
+| yugioh | `common` | Comum | 1 | `graphite` |
+| yugioh | `rare` | Rara | 2 | `silver` |
+| yugioh | `super-rare` | Super Rara | 3 | `aquamarine` |
+| yugioh | `ultra-rare` | Ultra Rara | 4 | `gold` |
+| yugioh | `secret-rare` | Secreta | 5 | `obsidian` |
 
 ### 4.5 Cartas
 
-Entre 24 e 30 cartas distribuídas pelos três jogos e por várias edições e raridades, o
-suficiente para exercitar paginação, busca e todos os filtros já na primeira abertura.
+33 cartas distribuídas pelos três jogos e por várias edições e raridades, o suficiente para
+exercitar paginação, busca e todos os filtros já na primeira abertura.
 
 Regras da massa:
 - Imagens por **URL** (`image_type = 'remote'`), nunca por arquivo — o seed não pode
