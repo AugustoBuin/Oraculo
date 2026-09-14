@@ -19,12 +19,16 @@ import { cardGallery } from "@/features/cards/components/card-gallery.js";
 import { cardHistory } from "@/features/cards/components/card-history.js";
 import { cardImageField } from "@/features/cards/components/card-image-field.js";
 import { cardTable } from "@/features/cards/components/card-table.js";
+import { empty } from "@/shared/components/feedback.js";
+import { loginPage } from "@/pages/login/login-page.js";
+import { deleteCardPreview } from "@/features/cards/components/delete-card-dialog.js";
 import { catalogPanel } from "@/features/catalogs/components/catalog-panel.js";
 import { rarityColorField } from "@/features/catalogs/components/rarity-color-field.js";
 import { invalidateCatalogs } from "@/features/catalogs/api/catalogs-api.js";
 import { changePasswordForm } from "@/features/auth/components/change-password-form.js";
 import { readCardQuery } from "@/features/cards/utils/card-query.js";
 import { appHeader } from "@/shared/components/app-header.js";
+import { button } from "@/shared/components/button.js";
 import { pagination } from "@/shared/components/pagination.js";
 import { rarityBadge } from "@/shared/components/rarity-badge.js";
 import { el } from "@/shared/dom/elements.js";
@@ -33,7 +37,9 @@ import { palettePage } from "@/pages/palette/palette-page.js";
 import { ROUTES, visibleNavigation } from "@/pages/app-shell/navigation.js";
 import { fetchDouble } from "~/doubles/fetch.js";
 import {
+  LAYOUT_WIDTHS,
   acrossWidths,
+  assertControlsKeepWords,
   assertNothingClipped,
   assertWholeWords,
   assertWithinContainer,
@@ -207,6 +213,34 @@ suite("tests/support/layout · a rede de segurança acusa o que deve acusar", ()
       assertWholeWords(host, "prova");
     }));
 
+  test("o controle que HERDOU a quebra em qualquer ponto é acusado", () =>
+    comCaixaDe(400, (host) => {
+      /*
+       * O ponto cego que este caso fecha: a invariante da palavra inteira
+       * PULA quem computa `anywhere`, e a propriedade é herdada — uma regra
+       * escrita na célula desce para o botão dentro dela, e o botão sai da
+       * conta junto. Foi assim que "Excluir" saiu como "Excl / uir" na visão
+       * tabela sem nenhum teste reclamar.
+       */
+      const celula = el("div", { classes: ["wrap-anywhere"] });
+
+      celula.append(el("button", { text: "Excluir", classes: ["button"] }));
+      host.append(celula);
+
+      assertThrows(
+        () => assertControlsKeepWords(host, "prova"),
+        Error,
+        "o botão herdou a quebra em qualquer ponto e ninguém acusou",
+      );
+    }));
+
+  test("o controle que NÃO herdou a quebra passa", () =>
+    comCaixaDe(400, (host) => {
+      host.append(el("button", { text: "Excluir", classes: ["button"] }));
+
+      assertControlsKeepWords(host, "prova");
+    }));
+
   test("o elemento mais largo que o contêiner é acusado", () =>
     comCaixaDe(100, (host) => {
       const largo = caixaDe300();
@@ -287,11 +321,95 @@ suite("styles/layout · a geometria das telas principais", () => {
   });
 
   test("a galeria de cartas cruza os pontos de quebra sem estourar a coluna", () =>
-    acrossWidths({
-      label: "galeria",
-      mount: ({ scope }) =>
-        cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }).node,
-    }));
+    acrossWidths(
+      {
+        label: "galeria",
+        /*
+         * As duas larguras a mais são a VIRADA DA GALERIA, e ela acontece num
+         * pixel: com 399 há uma coluna só e a carta tem 367px; com 400 são
+         * duas colunas de 176px. A carta muda de tamanho por um fator de dois
+         * de uma largura para a seguinte, e é justamente aí que um desenho em
+         * porcentagem — o verso — tem chance de quebrar. As larguras padrão
+         * da rede cercam os pontos de quebra do LAYOUT, que são outros.
+         */
+        widths: [...LAYOUT_WIDTHS, 399, 400].sort((a, b) => a - b),
+        // Sem `.node`: `cardGallery` devolve o próprio elemento. Com ele, o
+        // valor montado era `undefined`, nada era anexado, e esta linha da
+        // rede media uma caixa VAZIA — passava sempre, protegendo nada.
+        mount: ({ scope }) =>
+          cardGallery({ cards: cartas(), onOpen: () => {}, onDelete: () => {}, scope }),
+      },
+      ({ host, context }) => {
+        /*
+         * O verso da carta é DUAS CAMADAS DE MÁSCARA, e máscara não tem nó no
+         * DOM: `querySelector` não alcança, e afirmar que a regra foi escrita
+         * no CSS não prova que ela chegou ao elemento. Medir o estilo
+         * computado do pseudoelemento é o que prova — e é o mesmo motivo pelo
+         * qual esta rede existe (OF-004).
+         *
+         * As duas cartas do cenário estão sem imagem de propósito: é assim
+         * que o seed tem The One Ring e Celebration Pikachu.
+         */
+        const verso = host.querySelector(".card-image-empty");
+
+        assertTrue(verso !== null, `[${context}] a carta sem imagem não montou o espaço reservado`);
+
+        const moldura = getComputedStyle(verso, "::before").maskImage;
+        const gema = getComputedStyle(verso, "::after").maskImage;
+
+        assertTrue(
+          moldura.includes("card-back/frame.svg"),
+          `[${context}] o verso subiu sem a moldura: ${moldura}`,
+        );
+        assertTrue(
+          gema.includes("card-back/gem.svg"),
+          `[${context}] o verso subiu sem a gema: ${gema}`,
+        );
+      },
+    ));
+
+  test("o modal de exclusão põe a miniatura ao lado do texto, ou embaixo dele", () =>
+    acrossWidths(
+      {
+        label: "exclusão",
+        /*
+         * O modal em si não entra na rede: o `openModal` prende a caixa ao
+         * `document.body` e a largura dela vem da JANELA, não do contêiner
+         * que esta rede controla. O que tem geometria é o arranjo do
+         * conteúdo, e é ele que se monta aqui — o nó real que o modal
+         * recebe, não uma cópia parecida.
+         *
+         * O nome mais longo do seed de propósito: é ele que empurra o título
+         * e obriga a explicação a caber ao lado da miniatura.
+         */
+        mount: ({ scope }) =>
+          deleteCardPreview({
+            card: {
+              nameEn: "Blue-Eyes Alternative Ultimate Dragon",
+              imageUrl: null,
+            },
+            scope,
+          }),
+      },
+      ({ host, context }) => {
+        const miniatura = host.querySelector(".sidebar-side").getBoundingClientRect();
+        const texto = host.querySelector(".sidebar-content").getBoundingClientRect();
+        const caixa = host.querySelector(".sidebar").getBoundingClientRect();
+
+        // O mesmo contrato da primitiva que o OF-004 quebrou: ou a barra
+        // desceu, ou o que está ao lado dela tem pelo menos o piso declarado.
+        if (Math.abs(miniatura.top - texto.top) > MESMA_LINHA) {
+          return;
+        }
+
+        const minimo = Math.min(14 * rem(), caixa.width);
+
+        assertTrue(
+          texto.width >= minimo - MESMA_LINHA,
+          `[${context}] a explicação ficou com ${Math.round(texto.width)}px ao lado da miniatura; o mínimo é ${Math.round(minimo)}px`,
+        );
+      },
+    ));
 
   test("a tabela de cartas rola no próprio eixo e não na página", () =>
     acrossWidths(
@@ -315,6 +433,63 @@ suite("styles/layout · a geometria das telas principais", () => {
       },
     ));
 
+  test("os estados vazios cruzam os pontos de quebra com a ilustração", () =>
+    acrossWidths(
+      {
+        label: "estados vazios",
+        /*
+         * Os três de uma vez: eles são blocos independentes numa coluna, e o
+         * que interessa medir é a ilustração — `min(12rem, 100%)` some da
+         * conta em tela larga e passa a valer em tela estreita, que é onde
+         * uma largura fixa estouraria.
+         */
+        mount: ({ scope: life }) =>
+          el("div", {
+            classes: ["stack"],
+            children: [
+              empty({
+                title: "Página não encontrada",
+                description: "O endereço não corresponde a nenhuma tela do portal.",
+                as: "h1",
+                image: "not-found",
+              }),
+              empty({
+                title: "Nenhuma carta cadastrada ainda",
+                description: "Quando o catálogo receber a primeira carta, ela aparece aqui.",
+                image: "empty-catalog",
+              }),
+              empty({
+                title: "Nenhuma carta encontrada",
+                description: "Nenhuma carta corresponde à busca e aos filtros escolhidos.",
+                image: "search",
+                action: button({
+                  label: "Limpar busca e filtros",
+                  variant: "secondary",
+                  scope: life,
+                  onClick: () => {},
+                }).node,
+              }),
+            ],
+          }),
+      },
+      ({ host, context }) => {
+        const caixa = host.getBoundingClientRect();
+
+        for (const desenho of host.querySelectorAll(".state-image")) {
+          const medida = desenho.getBoundingClientRect();
+
+          assertTrue(
+            medida.width > 0 && medida.height > 0,
+            `[${context}] a ilustração subiu sem caixa: ${Math.round(medida.width)}x${Math.round(medida.height)}`,
+          );
+          assertTrue(
+            medida.width <= caixa.width + 1,
+            `[${context}] a ilustração mede ${Math.round(medida.width)}px numa caixa de ${Math.round(caixa.width)}px`,
+          );
+        }
+      },
+    ));
+
   test("o cabeçalho cruza os pontos de quebra sem cortar nenhuma ação", () =>
     acrossWidths({
       label: "cabeçalho",
@@ -333,8 +508,9 @@ suite("styles/layout · a geometria das telas principais", () => {
   test("a paginação cruza os pontos de quebra sem estourar", () =>
     acrossWidths({
       label: "paginação",
+      // Idem: `pagination` também devolve o elemento, e esta linha media vazio.
       mount: ({ scope }) =>
-        pagination({ page: 3, totalPages: 12, total: 237, onChange: () => {}, scope }).node,
+        pagination({ page: 3, totalPages: 12, total: 237, onChange: () => {}, scope }),
     }));
 
   test("a barra de filtros cruza os pontos de quebra sem estourar", async () => {
@@ -565,6 +741,49 @@ suite("styles/layout · a geometria das telas principais", () => {
         const linhas = host.querySelectorAll(".palette-table tbody tr").length;
 
         assertTrue(linhas > 40, `[${context}] a paleta desenhou ${linhas} linhas de tabela`);
+      },
+    ));
+
+  test("a entrada cruza os pontos de quebra, e a cena nunca empurra o formulário", () =>
+    acrossWidths(
+      {
+        label: "entrada",
+        /*
+         * O login não estava na rede. Ele é a primeira tela, tem uma cena
+         * atrás do formulário, e a cena é a única parte da interface que
+         * cresce com a JANELA enquanto o conteúdo cresce com a FONTE — que é
+         * justamente a combinação que produziu o OF-004.
+         */
+        mount: ({ scope: life, host }) => {
+          const raiz = el("div");
+
+          host.append(raiz);
+          life.add(loginPage(raiz, { onAuthenticated: () => {} }));
+
+          return raiz;
+        },
+      },
+      ({ host, context }) => {
+        const cartao = host.querySelector(".login-card").getBoundingClientRect();
+        const entrar = host.querySelector(".login-form .button").getBoundingClientRect();
+
+        // O botão é o fim do formulário: se ele couber, a cena não empurrou
+        // nada para fora do cartão.
+        assertTrue(
+          entrar.bottom <= cartao.bottom + 1,
+          `[${context}] o Entrar saiu do cartão por ${Math.round(entrar.bottom - cartao.bottom)}px`,
+        );
+
+        for (const deitada of host.querySelectorAll(".login-side")) {
+          const caixa = deitada.getBoundingClientRect();
+
+          // Carta deitada cortada pela borda é pior que carta deitada nenhuma:
+          // ela só aparece quando cabe inteira.
+          assertTrue(
+            caixa.width === 0 || caixa.left >= host.getBoundingClientRect().left - 1,
+            `[${context}] a carta deitada foi cortada pela borda`,
+          );
+        }
       },
     ));
 

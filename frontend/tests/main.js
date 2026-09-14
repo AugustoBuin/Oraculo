@@ -23,6 +23,10 @@ import "~/suites/cards-api.test.js";
 import "~/suites/cascade-select.test.js";
 import "~/suites/preference.test.js";
 import "~/suites/card-image.test.js";
+import "~/suites/brand-mark.test.js";
+import "~/suites/icon.test.js";
+import "~/suites/theme-toggle.test.js";
+import "~/suites/card-back.test.js";
 import "~/suites/card-tile.test.js";
 import "~/suites/card-gallery.test.js";
 import "~/suites/catalogs-api.test.js";
@@ -34,6 +38,7 @@ import "~/suites/image-field-layout.test.js";
 import "~/suites/layout-geometry.test.js";
 import "~/suites/feedback.test.js";
 import "~/suites/change-password-form.test.js";
+import "~/suites/login-page.test.js";
 
 const root = document.getElementById("results");
 

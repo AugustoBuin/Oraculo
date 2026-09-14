@@ -56,10 +56,17 @@ export function cardTable({ cards, onOpen, onDelete, scope }) {
     children: cards.map((card) => {
       // A raridade vai no selo do material, como na galeria: a mesma cor nas
       // duas visões, para quem alterna entre elas.
+      /*
+       * `wrap-anywhere` só na célula de DADO: nome de carta e de edição vêm do
+       * banco e podem chegar sem um espaço onde quebrar. A célula do selo e a
+       * de ações ficam de fora — `overflow-wrap` é herdado, e num controle ele
+       * zera o piso de min-content que segura a largura da coluna
+       * (`docs/design.md` §9).
+       */
       const cells = COLUMNS.map((column) =>
         column.key === "rarity"
           ? el("td", { children: [rarityBadge(card.rarity)] })
-          : el("td", { text: cellText(card, column.key) }),
+          : el("td", { text: cellText(card, column.key), classes: ["wrap-anywhere"] }),
       );
 
       if (onDelete !== undefined) {
