@@ -173,7 +173,7 @@ Cortar com justificativa é parte da entrega.
 | Importação em massa (CSV) | Alto valor real, alto custo: validação linha a linha, relatório de erro parcial e desfazer de lote. Fica como evolução declarada. |
 | Variações da mesma carta (foil, promo, alternate art) | Exigiria uma tabela de variações e mudaria a tela inteira. O desafio pede a carta, não a impressão. |
 | Internacionalização da interface | O produto é interno e em português. Os **dados** já são bilíngues (nome EN/PT), que é o que o desafio pede. |
-| Testes automatizados de interface | Custo desproporcional na janela de cinco dias. O roteiro acima cobre a verificação. |
+| Testes automatizados de interface | Custo desproporcional na janela de dez dias. O roteiro acima cobre a verificação. |
 
 ## Documentação
 

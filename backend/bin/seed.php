@@ -106,10 +106,10 @@ echo '  jogos     ' . count($games) . PHP_EOL;
 // ----------------------------------------------------------------- edições ---
 
 /**
- * Reproduzidas LITERALMENTE do enunciado, inclusive as quatro que não existem
- * no mundo real: The Hobbit, Marvel Super Heroes, Chaos Rising e Blazing
- * Dominion. A massa é o contrato do desafio — "corrigir" seria entregar algo
- * diferente do que foi pedido.
+ * Reproduzidas LITERALMENTE do enunciado, inclusive as quatro mais recentes:
+ * The Hobbit, Marvel Super Heroes, Chaos Rising e Blazing Dominion. A massa é o
+ * contrato do desafio — "corrigir" seria entregar algo diferente do que foi
+ * pedido.
  */
 $editions = [
     ['magic', 'dom', 'Dominaria', 1],
@@ -265,8 +265,8 @@ $cards = [
     ['magic', 'eld', 'mythic', 'Brazen Borrower', null, $scryfall . 'c/2/c2089ec9-0665-448f-bfe9-d181de127814.jpg'],
     ['magic', 'eld', 'rare', 'Bonecrusher Giant', 'Gigante Quebra-Ossos', $scryfall . '0/9/09fd2d9c-1793-4beb-a3fb-7a869f660cd4.jpg'],
 
-    // Edições fictícias do enunciado: sem imagem, de propósito — exercita o
-    // espaço reservado da interface (RF-34).
+    // Cartas das edições mais recentes do enunciado: sem imagem, de propósito —
+    // exercita o espaço reservado da interface (RF-34).
     ['magic', 'hob', 'mythic', 'The One Ring', 'O Um Anel', null],
     ['magic', 'msh', 'rare', 'Spider-Man', 'Homem-Aranha', null],
 

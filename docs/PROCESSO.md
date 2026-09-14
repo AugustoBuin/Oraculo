@@ -10,9 +10,7 @@
 ## 1. O prazo
 
 - Recebi o desafio em **03/09/2026, quinta-feira, às 14h52**. Não havia prazo oficial.
-- Me dei cerca de dez dias. O planejamento foi calibrado para uma janela de **cinco dias
-  úteis** — é a janela que o PRD, o ADR-002 e o ADR-004 citam —, e o escopo planejado fechou em
-  **09/09**, com o merge do Épico 10.
+- Me dei cerca de dez dias. O escopo planejado fechou em **09/09**, com o merge do Épico 10.
 - De 10 a 14/09, o trabalho foi refinamento sobre um produto que já funcionava: layout, paleta,
   cores de raridade e identidade visual.
 - Entregue em **14/09/2026, segunda-feira**.
