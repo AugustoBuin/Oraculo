@@ -129,10 +129,15 @@ $editions = [
     ['yugioh', 'blzd', 'Blazing Dominion', 5],
 ];
 
+// Nome e ordem entram só na inserção. O seed roda a cada boot e o ADMIN edita
+// as duas coisas: reescrevê-las devolveria o valor da massa a cada `docker
+// compose up`, sem erro nem log. `id = id` é o "não faça nada" do MySQL — o
+// INSERT IGNORE faria o mesmo, mas engoliria também erro de verdade. Corrigir um
+// nome da massa num banco que já existe é trabalho de migration.
 $insertEdition = $pdo->prepare(
     'INSERT INTO editions (game_id, code, name, sort_order, active, created_at)
      VALUES (:game_id, :code, :name, :sort_order, 1, :now)
-     ON DUPLICATE KEY UPDATE name = VALUES(name), sort_order = VALUES(sort_order)'
+     ON DUPLICATE KEY UPDATE id = id'
 );
 
 foreach ($editions as [$game, $code, $name, $order]) {
@@ -179,15 +184,15 @@ $rarities = [
     ['yugioh', 'secret-rare', 'Secreta', 5, 'obsidian'],
 ];
 
+// Como nas edições: nome, ordem e cor entram só na inserção, porque o ADMIN
+// edita os três e o seed roda a cada boot. Banco que já existia recebe as cores
+// pela migration 0012.
 $insertRarity = $pdo->prepare(
     'INSERT INTO rarities (game_id, code, name, color, sort_order, active, created_at)
      VALUES (:game_id, :code, :name, :color, :sort_order, 1, :now)
-     ON DUPLICATE KEY UPDATE name = VALUES(name), sort_order = VALUES(sort_order)'
+     ON DUPLICATE KEY UPDATE id = id'
 );
 
-// A cor entra só na inserção, e fica FORA do ON DUPLICATE KEY UPDATE: o seed
-// roda a cada boot, e reescrevê-la desfaria a escolha do ADMIN a cada
-// `docker compose up`. Banco que já existia recebe as cores pela migration 0012.
 foreach ($rarities as [$game, $code, $name, $order, $color]) {
     $insertRarity->execute([
         'game_id' => $gameIds[$game],
