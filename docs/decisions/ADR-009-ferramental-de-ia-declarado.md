@@ -7,12 +7,12 @@
 ## Contexto
 
 Este projeto foi construído com agentes de IA. O código foi escrito em sessões com o Claude
-Code, que também rodou as auditorias; um gerador de imagens produziu as artes raster da tela de
+Code, que também rodou as auditorias; um agente Gemini produziu as artes raster da tela de
 entrada. A camada que orienta os agentes segue o `backend/PADROES.md` §15: o `CLAUDE.md` na
 raiz, os agentes auditores e as skills de método em `.claude/`, e hooks que bloqueiam comando
 destrutivo.
 
-A questão não é se usar, e sim **o que o repositório que o avaliador clona mostra e declara.**
+A questão não é se deve usar, e sim **o que o repositório que o avaliador clona mostra e declara.**
 
 O enunciado exige *"código 100% autoral e puro"*. No contexto, a frase se refere à ausência de
 framework e de biblioteca proibida, não ao uso de assistente de desenvolvimento. Mas, numa
@@ -37,10 +37,14 @@ qualquer jeito. Na prática, vira a opção B.
 - O uso é declarado numa seção curta no fim do `README.md` e detalhado em
   [`docs/PROCESSO.md`](../PROCESSO.md): quem decidiu o quê, o que foi delegado, as travas, os
   erros da IA e como foram pegos, e a linha do tempo.
-- `.claude/` e `CLAUDE.md` são versionados **como último passo antes da entrega**, depois da
-  revisão de anonimização do [ADR-011](ADR-011-padroes-de-referencia-anonimizados.md): a
-  camada veio adaptada de um projeto anterior e cita os padrões de referência. Até lá, os dois
-  continuam no `.gitignore`.
+- `.claude/` e `CLAUDE.md` são versionados, depois da revisão de anonimização do
+  [ADR-011](ADR-011-padroes-de-referencia-anonimizados.md): a camada veio adaptada de um
+  projeto anterior e cita os padrões de referência.
+- **As permissões ficam divididas.** As travas — o que é negado, o que pede confirmação e o
+  hook que bloqueia comando destrutivo — vão em `.claude/settings.json`, versionado. O
+  `.claude/settings.local.json`, que libera ferramentas sem pedir confirmação, fica fora do
+  Git: versionado, ele daria essa liberação a qualquer pessoa que clonasse o projeto e o
+  abrisse no Claude Code.
 - A linha `Co-Authored-By` fica nos commits. O histórico é a parte conferível do que o
   documento de processo conta.
 - O portão de pré-push continua sem IA: `backend/bin/validate.php` no contêiner. Quem avalia
@@ -63,10 +67,3 @@ qualquer jeito. Na prática, vira a opção B.
 
 Se a revisão de anonimização achar, em `.claude/`, conteúdo que não se anonimiza sem perder o
 sentido, aquele arquivo fica fora — e o `docs/PROCESSO.md` diz qual e por quê.
-
-## Histórico
-
-A primeira versão desta decisão, de 04/09, escolheu a opção C, e em 08/09 o histórico foi
-reescrito para retirar as linhas `Co-Authored-By` dos commits já feitos. Em 14/09 a decisão
-passou a ser a opção A: o rastro já estava versionado sem explicação, e prefiro declarar a
-deixar que se descubra.

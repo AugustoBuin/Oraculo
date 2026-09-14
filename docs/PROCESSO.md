@@ -130,7 +130,8 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 
 ## 8. O que ainda fica fora do repositório
 
-- **Os padrões de engenharia** e a **camada `.claude/`** entram no último passo antes da
-  entrega, depois da revisão de anonimização
-  ([ADR-009](decisions/ADR-009-ferramental-de-ia-declarado.md),
-  [ADR-011](decisions/ADR-011-padroes-de-referencia-anonimizados.md)).
+- **Os padrões de engenharia** entram no último passo antes da entrega, depois da revisão de
+  anonimização ([ADR-011](decisions/ADR-011-padroes-de-referencia-anonimizados.md)).
+- **As permissões locais do Claude Code** (`.claude/settings.local.json`), que liberam
+  ferramentas sem pedir confirmação. As travas estão versionadas em `.claude/settings.json`
+  ([ADR-009](decisions/ADR-009-ferramental-de-ia-declarado.md)).
