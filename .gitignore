@@ -1,4 +1,5 @@
-# --- Ferramental local de IA (decisão registrada em docs/decisions/ADR-009) ---
+# --- Camada de IA: versionada no último passo antes da entrega, depois da revisão
+#     de anonimização (ADR-009). ---
 /.claude/
 /CLAUDE.md
 

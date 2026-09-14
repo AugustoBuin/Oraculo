@@ -21,6 +21,6 @@ em silêncio, não.
 | [006](ADR-006-rbac-hierarquico.md) | Três níveis hierárquicos, não matriz de permissões | — Aplica §5.1 |
 | [007](ADR-007-status-401-e-403.md) | `401` para sessão ausente, `403` para nível insuficiente | ✅ Sim — `PADROES.md` §4.2 |
 | [008](ADR-008-imagem-upload-e-url.md) | Imagem por upload (padrão) ou URL, via Strategy | — |
-| [009](ADR-009-ferramental-de-ia-fora-do-repositorio.md) | `.claude/` e `CLAUDE.md` fora do repositório entregue | — |
+| [009](ADR-009-ferramental-de-ia-declarado.md) | Uso de IA declarado; `.claude/` e `CLAUDE.md` versionados | — |
 | [010](ADR-010-fluxo-git-reduzido.md) | GitFlow reduzido a `main`, `development` e `feature-*` | ✅ Sim — `PADROES.md` §13.1 |
 | [011](ADR-011-padroes-de-referencia-anonimizados.md) | Documentos de padrões de referência versionados depois de anonimizados | — |
