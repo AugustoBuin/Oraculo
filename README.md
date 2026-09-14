@@ -195,7 +195,7 @@ Construí o Oráculo usando agentes de IA como ferramenta de engenharia. O códi
 sessões com o Claude Code, sob as regras deste repositório — nenhuma dependência de terceiros,
 teste antes da implementação e um portão de validação que não usa IA —, e as auditorias de
 qualidade e segurança foram feitas por agentes. As imagens da mesa e da carta, na tela de
-entrada, vieram de um gerador de imagens. O escopo, as decisões de arquitetura e de produto, o
+entrada, foram geradas com o Gemini. O escopo, as decisões de arquitetura e de produto, o
 desenho, a aprovação de cada entrega e a verificação na tela foram meus.
 
 O que foi delegado e o que não foi, as travas, os erros da IA e como foram pegos, e a linha do
