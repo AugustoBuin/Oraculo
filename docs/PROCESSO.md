@@ -103,7 +103,8 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 
 - Os três achados altos de 09/09 (OF-001 a OF-003) eram defeitos do código escrito por agente,
   achados por outro agente. Foram corrigidos no mesmo dia, cada um com o teste antes.
-- O alto de 14/09 (A-1) foi corrigido antes do merge — ver a seção 6.
+- O alto de 14/09, o A-1 do relatório de backend, virou o OF-006 e foi corrigido antes do
+  merge — ver a seção 6.
 - **A auditoria de segurança de 14/09 foi interrompida** por limite de uso da ferramenta. Não
   houve revisão de segurança do que entrou depois de 09/09.
 - Auditoria feita por agente não substitui olhar a aplicação: nenhuma das três de 09/09 pegou o
@@ -117,7 +118,7 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 | 11/09 | O agente começou uma terceira rodada de variantes do logo, por gosto próprio, sem me mostrar. | Eu. A regra passou a ser mostrar o rascunho e perguntar. |
 | 12/09 | **Dois testes que não mediam nada.** A rede de testes de geometria montava a galeria e a paginação do jeito errado e media uma caixa vazia desde 10/09: os testes passavam sem verificar. | O próprio agente, ao escrever o teste seguinte (`8d4a6f2`). |
 | 12/09 | **OF-005.** O botão "Excluir" quebrava ao meio na visão tabela. A rede de geometria não alcançava tabelas. | Eu, na tela. |
-| 14/09 | **A-1.** O seed, que roda a cada boot, desfazia o nome e a ordem que o ADMIN editasse em edições e raridades — alcançável pela interface desde que o editar entrou, em 11/09. | A auditoria do que mudou. Corrigido com teste antes do merge (`6031e05`). |
+| 14/09 | **OF-006 (A-1).** O seed, que roda a cada boot, desfazia o nome e a ordem que o ADMIN editasse em edições e raridades — alcançável pela interface desde que o editar entrou, em 11/09. | A auditoria do que mudou. Corrigido com teste antes do merge (`6031e05`). |
 | 14/09 | **Uma premissa errada.** O registro tratava a moldura do cartão de entrada como esticada, e havia uma decisão pendente sobre isso. Medido o cartão real, ela não esticava: ficava centrada. | A medição, antes que a decisão fosse tomada sobre o problema errado. |
 
 ## 7. O histórico do Git
