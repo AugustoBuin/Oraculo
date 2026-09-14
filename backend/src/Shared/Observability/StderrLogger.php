@@ -11,11 +11,9 @@ namespace App\Shared\Observability;
  * cair — o armazenamento de log é dependência fraca: se o coletor parar, a
  * aplicação continua respondendo (PADROES.md §6, regra 7).
  *
- * A redação de dado sensível é automática e central (regra 4). Isso existe por
- * causa de um incidente concreto: a única forma de depurar um envio foi ampliar
- * permanentemente a exposição de token e telefone no log, e a mudança ficou em
- * produção por mais de um mês. Redigir na mão, caso a caso, é o que garante que
- * um dia alguém esqueça.
+ * A redação de dado sensível é automática e central (regra 4). Redigir na mão,
+ * caso a caso, é o que garante que um dia alguém esqueça — e o esquecimento mais
+ * comum é ampliar a exposição no log para depurar e deixar a ampliação ficar.
  */
 final class StderrLogger implements Logger
 {
