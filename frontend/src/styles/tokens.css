@@ -39,6 +39,30 @@
   --color-line: #dcdbe1;
 
   /*
+   * O traço de ARTE DECORATIVA — hoje, o verso da carta.
+   *
+   * Papel que nenhum token cobria: ele desenha, e não separa. Com os tokens
+   * de antes, a mesma linha dava 1,20 no claro e 1,57 no escuro — apagada num
+   * tema e marcada no outro. Aqui são 1,34:1 e 1,36:1 sobre o fundo, de
+   * propósito: o verso precisa ficar ABAIXO de qualquer arte real, para não
+   * disputar com a carta que tem imagem.
+   *
+   * Não se mede a 4,5:1, e a `/paleta` sabe disso: a família `--color-line`
+   * inteira fica fora das tintas (`shared/theme/palette.js`).
+   */
+  --color-line-art: #d1cfdf;
+
+  /*
+   * O mesmo papel, um degrau mais forte: 2,07:1 no claro e 2,06:1 no escuro.
+   *
+   * O tom acima foi calibrado para ficar ATRÁS de texto (o nome da carta, no
+   * verso). A ilustração de estado está sozinha e na frente, e naquele tom
+   * ela vira fantasma no claro. Dois tons e não um: quem está atrás de texto
+   * e quem está sozinho não podem ter o mesmo peso.
+   */
+  --color-line-art-strong: #a9a6bd;
+
+  /*
    * A borda de campo de formulário — o limite que IDENTIFICA um controle.
    *
    * A linha acima é decorativa (divisória, borda de cartão) e pode ser leve.
@@ -188,6 +212,68 @@
   --target-min: 2.75rem; /* 44px */
 
   /* ---------------------------------------------------------------------
+   * Imagem — endereço de arquivo também é valor visual
+   *
+   * Nenhum `url()` de imagem é escrito fora deste arquivo (§10.1): trocar o
+   * desenho é trocar um token. O caminho é absoluto a partir da raiz, e não
+   * relativo, porque endereço dentro de variável se resolve contra a folha em
+   * que a variável é USADA, não contra esta.
+   *
+   * Estes dois não mudam com o tema: são máscara, e quem muda é a cor que os
+   * pinta (`--color-brand`). A versão com o sigilo vale de 64px em diante — a
+   * 48px as facetas da gema se fundem (medido em 11/09).
+   * ------------------------------------------------------------------- */
+
+  --image-brand-mark: url("/src/assets/brand/symbol.svg");
+  --image-brand-mark-sigil: url("/src/assets/brand/symbol-sigil.svg");
+
+  /*
+   * O verso da carta, em duas camadas: a moldura em lapidação esmeralda e a
+   * gema acima dela. Dois arquivos e não um, porque o CSS posiciona a gema em
+   * porcentagem — e porque sem texto (a miniatura do modal) ela vai ao centro
+   * e cresce, o que um desenho só não permitiria.
+   */
+  --image-card-back-frame: url("/src/assets/card-back/frame.svg");
+  --image-card-back-gem: url("/src/assets/card-back/gem.svg");
+
+  /*
+   * As ilustrações de estado. A busca sem resultado não tem arquivo: ela
+   * reusa a gema do verso, menor — o estado é frequente, e já traz a ação de
+   * limpar os filtros.
+   */
+  --image-state-not-found: url("/src/assets/states/not-found.svg");
+  --image-state-empty-catalog: url("/src/assets/states/empty-catalog.svg");
+
+  /*
+   * A cena da entrada, em duas camadas e uma por tema.
+   *
+   * Cena única não serviria: a mesa cresce com a JANELA e o cartão do
+   * formulário cresce com a FONTE, então com a fonte em 200% as cartas de uma
+   * foto só ficariam debaixo do cartão. Em camadas, a carta deitada tem
+   * tamanho em `rem` e acompanha o cartão.
+   *
+   * Uma imagem por tema, e não uma só esmaecida: a virada do login revela a
+   * aplicação, e revelar um tema com a cena do outro é o defeito que a troca
+   * por token evita.
+   */
+  --image-login-table: url("/src/assets/login/table-light.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-light.webp") 1x,
+    url("/src/assets/login/card-light@2x.webp") 2x
+  );
+
+  /*
+   * Os ícones de traço. Um arquivo por desenho, e nenhum por cor: quem pinta
+   * é `currentColor`, então o mesmo aviso serve ao vermelho do erro e à tinta
+   * do resto.
+   */
+  --image-icon-warning: url("/src/assets/icons/warning.svg");
+  --image-icon-lock: url("/src/assets/icons/lock.svg");
+  --image-icon-theme-system: url("/src/assets/icons/theme-system.svg");
+  --image-icon-theme-light: url("/src/assets/icons/theme-light.svg");
+  --image-icon-theme-dark: url("/src/assets/icons/theme-dark.svg");
+
+  /* ---------------------------------------------------------------------
    * Movimento — nada acima de 400ms, exceto progresso (§11.2)
    * ------------------------------------------------------------------- */
 
@@ -195,6 +281,17 @@
   --duration-base: 200ms;
   --duration-slow: 320ms;
   --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  /*
+   * A curva de quem sai do repouso e volta ao repouso.
+   *
+   * `--ease-out` desacelera no fim, e é o certo para o que ENTRA: a coisa
+   * chega e assenta. Para um objeto que GIRA, ela desperdiça o movimento —
+   * medido na virada da entrada, a carta chegava a 80° (já de perfil, já
+   * invisível) com 51% do tempo, e os 156ms restantes eram tela parada. Com a
+   * curva simétrica, o mesmo ponto cai em 77% do tempo.
+   */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
 
   /* Diz ao navegador quais esquemas a página sabe pintar. */
   color-scheme: light dark;
@@ -236,6 +333,14 @@
     --color-muted: #9aa0a8; /*  6,29:1 na superfície */
 
     --color-line: #35353e;
+    --color-line-art: #2b293f; /* 1,36:1 no fundo — o traço do verso */
+    --color-line-art-strong: #474461; /* 2,06:1 — a ilustração sozinha */
+
+    --image-login-table: url("/src/assets/login/table-dark.webp");
+    --image-login-card: image-set(
+      url("/src/assets/login/card-dark.webp") 1x,
+      url("/src/assets/login/card-dark@2x.webp") 2x
+    );
     --color-border: #74737c;
 
     --color-brand: #bab3ff;
@@ -300,7 +405,15 @@
   --color-muted: #9aa0a8;
 
   --color-line: #35353e;
+  --color-line-art: #2b293f;
+  --color-line-art-strong: #474461;
   --color-border: #74737c;
+
+  --image-login-table: url("/src/assets/login/table-dark.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-dark.webp") 1x,
+    url("/src/assets/login/card-dark@2x.webp") 2x
+  );
 
   --color-brand: #bab3ff;
 

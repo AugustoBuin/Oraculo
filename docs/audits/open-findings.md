@@ -13,6 +13,7 @@ Contrato do formato: `backend/PADROES.md` §14.1.
 | OF-002 | HIGH | — | Cinco leituras remotas sem cancelamento; em `catalogs-page` um escopo nasce depois do `dispose` e dispara duas requisições sobre a tela já morta (RNF-07, `PADROES-ENGENHARIA.md` §12.4) | `frontend/src/pages/catalogs/catalogs-page.js:89-106`; `frontend/src/pages/cards/cards-filters.js:122-152`; `frontend/src/features/cards/components/card-form.js:343-376`; `frontend/src/features/catalogs/components/catalog-panel.js:47-51`; `frontend/src/features/catalogs/api/catalogs-api.js:95-96` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 | OF-003 | HIGH | — | **Verificado na tela em 09/09.** Na galeria — a visão padrão da listagem — abrir uma carta é ação exclusiva de mouse: o cartão não é focável e a grade só escuta `click`. Tabulando a partir da busca, o foco vai do `Excluir` de uma carta direto ao `Excluir` da seguinte, sem parada intermediária: **a única ação alcançável por teclado em cada carta é a destrutiva** (RNF-06, e o aceite de F-050 que diz "a aplicação inteira é operável só pelo teclado") | `frontend/src/features/cards/components/card-tile.js:117-123`; `frontend/src/features/cards/components/card-gallery.js:30-55` | `2026-09-09-auditoria-final-qualidade-frontend.md` | fixed | | 2026-09-09 | 2026-09-09 |
 | OF-004 | HIGH | — | Campo de imagem inutilizável no desktop: a trilha `auto` do grid reservava a largura NATURAL da imagem (488px), o item pintava 128px, e a coluna dos controles era espremida até o mínimo — que `overflow-wrap: anywhere`, herdado do `body`, reduz a UM caractere. "Remover imagem" saía uma letra por linha, com 379px de buraco ao lado | `frontend/src/styles/components.css` (`.image-field`, media de 36rem) | reportado pelo autor na tela, 09/09 — **nenhuma das três auditorias pegou** | fixed | | 2026-09-09 | 2026-09-09 |
+| OF-005 | HIGH | — | "Excluir" racha ao meio na visão tabela ("Excl / uir"): `.card-table td` estava na lista de `overflow-wrap: anywhere` e era a única entrada dela que mirava um CONTÊINER. A propriedade é herdada, então descia para o botão da célula de ações, zerava o min-content dele e a coluna perdia o piso — o layout automático da tabela espremeu até a palavra quebrar. Mesma propriedade e mesma família do OF-004 | `frontend/src/styles/components.css` (a lista do topo); `frontend/src/features/cards/components/card-table.js:59-70` | reportado pelo autor na tela, 12/09 — **a rede de geometria não alcançava a tabela** | fixed | | 2026-09-12 | 2026-09-12 |
 
 ## Convenções
 
@@ -101,6 +102,19 @@ comportamento: a leitura em voo é de fato interrompida. As guardas depois do `a
 páginas, ficam no roteiro manual — camada de DOM, por ADR-004 — e foram percorridas:
 `/catalogos`, `/cartas/:id` e a galeria com filtro pela URL, todas carregando e com console
 limpo.
+
+**OF-005 não foi pego porque a rede de geometria não enxergava a tabela — nenhuma parte
+dela.** O `walk` de `tests/support/layout.js` encerrava o ramo em qualquer contêiner que
+rola, e a tabela de cartas vive dentro de um `.scroll-x`: cada célula e cada botão ficavam
+fora das três invariantes desde que a rede nasceu, em 10/09. Rolar dá direito a ser mais
+LARGO; não dá direito a rachar palavra, deixar controle sem piso nem esconder conteúdo —
+agora só a medida de largura para no que rola. Havia uma segunda cegueira, menor e
+independente: a invariante da palavra inteira pula quem computa `anywhere`, e a propriedade
+é herdada, então a exceção alcançava o botão. Fechada por uma quarta invariante — nenhum
+controle pode computar `anywhere` —, que é a regra do `design.md` §9 virada em teste. Com o
+ramo aberto, a rede acusou o defeito sozinha, em `[tabela · 320px]`, antes da correção; e
+não acusou mais nada em nenhuma outra tela. Corrigido em `3eedd36`, na branch
+`feature-identidade-visual`.
 
 **OF-004 é o achado que as auditorias NÃO pegaram, e vale registrar por quê.** Os dois
 auditores de qualidade leram código; este defeito só existe em geometria calculada, com uma

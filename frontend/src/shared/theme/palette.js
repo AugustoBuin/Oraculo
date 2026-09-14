@@ -191,10 +191,11 @@ export function collectTokens(rules, prefix) {
  *   — é medido sobre as superfícies a 3:1, que é o piso da WCAG 1.4.11 para o
  *   que identifica um controle, e não o de texto.
  *
- * A linha (`--color-line`) não entra: é decorativa — divisória, borda de
- * cartão —, e não identifica controle nenhum. É tinta quem não é superfície,
- * versão suave, tinta de ação, fundo de selo, linha nem componente. A convenção de nome é o
- * que permite a um token novo entrar na conta sozinho.
+ * A família da linha (`--color-line`, `--color-line-art`) não entra: é
+ * decorativa — divisória, borda de cartão, traço do verso —, e não identifica
+ * controle nenhum. É tinta quem não é superfície, versão suave, tinta de ação,
+ * fundo de selo, linha nem componente. A convenção de nome é o que permite a
+ * um token novo entrar na conta sozinho.
  *
  * @param {string[]} names
  * @returns {Array<{ fg: string, bg: string, min: number }>}
@@ -206,13 +207,20 @@ export function contrastPairs(names) {
   // O fundo do selo de raridade é superfície de UM texto só, o do próprio
   // selo: medi-lo como tinta contra a página seria medir um par que não existe.
   const isRarityFill = (name) => name.startsWith("--color-rarity-");
+  /*
+   * A FAMÍLIA da linha, e não o nome exato: `--color-line-art` é o traço do
+   * verso da carta, decorativo pelo mesmo motivo que a divisória — ele
+   * desenha, não escreve. Medido como tinta, reprovaria por projeto (1,34:1
+   * no claro), e a `/paleta` acusaria um defeito que não existe.
+   */
+  const isLine = (name) => name.startsWith("--color-line");
   const isInk = (name) =>
     !isSurface(name) &&
     !isComponent(name) &&
     !isRarityFill(name) &&
     !name.endsWith("-soft") &&
     !name.startsWith("--color-on-") &&
-    name !== "--color-line";
+    !isLine(name);
 
   const surfaces = names.filter(isSurface);
   const pairs = [];

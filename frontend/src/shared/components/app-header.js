@@ -7,6 +7,7 @@
  * componente reutilizável (§2.3 e §17.1).
  */
 
+import { brandMark } from "@/shared/components/brand-mark.js";
 import { el } from "@/shared/dom/elements.js";
 
 /**
@@ -40,7 +41,17 @@ export function appHeader({ brand, items, currentPath, actions = [] }) {
       el("div", {
         classes: ["cluster", "app-header-inner", "container"],
         children: [
-          el("a", { text: brand, attrs: { href: "/" }, classes: ["app-brand"] }),
+          el("a", {
+            attrs: { href: "/" },
+            classes: ["app-brand"],
+            children: [
+              // A marca vem ANTES do nome, e por `children`: `el()` escreve o
+              // `text` primeiro e só depois anexa os filhos, então o desenho
+              // sairia à direita da palavra.
+              brandMark(),
+              el("span", { text: brand }),
+            ],
+          }),
           el("nav", {
             attrs: { "aria-label": "Principal" },
             classes: ["cluster", "app-nav"],

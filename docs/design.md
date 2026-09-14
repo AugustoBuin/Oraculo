@@ -123,6 +123,8 @@ preenchimento suave medido com a própria tinta em cima.
 
 **Componentes, a 3:1** (WCAG 1.4.11), no pior caso entre fundo e superfície: anel de foco a 5,35:1 no claro e 8,61:1 no escuro; borda de campo a 3,46:1 no claro e 3,54:1 no escuro. A linha decorativa não entra: não identifica controle nenhum.
 
+**O traço de arte não tem piso — e é medido mesmo assim, para o número ficar registrado:** `--color-line-art`, o verso da carta, dá **1,34:1** no claro e **1,36:1** no escuro sobre o fundo, e `--color-line-art-strong`, a ilustração de estado, dá **2,07:1** e **2,06:1**. Os dois estão abaixo de qualquer piso de propósito. Ele desenha, não escreve: nenhum texto vai por cima dele — o nome da carta fica em área lisa, em `--color-muted` —, e o verso precisa ficar abaixo de qualquer arte real, para não disputar com a carta que tem imagem ao lado. É por isso que a família `--color-line` inteira fica fora das tintas na `/paleta`, e não só o nome exato. **São dois tons, e a diferença é a posição:** o do verso foi calibrado para ficar ATRÁS de texto; a ilustração de estado está sozinha e na frente, e naquele tom ela vira fantasma no claro.
+
 > **A tela `/paleta` mede estes mesmos pares ao vivo.** Ela lê o `tokens.css` que o navegador
 > carregou, mostra os dois temas lado a lado e calcula cada razão pela fórmula da WCAG — mais
 > os dois pares do anel de foco, que pedem 3:1 e não 4,5. Fica fora do menu: é ferramenta
@@ -228,8 +230,10 @@ Cada matiz tem um significado registrado e **não é reaproveitado fora dele**. 
 | `--color-body`      | Texto corrente                                              |
 | `--color-muted`     | Metadado: data, contagem, rótulo secundário                 |
 | `--color-line`      | Linha decorativa: divisória, borda de cartão e de tabela    |
+| `--color-line-art`  | Traço de arte decorativa: o verso da carta. Nunca sob texto |
+| `--color-line-art-strong` | O mesmo traço, um degrau acima: a ilustração que está sozinha |
 | `--color-border`    | Borda de campo — o limite que identifica o controle, a 3:1  |
-| `--color-brand`     | A marca. Só o logotipo "Oráculo" — em nenhum outro lugar    |
+| `--color-brand`     | A marca: o desenho e a palavra "Oráculo" — em nenhum outro lugar |
 | `--color-accent`    | **A voz única de ação**, em violeta. Uma ação primária por contexto |
 | `--color-on-accent` | A tinta que vai sobre o acento. Troca de tema junto com ele |
 | `--color-success`   | Operação concluída                                          |
@@ -252,6 +256,35 @@ ele não chama para a ação, só situa.
 **A regra dos dois sinais.** Nenhum estado depende só de cor: sempre cor **mais** rótulo,
 ícone ou forma. Cor sozinha exclui daltônicos, morre em impressão e some sob sol forte. É por
 isso que `.badge` no `utilities.css` sempre carrega texto.
+
+**A marca tem duas metades, e a cor é a mesma.** A palavra "Oráculo" é texto HTML; o desenho
+(três cartas em leque, com a gema) é um elemento vazio recortado pelo SVG em `mask-image` e
+pintado com `background-color: var(--color-brand)`. Não é `<img>` de propósito: um arquivo por
+tema seguiria `prefers-color-scheme`, que obedece ao sistema operacional e **ignoraria o botão
+de tema** (§6). A medida que vale é a da §3 — 9,92:1 no claro e 8,66:1 no escuro, bem acima do
+piso de 3:1 de elemento gráfico.
+
+**O que a máscara cobra:** no alto contraste do Windows o sistema força toda cor de fundo para
+a da tela, e um desenho pintado por fundo desapareceria. A regra em `@media (forced-colors:
+active)` devolve o controle do elemento (`forced-color-adjust: none`) e volta a pintar com cor
+**do sistema** — `LinkText` dentro do link do cabeçalho, `CanvasText` fora dele. Nunca com a
+cor da paleta: é ela que o modo existe para substituir.
+
+**Ícone não tem cor própria.** Os cinco ícones de traço (aviso, cadeado, e os três do botão
+de tema) são máscara pintada com `currentColor`: cada um tem a cor do texto ao lado — vermelho
+dentro do estado de erro, tinta no botão — e não existe um arquivo por cor. Eles substituíram
+caracteres de fonte, que não obedecem a paleta nenhuma: o cadeado saía emoji colorido, e o
+sol, a lua e o meio círculo mudavam de forma conforme o sistema operacional. A família é uma
+só — grade de 24, traço 2, pontas e junções redondas, as do logo — e as formas são as
+universais, porque reinventar um sinal de aviso custa reconhecimento e a identidade fica no
+traço.
+
+**A única cor gravada fora do `tokens.css` é a do ícone da aba**, e é uma exceção com motivo:
+o ícone vive na barra de abas, que é do navegador, e por isso tem fundo próprio e não segue o
+tema do Oráculo — um SVG que trocasse de cor com o tema do navegador precisaria de `<style>`
+dentro do arquivo, e a CSP da pasta servida não aceita. O violeta gravado é o
+`--color-brand` do tema claro (`#492c9b`) com o símbolo branco, a 9,92:1; a origem está
+anotada no `<head>` do `index.html`, junto do procedimento para refazer os três arquivos.
 
 **Raridade não é estado.** Os selos de estado e o de raridade usam o mesmo desenho de fundo e
 tinta, e o que os separa é a **forma**: o de raridade leva uma marca redonda antes do nome, e
@@ -276,8 +309,11 @@ zoom de 200% funcione sem perda de conteúdo.
 **Profundidade** — vem de tom e borda. Sombra é reservada ao que flutua de verdade: modal,
 popover, menu. **Cartão em repouso não tem sombra.**
 
-**Movimento** — 120 · 200 · 320ms, com `cubic-bezier(0.2, 0, 0, 1)`. Nada acima de 400ms,
-exceto indicador de progresso.
+**Movimento** — 120 · 200 · 320ms, com **duas** curvas: `cubic-bezier(0.2, 0, 0, 1)` para o
+que entra e assenta, e `cubic-bezier(0.4, 0, 0.6, 1)` para o que sai do repouso e volta a ele
+— um objeto que gira. A primeira desacelera no fim: usada numa rotação, ela gasta metade do
+tempo com a coisa já de perfil e invisível. Nada acima de 400ms, exceto indicador de
+progresso.
 
 ---
 
@@ -335,6 +371,12 @@ Dois detalhes que parecem preciosismo e não são:
    `rarity-`).
 3. Existe nos dois temas? Todo token de cor existe nos dois ou não existe.
 4. A tabela da §3 é atualizada no **mesmo commit** que introduz o token.
+5. **Endereço de imagem também é token** (`--image-*`), pelo mesmo motivo: trocar o desenho
+   é trocar um token, e nenhum `url()` de imagem se escreve fora do `tokens.css`. O caminho é
+   absoluto a partir da raiz — endereço relativo dentro de variável se resolve contra a folha
+   que a **usa**, não contra a que a declara. Ele não se mede: quem se mede é a cor que pinta
+   a máscara. Arquivo que serve aos dois temas é declarado uma vez, no `:root`; arquivo que
+   muda com o tema é redefinido nos dois blocos escuros, como as cores.
 
 ---
 
@@ -409,6 +451,12 @@ virou "uma letra por linha" em vez de "coluna estreita".
 Agora ele vale só no texto que pode chegar sem espaço onde quebrar: nome de carta e de edição,
 código de catálogo, mensagem com nome de arquivo, valor do histórico, e-mail. A lista está no
 topo de `components.css`; quem não tem classe própria usa `.wrap-anywhere`.
+
+**Toda linha dessa lista mira o TEXTO, nunca o contêiner dele** — e esta frase custou um
+defeito. `.card-table td` esteve na lista, e `overflow-wrap` é herdado: a regra descia para o
+botão "Excluir" que mora na célula de ações, zerava o min-content dele, a coluna colapsava e
+a palavra rachava ao meio na visão tabela. Escopar por contêiner é escopar por acidente —
+tudo o que estiver dentro herda, controle incluído.
 
 ### A rede de geometria
 
