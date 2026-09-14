@@ -336,7 +336,10 @@ erro para o usuário que acabou de salvar (`PADROES.md` §2.4).
 ## 4. Massa de dados inicial (seed)
 
 `bin/seed.php` é **idempotente** (`INSERT ... ON DUPLICATE KEY UPDATE` sobre as chaves
-naturais) e roda a cada boot.
+naturais) e roda a cada boot. Em edições e raridades, o que já existe **não é reescrito**
+(`ON DUPLICATE KEY UPDATE id = id`): nome, ordem e cor são editáveis pelo `ADMIN`, e
+reescrevê-los desfaria a edição a cada `docker compose up`. Corrigir um valor da massa num
+banco que já existe é trabalho de migration.
 
 ### 4.1 Usuários
 
