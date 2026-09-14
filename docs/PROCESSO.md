@@ -35,7 +35,7 @@ que entrou em cada dia, não quantas horas foram trabalhadas.
 | 11/09, sex | As cores de raridade na interface, com o editar na própria linha. |
 | 12/09, sáb | Identidade visual: a marca, o ícone da aba, o verso da carta, os ícones, a carta no modal de exclusão, as ilustrações dos estados vazios e a cena da tela de entrada. A correção do OF-005. |
 | 13/09, dom | A virada da carta na tela de entrada. |
-| 14/09, seg | Auditoria do que mudou desde 09/09, a correção do A-1, o merge da identidade visual e esta documentação. |
+| 14/09, seg | Auditoria do que mudou desde 09/09, a correção do OF-006, o merge da identidade visual e esta documentação. |
 
 ## 3. Quem fez o quê
 
@@ -59,12 +59,11 @@ que entrou em cada dia, não quantas horas foram trabalhadas.
   dos ícones, do verso da carta e das ilustrações.
 - **Claude in Chrome**, a extensão do Claude para o navegador, na verificação da aplicação em
   execução: teclado, zoom e larguras de tela.
-- **Um gerador de imagens por IA**, nas imagens raster da tela de entrada: a mesa e a carta
-  deitada, uma de cada por tema. Os pedidos estão no P4 do
+- **Gemini**, do Google, nas imagens raster da tela de entrada: a mesa e a carta deitada, uma
+  de cada por tema. Os pedidos estão no P4 do
   [checklist de identidade visual](visual-identity-checklist.md).
-- **Um artefato do Claude**, na pesquisa sobre a empresa em
-  [`pre-development/LigaMagic-research.md`](pre-development/LigaMagic-research.md). O link que
-  está ali é privado.
+- **Um artefato do Claude**, publicado, na pesquisa sobre a empresa e os produtos dela, em
+  [`pre-development/LigaMagic-research.md`](pre-development/LigaMagic-research.md).
 
 ## 4. As travas
 
@@ -135,6 +134,3 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
   entrega, depois da revisão de anonimização
   ([ADR-009](decisions/ADR-009-ferramental-de-ia-declarado.md),
   [ADR-011](decisions/ADR-011-padroes-de-referencia-anonimizados.md)).
-- **As referências e os rascunhos da identidade visual** (`docs/visual-identity-refs/`). As
-  imagens geradas que estão em uso foram copiadas para `frontend/src/assets/login/`, e os
-  pedidos ao gerador estão no checklist.
