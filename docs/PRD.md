@@ -1,8 +1,10 @@
 # PRD — Oráculo
 
-**Versão:** 1.0 · **Data:** 04/09/2026 · **Autor:** Augusto Henrique Buin
+**Versão:** 1.1 · **Data:** 04/09/2026 · **Revisto:** 14/09/2026 · **Autor:** Augusto Henrique Buin
 **Contexto:** desafio técnico — Desenvolvedor(a) Full Stack com foco em Front-end · LigaMagic
-**Janela de entrega:** 04/09 a 08/09 (construção) · 09/09 a 10/09 (aprimoramento e testes)
+**Janela de entrega:** desafio recebido em 03/09, sem prazo oficial, com a meta de cerca de dez
+dias · planejamento em 04/09 · construção de 05 a 09/09 · refinamento de 10 a 14/09 · entrega
+em 14/09
 
 ---
 
@@ -84,7 +86,7 @@ Cortar com justificativa é parte da entrega. O anúncio pede alguém que saiba
 | Variações da mesma carta (foil, promo, alternate art) | Modelagem correta exigiria uma tabela de variações e mudaria a tela inteira. O desafio pede a carta, não a impressão. |
 | Condição do exemplar (NM, SP, MP…) | Condição é de uma **cópia física**, não da carta: a mesma entrada do catálogo tem cópias em todas as condições ao mesmo tempo. Como campo da carta, cada condição viraria uma entrada — busca repetida, aviso de duplicidade (RN-04) a cada cadastro, histórico espalhado. O modelo certo é uma entidade de exemplares ligada à carta, com condição, idioma e quantidade, e a lista de condições administrável como as raridades, porque a escala muda de mercado para mercado (NM/LP/MP/HP/DMG na TCGplayer; NM/SP/MP/HP/D é o comum no Brasil). É estoque, outro contexto: o desafio pede a carta, não o exemplar. |
 | Internacionalização da interface | O produto é interno e em português. Os **dados** já são bilíngues (nome EN/PT), que é o que o desafio pede. |
-| Testes automatizados de interface | Custo desproporcional na janela de 5 dias. Roteiro de teste manual documentado no README cobre a verificação. |
+| Testes automatizados de interface | Custo desproporcional na janela de 10 dias. Roteiro de teste manual documentado no README cobre a verificação. |
 | Multi-tenant em runtime (subdomínio, white-label) | A modelagem suporta; a feature não entra. Ver §1.1. |
 
 ---
@@ -230,7 +232,9 @@ legítimo.
 
 | ID | Requisito | Verificação |
 |---|---|---|
-| RNF-01 | Zero dependências de terceiros no código entregue — nenhum framework, biblioteca, CDN ou pacote, no backend ou no frontend. | Busca por `react|vue|jquery|bootstrap|tailwind|vendor/|node_modules/` no repositório volta vazia. |
+| RNF-01 | Zero dependências de terceiros no código entregue — nenhum framework, biblioteca, CDN ou pacote, no backend ou no frontend. | Não há `composer.json`, `package.json`, `vendor/` nem `node_modules/` no repositório; nenhum
+script ou folha de estilo vem de CDN; e nenhum framework é importado — a busca por React, Vue,
+jQuery, Bootstrap e Tailwind só encontra um comentário do `tokens.css` que compara matizes. |
 | RNF-02 | O ambiente sobe com um único comando, com schema e massa de dados aplicados. | `docker compose up` seguido de login bem-sucedido, sem nenhum passo manual. |
 | RNF-03 | Nenhum erro no console do navegador nem no log do PHP em qualquer fluxo. | Percorrer o roteiro de testes manuais do README com o console aberto. |
 | RNF-04 | Interface desenhada primeiro para a tela pequena; nenhuma rolagem horizontal na página. | Inspeção em 360px, 768px e 1440px. |
@@ -280,33 +284,50 @@ nenhuma foi esquecida.
 ## 9. Definition of Done da entrega
 
 - [ ] Um avaliador clona, roda `docker compose up`, abre o navegador e loga com as
-      credenciais do README — sem nenhum passo manual adicional.
-- [ ] Os 26 itens da tabela de rastreabilidade (§8) verificados um a um.
-- [ ] Nenhum erro no console do navegador nem no log do PHP em nenhum fluxo.
-- [ ] Busca por biblioteca proibida no repositório volta vazia.
-- [ ] `php bin/validate.php` verde: sem marcador de conflito, `php -l` limpo, fronteiras
-      de camada respeitadas, testes passando.
-- [ ] Auditoria de qualidade e de segurança sem achado `CRITICAL`.
-- [ ] README completo: como rodar, credenciais dos três perfis, decisões de produto
-      justificadas, roteiro de teste manual e o que ficou fora com o motivo.
-- [ ] Histórico de commits legível, com Conventional Commits em português.
+      credenciais do README — sem nenhum passo manual adicional. *Falta refazer num clone limpo:
+      o boot aplica migrations e seed sozinho, e o login com as credenciais do README foi
+      conferido na tela em 09/09 e em 14/09.*
+- [x] Os 24 itens da tabela de rastreabilidade (§8) verificados um a um — *pelo roteiro manual
+      do README, na verificação em tela de 09/09.*
+- [x] Nenhum erro no console do navegador nem no log do PHP em nenhum fluxo — *console conferido
+      em 09/09 e em 13/09, e nenhum aviso do PHP no log de 12 a 14/09. O log só registra a falha
+      de conexão das migrations quando o Docker religa os contêineres sem esperar o banco: o
+      `depends_on` vale só no `docker compose up`, e o reinício automático sobe o app segundos
+      depois.*
+- [x] Busca por biblioteca proibida no repositório volta vazia — *conferida em 14/09 (RNF-01).*
+- [x] `php bin/validate.php` verde: sem marcador de conflito, `php -l` limpo, fronteiras
+      de camada respeitadas, testes passando — *verde em 14/09, com 263 testes.*
+- [x] Auditoria de qualidade e de segurança sem achado `CRITICAL` — *a completa de 09/09 e a do
+      que mudou, de 14/09.*
+- [x] README completo: como rodar, credenciais dos três perfis, decisões de produto
+      justificadas, roteiro de teste manual e o que ficou fora com o motivo — *e, desde 14/09, como foi construído.*
+- [x] Histórico de commits legível, com Conventional Commits em português — *a linha
+      `Co-Authored-By` está declarada em `docs/PROCESSO.md` §7.*
 
 ---
 
 ## 10. Cronograma e ordem de corte
 
-| Dia | Entrega | Primeiro item a cair se atrasar |
-|---|---|---|
-| **04/09** | Planejamento, ADRs, Docker, schema, seed, esqueleto das camadas, autoloader, micro-runner | — |
-| **05/09** | Sessão em MySQL, login, CSRF, rate limit, RBAC, guard, pipeline de middleware | — |
-| **06/09** | CRUD de cartas, catálogos, Strategy de imagem, auditoria, testes | Trilha de auditoria (E9) |
-| **07/09** | Tokens e temas, shell, login, listagem com busca e filtros | Visão tabela (E7) |
-| **08/09** | Cascata tripla, exclusão reversível, estados, acessibilidade | Admin de catálogos pela UI (E8) |
-| **09–10/09** | Responsivo, contraste medido, auditorias, README, revisão final | — |
+O plano de 04/09 dividia a construção em seis dias, com uma ordem de corte para o caso de
+atraso. O que aconteceu, pelo histórico do Git (o detalhe está em `docs/PROCESSO.md`):
 
-**A regra de corte:** se o dia 08 chegar ao fim sem a cascata Jogo → Edição → Raridade
-impecável, corta-se qualquer outra coisa. É o requisito que o desafio detalhou em quatro
-subitens, e é o que reprova.
+| Dia | Planejado | Realizado |
+|---|---|---|
+| **04/09** | Planejamento, ADRs, Docker, schema, seed, esqueleto das camadas, autoloader, micro-runner | Planejamento: PRD, ADRs, contrato da API, schema e backlog do backend |
+| **05/09** | Sessão em MySQL, login, CSRF, rate limit, RBAC, guard, pipeline de middleware | O backend inteiro, Épicos 0 a 4 |
+| **06/09** | CRUD de cartas, catálogos, Strategy de imagem, auditoria, testes | — |
+| **07/09** | Tokens e temas, shell, login, listagem com busca e filtros | O frontend, Épicos 5 a 9 — a cascata inclusive |
+| **08/09** | Cascata tripla, exclusão reversível, estados, acessibilidade | Acabamento: fonte em 200%, títulos, CSP e o README de entrega |
+| **09/09** | Responsivo, contraste medido, auditorias, README, revisão final | Auditoria completa, OF-001 a OF-004 e o Épico 10: **fim do escopo planejado** |
+| **10 a 14/09** | — | Refinamento: layout em primitivas, `/paleta`, paleta nova, cores de raridade, identidade visual, auditoria do que mudou e a documentação |
+
+**A ordem de corte não precisou ser usada.** Os três itens que cairiam primeiro — a trilha de
+auditoria (E9), a visão tabela (E7) e a administração de catálogos pela interface (E8) —
+entraram todos.
+
+**A regra de corte, como foi escrita:** se o dia 08 chegasse ao fim sem a cascata Jogo →
+Edição → Raridade impecável, cortava-se qualquer outra coisa. É o requisito que o desafio
+detalhou em quatro subitens, e é o que reprova.
 
 ---
 
@@ -314,8 +335,8 @@ subitens, e é o que reprova.
 
 | Risco | Probabilidade | Impacto | Mitigação |
 |---|---|---|---|
-| Escopo maior do que a janela de 5 dias | Alta | Alto | Ordem de corte definida em §10, revisada ao fim de cada dia. |
-| Arquitetura em camadas consumir tempo demais para o tamanho do problema | Média | Alto | Camadas mantidas, apparatus podado (ADR-002). Fundação inteira concentrada no dia 04. |
+| Escopo maior do que a janela de dez dias | Alta | Alto | Ordem de corte definida em §10, revisada ao fim de cada dia. |
+| Arquitetura em camadas consumir tempo demais para o tamanho do problema | Média | Alto | Camadas mantidas, apparatus podado (ADR-002). Fundação inteira concentrada no primeiro dia de código. |
 | Avaliador interpretar qualquer dependência como violação | Média | **Crítico** | Zero dependências, inclusive Composer (ADR-001). Verificação explícita na Definition of Done. |
 | Cascata com race condition passar despercebida | Média | **Crítico** | RF-25 com teste manual explícito de troca rápida no roteiro do README. |
 | Contraste do tema escuro reprovar | Média | Médio | Tokens medidos antes do primeiro componente, não depois. |

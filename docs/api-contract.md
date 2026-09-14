@@ -92,8 +92,9 @@ mensagem no input certo:
 
 ### 3.1 Como funciona
 
-1. `POST /api/auth/login` valida as credenciais, cria a sessão no servidor, chama
-   `session_regenerate_id(true)` e devolve o usuário e o **token CSRF**.
+1. `POST /api/auth/login` valida as credenciais, cria a sessão no servidor com um id novo,
+   de `random_bytes` — o que dispensa `session_regenerate_id` (ADR-003) —, e devolve o
+   usuário e o **token CSRF**.
 2. O cookie de sessão vai com `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/`. O JavaScript
    nunca lê o cookie — nem precisa.
 3. Toda requisição que **altera estado** (`POST`, `PUT`, `PATCH`, `DELETE`) envia o token no
@@ -118,7 +119,7 @@ A **única** rota pública do sistema. Excepcionalidade justificada por escrito,
 // 200
 {
   "data": {
-    "user": { "id": 2, "name": "Editor de Catálogo", "email": "...", "role": "EDITOR", "level": 2 },
+    "user": { "id": 2, "name": "Editor de Catálogo", "email": "...", "role": "EDITOR", "roleLabel": "…", "level": 2 },
     "csrfToken": "…64 hex…"
   }
 }
@@ -130,7 +131,7 @@ A **única** rota pública do sistema. Excepcionalidade justificada por escrito,
 | Usuário inativo | `401` | `"E-mail ou senha inválidos."` |
 | Limite de tentativas | `429` | `"Muitas tentativas. Tente novamente em alguns minutos."` |
 
-> **A mensagem é a mesma nos três primeiros casos, de propósito.** Distinguir "usuário não
+> **A mensagem é a mesma nos três primeiros casos (dado errado/usuário inativo), de propósito.** Distinguir "usuário não
 > existe" de "senha errada" entrega uma lista de usuários válidos a quem tentar
 > (`PADROES.md` §5.4). O tempo de resposta também não pode denunciar: verifique o hash
 > mesmo quando o usuário não existir.
@@ -142,7 +143,11 @@ login e a aplicação.
 
 ```jsonc
 // 200
-{ "data": { "user": { "id": 2, "name": "…", "role": "EDITOR", "level": 2 }, "csrfToken": "…" } }
+{ "data": {
+  "user": { "id": 2, "name": "…", "email": "…", "role": "EDITOR", "roleLabel": "…", "level": 2 },
+  "csrfToken": "…",
+  "expiresAt": "2026-09-14T18:00:00-03:00"
+} }
 // 401 → sem sessão. Não é erro inesperado: é o caminho normal de quem ainda não logou.
 ```
 
@@ -266,8 +271,11 @@ Mesma forma, na ordem natural do jogo (comum → mítica), não alfabética.
 | `PUT` | `/api/rarities/{rarityId}` | Atualiza `name`, `sortOrder`, `active` e `color` — aqui obrigatória |
 | `DELETE` | `/api/rarities/{rarityId}` | **Desativa** |
 
-O `code` aceita letras minúsculas, números e hífen, até 32 caracteres — ele vira parte da
-URL pública. É único **dentro do jogo**: criar `sv3` em Pokémon não impede criar `sv3` em
+Criar devolve `201` com `{ "data": { "id": 15 } }` — o `ref` numérico do item novo, que as
+outras rotas de escrita esperam. Alterar devolve `204`, sem corpo.
+
+O `code` aceita letras minúsculas, números e hífen, começa por letra ou número e tem até 32
+caracteres — ele vira parte da URL pública. É único **dentro do jogo**: criar `sv3` em Pokémon não impede criar `sv3` em
 Magic. Código repetido no mesmo jogo devolve `409`.
 
 `code` não é alterável no `PUT`. Ele é o identificador público: aparece na URL, no contrato
@@ -330,6 +338,12 @@ honesto quando a ação é reversível — e reativar é um `PUT` com `active: t
 
 O corpo carrega o registro inteiro — `name` é obrigatório mesmo quando só se quer
 reativar. Mandar `{ "active": true }` sozinho devolve `400` apontando `name`.
+
+Dois campos têm valor quando faltam: `active` ausente conta como `true`, e `sortOrder` ausente,
+ou que não seja inteiro, vira `0`, sem aviso. Duas lacunas conhecidas, registradas na auditoria
+de backend de 14/09 e ainda abertas: `sortOrder` fora de 0 a 65535 e `name` maior que a coluna
+(120 na edição, 80 na raridade) chegam ao banco e voltam como `500`. A tela sempre manda a
+ordem e limita o nome.
 
 É o comportamento que o backend implementa, e vale a pena saber antes de escrever a tela:
 um formulário que envia só o campo alterado quebraria em toda reativação.
@@ -451,6 +465,7 @@ recurso. `404` se o id não existe; `409` se a carta não está excluída.
 { "data": [
   {
     "action": "updated",
+    "actionLabel": "…",
     "user":   { "id": 2, "name": "Editor de Catálogo" },
     "changes": { "rarity": { "from": "Rara", "to": "Mítica" } },
     "createdAt": "2026-09-04T14:31:02-03:00"

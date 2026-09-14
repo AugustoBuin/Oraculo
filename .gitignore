@@ -1,13 +1,6 @@
-# --- Ferramental local de IA (decisão registrada em docs/decisions/ADR-009) ---
-/.claude/
-/CLAUDE.md
-
-# --- Padrões de engenharia de referência: NÃO versionados (ADR-011).
-#     Contêm o nome do empregador atual e o histórico de incidentes de segurança
-#     dele. Servem de referência local para a construção; o que este projeto
-#     precisa expor está em docs/ENGENHARIA.md e docs/decisions/. ---
-/backend/PADROES.md
-/frontend/PADROES-ENGENHARIA.md
+# --- Camada de IA: versionada (ADR-009), menos as permissões locais, que liberam
+#     ferramentas sem pedir confirmação. As travas ficam em .claude/settings.json. ---
+/.claude/settings.local.json
 
 # --- Segredos: nunca versionados; só o exemplo entra ---
 .env

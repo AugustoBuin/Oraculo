@@ -1,12 +1,27 @@
 # Backlog do Frontend — Oráculo
 
-**Janela:** 07/09 a 10/09 · **Estimativa total:** 47 pontos
+**Janela planejada:** 07/09 a 10/09 · **Realizado:** 07 a 09/09, e o refinamento de 10 a 14/09 · **Estimativa total:** 47 pontos
 **Referências obrigatórias:** `docs/ENGENHARIA.md` · `docs/api-contract.md` · `docs/PRD.md` ·
 `docs/decisions/` · `frontend/PADROES-ENGENHARIA.md`
 
 > Continuação de `docs/backlog-backend.md`. A numeração de épicos segue a mesma sequência do
 > projeto: o backend fechou no Épico 4, o frontend abre no Épico 5. As tarefas usam o prefixo
 > `F-` para que um commit nunca fique ambíguo entre as duas metades.
+
+---
+
+## Estado em 14/09/2026
+
+**Todas as tarefas foram entregues, e nenhuma foi cortada.** As datas dos épicos são as reais,
+tiradas do histórico do Git. As caixas de aceite foram marcadas na revisão de 14/09, com esta
+base:
+
+- a suíte do frontend verde (353 testes), também com movimento reduzido;
+- a auditoria completa de 09/09 e a auditoria do que mudou, de 14/09, sem achado crítico;
+- a verificação em tela de 09/09, e a de cada entrega seguinte.
+
+Onde a execução mudou o que o critério pedia, a linha leva **Mudou:** e o que foi entregue no
+lugar. O Épico 11 foi registrado depois de implementado, e está marcado como **retroativo**.
 
 ---
 
@@ -49,7 +64,7 @@ Contém o objetivo, o que entregar, os critérios de aceite e como se verifica.
 
 **A regra de corte** (PRD §10): se o dia 08 chegar ao fim sem a cascata de F-030 impecável,
 corta-se qualquer outra coisa. As duas primeiras a cair estão marcadas com ✂ na própria
-tarefa.
+tarefa. **Não precisou ser usada:** as duas entraram.
 
 ---
 
@@ -73,14 +88,14 @@ apontando para `main.js`; `shared/config/` com ponto único de configuração �
 que nomeia a chave ausente.
 
 **Aceite:**
-- [ ] `php bin/validate.php` passa a varrer `frontend/src` e reporta a contagem de arquivos.
-- [ ] Todo import usa o prefixo `@/`; `grep -rn "\.\./\.\./" frontend/src` volta vazio.
-- [ ] Nenhuma URL de API escrita fora de `API_ENDPOINTS`.
-- [ ] O único `<script>` inline é o mapa de importação: o §2.7 o prescreve, ele não carrega
+- [x] `php bin/validate.php` passa a varrer `frontend/src` e reporta a contagem de arquivos.
+- [x] Todo import usa o prefixo `@/`; `grep -rn "\.\./\.\./" frontend/src` volta vazio.
+- [x] Nenhuma URL de API escrita fora de `API_ENDPOINTS`.
+- [x] O único `<script>` inline é o mapa de importação: o §2.7 o prescreve, ele não carrega
       comportamento e não existe versão externa suportada pelos navegadores. Entra na CSP de
       F-051 por hash. Nenhum outro script inline, nenhum `style=` inline.
-- [ ] `shared/` não importa de `features/` nem de `pages/`; nenhuma `feature` importa de outra.
-- [ ] Nenhum segredo no cliente. O que está no config é público de verdade (§8.2).
+- [x] `shared/` não importa de `features/` nem de `pages/`; nenhuma `feature` importa de outra.
+- [x] Nenhum segredo no cliente. O que está no config é público de verdade (§8.2).
 
 **Verificação:** `bin/validate.php` verde; a página carrega em `http://localhost:8080` sem
 uma linha no console.
@@ -100,17 +115,17 @@ escolha do usuário lembrada; bloco `prefers-reduced-motion`; `docs/design.md` c
 contraste **medida**, par a par, nos dois temas.
 
 **Aceite:**
-- [ ] Todo texto atinge 4,5:1 nos dois temas, medido e registrado em `docs/design.md` (RNF-05).
-- [ ] Todo token de cor existe nos dois temas.
-- [ ] Nenhum valor visual cru fora de `tokens.css`; nenhum tamanho intermediário inventado
+- [x] Todo texto atinge 4,5:1 nos dois temas, medido e registrado em `docs/design.md` (RNF-05).
+- [x] Todo token de cor existe nos dois temas.
+- [x] Nenhum valor visual cru fora de `tokens.css`; nenhum tamanho intermediário inventado
       fora da escala (§10.3).
-- [ ] A cor de acento marca **uma** ação primária por contexto e não passa de ~10% da tela.
-- [ ] Toda superfície de ação declara sua tinta; nenhum branco fixo sobre superfície que
+- [x] A cor de acento marca **uma** ação primária por contexto e não passa de ~10% da tela.
+- [x] Toda superfície de ação declara sua tinta; nenhum branco fixo sobre superfície que
       clareia no tema escuro (§10.2).
-- [ ] `prefers-reduced-motion: reduce` zera a duração de animação **sem** matar transição de
+- [x] `prefers-reduced-motion: reduce` zera a duração de animação **sem** matar transição de
       cor, opacidade e sombra (§11.3); `animation-duration: 1ms`, nunca `0`.
-- [ ] Nenhuma animação acima de 400ms, exceto indicador de progresso.
-- [ ] Nenhuma regra de layout depende de largura fixa em pixel; a página não rola na
+- [x] Nenhuma animação acima de 400ms, exceto indicador de progresso.
+- [x] Nenhuma regra de layout depende de largura fixa em pixel; a página não rola na
       horizontal em 360px (RNF-04).
 
 **Verificação:** tabela de contraste em `docs/design.md`; alternância de tema sem recarregar;
@@ -129,14 +144,14 @@ mão perde essa proteção de graça, e uma revisão que depende de lembrar não
 `mount()`, que compõe montagem e devolve a função de limpeza acumulada.
 
 **Aceite:**
-- [ ] `el()` nunca aceita HTML: texto vai por `textContent`.
-- [ ] `el()` lança ao receber atributo de evento (`onclick`) e obriga o uso de `on()`.
-- [ ] `href` e `src` passam por `isSafeUrl`; `javascript:`, `data:`, `vbscript:` e `file:`
+- [x] `el()` nunca aceita HTML: texto vai por `textContent`.
+- [x] `el()` lança ao receber atributo de evento (`onclick`) e obriga o uso de `on()`.
+- [x] `href` e `src` passam por `isSafeUrl`; `javascript:`, `data:`, `vbscript:` e `file:`
       são descartados sem quebrar a renderização.
-- [ ] `on()` devolve a função que remove o listener; `mount()` acumula e devolve todas.
-- [ ] `grep -rn "innerHTML\|insertAdjacentHTML\|eval(\|new Function" frontend/src` só retorna
+- [x] `on()` devolve a função que remove o listener; `mount()` acumula e devolve todas.
+- [x] `grep -rn "innerHTML\|insertAdjacentHTML\|eval(\|new Function" frontend/src` só retorna
       literais do próprio código, e cada ocorrência é justificada em comentário.
-- [ ] Link com `target="_blank"` sempre com `rel="noopener noreferrer"`.
+- [x] Link com `target="_blank"` sempre com `rel="noopener noreferrer"`.
 
 **Testes:** em F-004 — `isSafeUrl` aceita `http`/`https`, recusa `javascript:`, `data:`,
 `vbscript:` e string malformada; `el()` com texto contendo `<img onerror>` produz nó de texto,
@@ -157,12 +172,12 @@ imprime nome, esperado e recebido de cada falha; `assertSame`, `assertTrue`, `as
 `assertRejects`, espelhando os nomes de `backend/bin/test.php`. Suítes espelham `src/`.
 
 **Aceite:**
-- [ ] Abrir `http://localhost:8080/tests/` roda tudo e mostra o placar; nenhum passo de build.
-- [ ] Teste que falha aparece com nome em português, valor esperado e valor recebido.
-- [ ] Exceção dentro de um teste vira falha, não derruba o runner.
-- [ ] Um teste não interfere no outro; nenhum depende de ordem ou de tempo real.
-- [ ] O runner não é servido como parte da aplicação — `tests/` fica fora de `src/`.
-- [ ] Zero import de fora do projeto.
+- [x] Abrir `http://localhost:8080/tests/` roda tudo e mostra o placar; nenhum passo de build.
+- [x] Teste que falha aparece com nome em português, valor esperado e valor recebido.
+- [x] Exceção dentro de um teste vira falha, não derruba o runner.
+- [x] Um teste não interfere no outro; nenhum depende de ordem ou de tempo real.
+- [x] O runner não é servido como parte da aplicação — `tests/` fica fora de `src/`.
+- [x] Zero import de fora do projeto.
 
 **Verificação:** o placar verde é item do roteiro manual do README (F-051).
 
@@ -181,17 +196,17 @@ de transporte em `ApiError` tipada com `status`; `shared/api/messages.js`, o map
 mensagens por status; `shared/api/csrf.js`, guardando o token **em memória**.
 
 **Aceite:**
-- [ ] Toda escrita (`POST`, `PUT`, `DELETE`) envia `X-CSRF-Token`; o login não envia.
-- [ ] O token CSRF não aparece em `localStorage`, `sessionStorage`, cookie lido por JS,
+- [x] Toda escrita (`POST`, `PUT`, `DELETE`) envia `X-CSRF-Token`; o login não envia.
+- [x] O token CSRF não aparece em `localStorage`, `sessionStorage`, cookie lido por JS,
       URL ou log.
-- [ ] Corpo malformado ou vazio não quebra: `204` devolve `null`, não `JSON.parse` estourado.
-- [ ] Toda mensagem exibida vem do mapa. `undefined`, `null`, `[object Object]`, stack trace
+- [x] Corpo malformado ou vazio não quebra: `204` devolve `null`, não `JSON.parse` estourado.
+- [x] Toda mensagem exibida vem do mapa. `undefined`, `null`, `[object Object]`, stack trace
       e nome de coluna nunca chegam à tela (§7.1).
-- [ ] O `message` do servidor é exibido quando existe — ele já é seguro por contrato
+- [x] O `message` do servidor é exibido quando existe — ele já é seguro por contrato
       (`api-contract.md` §1.3); o mapa é a reserva por status.
-- [ ] `errors` por campo é preservado para o formulário ancorar a mensagem no input certo.
-- [ ] Timeout aborta e produz mensagem de rede, não erro cru.
-- [ ] Requisição pendente é abortável por quem a pediu.
+- [x] `errors` por campo é preservado para o formulário ancorar a mensagem no input certo.
+- [x] Timeout aborta e produz mensagem de rede, não erro cru.
+- [x] Requisição pendente é abortável por quem a pediu.
 
 **Testes:** montagem de query string omite parâmetro vazio e escapa acento; `ApiError`
 carrega o status; mapa de mensagens cobre 400, 401, 403, 404, 409, 413, 415, 429 e 500 e
@@ -213,18 +228,18 @@ declarada por chave; `shared/session/` guardando usuário e token CSRF em memór
 fallback de SPA que o Apache já serve.
 
 **Aceite:**
-- [ ] A chave de cache é composta de primitivos, nunca de objeto recriado (§5.4).
-- [ ] Duas telas pedindo o mesmo dado geram **uma** requisição.
-- [ ] Cada leitura declara por quanto tempo serve: sessão até logout ou 401; catálogos longo;
+- [x] A chave de cache é composta de primitivos, nunca de objeto recriado (§5.4).
+- [x] Duas telas pedindo o mesmo dado geram **uma** requisição.
+- [x] Cada leitura declara por quanto tempo serve: sessão até logout ou 401; catálogos longo;
       lista de cartas curto, revalidada ao voltar à tela.
-- [ ] Invalidação após mutação atinge o escopo mínimo — alterar uma carta não derruba o cache
+- [x] Invalidação após mutação atinge o escopo mínimo — alterar uma carta não derruba o cache
       de catálogos.
-- [ ] Trocar de rota executa a limpeza da tela anterior: nenhum listener, timer ou requisição
+- [x] Trocar de rota executa a limpeza da tela anterior: nenhum listener, timer ou requisição
       sobrevive (RNF-07).
-- [ ] `subscribe` devolve a função de cancelamento, e o roteador a chama.
-- [ ] Nenhum dado de servidor é copiado para estado local "para editar"; rascunho de
+- [x] `subscribe` devolve a função de cancelamento, e o roteador a chama.
+- [x] Nenhum dado de servidor é copiado para estado local "para editar"; rascunho de
       formulário é explícito e descartado ao confirmar (§6.1).
-- [ ] `hasLevel()` é a única forma de comparar nível. Nenhum `role === "ADMIN"` espalhado
+- [x] `hasLevel()` é a única forma de comparar nível. Nenhum `role === "ADMIN"` espalhado
       (§4.3 — achado CRÍTICO em auditoria).
 
 **Testes:** `fetchOnce` chamado duas vezes em paralelo dispara um loader só; cache vencido
@@ -246,15 +261,15 @@ navegar de A para B executa a limpeza de A.
 usuário e do token CSRF na sessão em memória; redirecionamento para a listagem.
 
 **Aceite:**
-- [ ] Credencial inválida e usuário inativo mostram **a mesma** mensagem (RF-02); a tela não
+- [x] Credencial inválida e usuário inativo mostram **a mesma** mensagem (RF-02); a tela não
       distingue os casos nem pelo texto nem pelo tempo.
-- [ ] `429` mostra a mensagem de limite de tentativas, não um erro genérico (RF-03).
-- [ ] Botão desabilitado e estado de carregando enquanto a requisição corre; nenhum envio
+- [x] `429` mostra a mensagem de limite de tentativas, não um erro genérico (RF-03).
+- [x] Botão desabilitado e estado de carregando enquanto a requisição corre; nenhum envio
       duplo por clique repetido.
-- [ ] Senha nunca em log, em URL ou em atributo do DOM.
-- [ ] `label` associado a cada campo; erro anunciado por `aria-invalid` e `aria-describedby`.
-- [ ] Enter no formulário submete; foco inicial no campo de e-mail.
-- [ ] Os cinco estados desenhados.
+- [x] Senha nunca em log, em URL ou em atributo do DOM.
+- [x] `label` associado a cada campo; erro anunciado por `aria-invalid` e `aria-describedby`.
+- [x] Enter no formulário submete; foco inicial no campo de e-mail.
+- [x] Os cinco estados desenhados.
 
 **Verificação:** roteiro manual com os três perfis do seed.
 
@@ -271,16 +286,16 @@ carregamento, notificação (`aria-live`) e modal genérico; `pages/app-shell/` 
 boot por `GET /api/auth/session` decidindo entre login e aplicação.
 
 **Aceite:**
-- [ ] `401` no boot é caminho normal: leva ao login sem mensagem de erro (`api-contract.md` §3.2).
-- [ ] O token CSRF é rebuscado no boot — recarregar a página não quebra a próxima escrita.
-- [ ] Item de menu de `EDITOR` não aparece para `VIEWER`; o de `ADMIN` não aparece para
+- [x] `401` no boot é caminho normal: leva ao login sem mensagem de erro (`api-contract.md` §3.2).
+- [x] O token CSRF é rebuscado no boot — recarregar a página não quebra a próxima escrita.
+- [x] Item de menu de `EDITOR` não aparece para `VIEWER`; o de `ADMIN` não aparece para
       `EDITOR`. Esconder é conveniência visual — o servidor recusa de qualquer forma.
-- [ ] Modal: foco entra ao abrir, fica preso enquanto aberto, `Esc` fecha e o foco volta para
+- [x] Modal: foco entra ao abrir, fica preso enquanto aberto, `Esc` fecha e o foco volta para
       quem abriu (§9.2).
-- [ ] O anel de foco nunca é removido; substituir por um anel visível é permitido.
-- [ ] Alvo de toque de 44px na base mobile.
-- [ ] Um componente global não contém `if` sobre regra de negócio (§2.3).
-- [ ] Logout chama `DELETE /api/auth/session` e limpa **tudo**: usuário, token, cache em
+- [x] O anel de foco nunca é removido; substituir por um anel visível é permitido.
+- [x] Alvo de toque de 44px na base mobile.
+- [x] Um componente global não contém `if` sobre regra de negócio (§2.3).
+- [x] Logout chama `DELETE /api/auth/session` e limpa **tudo**: usuário, token, cache em
       memória e preferências de sessão (§8.4).
 
 **Verificação:** navegação completa por teclado; logout seguido de voltar no navegador não
@@ -298,15 +313,15 @@ isto" (ADR-007).
 (`PUT /api/auth/password`); preservação da intenção do usuário quando possível.
 
 **Aceite:**
-- [ ] `401` durante o uso leva ao login com aviso claro, preservando para onde o usuário ia
+- [x] `401` durante o uso leva ao login com aviso claro, preservando para onde o usuário ia
       (RF-08); a limpeza é total, não parcial.
-- [ ] `403` **não** desloga: mostra "sem permissão" na própria tela (ADR-007).
-- [ ] Várias requisições em voo que recebem `401` produzem **um** redirecionamento, não N.
-- [ ] Depois da troca de senha, a aplicação vai ao login — o servidor já revogou todas as
+- [x] `403` **não** desloga: mostra "sem permissão" na própria tela (ADR-007).
+- [x] Várias requisições em voo que recebem `401` produzem **um** redirecionamento, não N.
+- [x] Depois da troca de senha, a aplicação vai ao login — o servidor já revogou todas as
       sessões e expirou o cookie (RF-05).
-- [ ] Nova senha com menos de 8 caracteres e nova senha igual à atual mostram a mensagem do
+- [x] Nova senha com menos de 8 caracteres e nova senha igual à atual mostram a mensagem do
       campo certo, vinda de `errors`.
-- [ ] Senha atual incorreta mostra a mensagem do servidor, sem revelar mais nada.
+- [x] Senha atual incorreta mostra a mensagem do servidor, sem revelar mais nada.
 
 **Verificação:** derrubar a sessão pelo banco com a tela aberta e agir; trocar a senha em uma
 aba e conferir que a outra cai no login.
@@ -328,18 +343,18 @@ mostrando imagem, nome, jogo, edição e raridade; paginação sobre o envelope
 `{data, pagination}`.
 
 **Aceite:**
-- [ ] A resposta é validada na borda, uma vez; nenhum `if (r && r.data && r.data[0])`
+- [x] A resposta é validada na borda, uma vez; nenhum `if (r && r.data && r.data[0])`
       espalhado pela UI (§5.2).
-- [ ] `perPage` vem de `DEFAULT_PAGE_SIZE`, nunca de número solto.
-- [ ] Carta sem imagem mostra espaço reservado legível — nunca ícone de imagem quebrada
+- [x] `perPage` vem de `DEFAULT_PAGE_SIZE`, nunca de número solto.
+- [x] Carta sem imagem mostra espaço reservado legível — nunca ícone de imagem quebrada
       (RF-34). `onerror` cai no mesmo espaço reservado.
-- [ ] Imagem com `width`/`height` declarados e `loading="lazy"` fora da dobra; a lista não
+- [x] Imagem com `width`/`height` declarados e `loading="lazy"` fora da dobra; a lista não
       desloca ao carregar (§12.2).
-- [ ] `imageUrl` passa por `isSafeUrl` antes de virar `src`.
-- [ ] Nome de carta vai por `textContent` — o catálogo é dado editável por usuário.
-- [ ] Um listener no contêiner, não um por cartão (§12.3).
-- [ ] Os cinco estados desenhados, o vazio com texto útil, e o erro com ação de tentar de novo.
-- [ ] Trocar de página cancela a requisição anterior.
+- [x] `imageUrl` passa por `isSafeUrl` antes de virar `src`.
+- [x] Nome de carta vai por `textContent` — o catálogo é dado editável por usuário.
+- [x] Um listener no contêiner, não um por cartão (§12.3).
+- [x] Os cinco estados desenhados, o vazio com texto útil, e o erro com ação de tentar de novo.
+- [x] Trocar de página cancela a requisição anterior.
 
 **Verificação:** roteiro manual com console aberto; navegar 20 vezes entre telas e conferir
 que listeners não acumulam (RNF-07).
@@ -357,23 +372,23 @@ raridade que se encadeiam entre si; ordenação pela allowlist `recent | name | 
 espelhado na query string.
 
 **Aceite:**
-- [ ] `edition` e `rarity` só são enviados junto de `game` — é o que o contrato aceita.
-- [ ] Trocar o jogo no filtro reseta edição e raridade, como no formulário.
-- [ ] `sort` só assume valor da allowlist; nada do cliente chega perto de nome de coluna.
-- [ ] Cada tecla digitada não vira uma requisição: há atraso, e a requisição anterior é
+- [x] `edition` e `rarity` só são enviados junto de `game` — é o que o contrato aceita.
+- [x] Trocar o jogo no filtro reseta edição e raridade, como no formulário.
+- [x] `sort` só assume valor da allowlist; nada do cliente chega perto de nome de coluna.
+- [x] Cada tecla digitada não vira uma requisição: há atraso, e a requisição anterior é
       **cancelada**, não ignorada.
-- [ ] Filtro alterado volta para a página 1.
-- [ ] A URL carrega o estado: recarregar mantém busca, filtros, ordenação e página.
-- [ ] A query string é lida como dado hostil — valor fora da allowlist é descartado, não
+- [x] Filtro alterado volta para a página 1.
+- [x] A URL carrega o estado: recarregar mantém busca, filtros, ordenação e página.
+- [x] A query string é lida como dado hostil — valor fora da allowlist é descartado, não
       repassado (§8.5).
-- [ ] Filtro vazio não vira parâmetro na URL.
+- [x] Filtro vazio não vira parâmetro na URL.
 
 **Testes:** montagem de parâmetros omite vazios, recusa `sort` fora da allowlist e nunca envia
 `edition` sem `game`; leitura da query string descarta valor inválido.
 
 ---
 
-### F-022 · Visão tabela e preferência lembrada · 2 pontos ✂ *primeiro a cair*
+### F-022 · Visão tabela e preferência lembrada · 2 pontos ✂ *primeiro a cair — não caiu*
 **Depende de:** F-021
 
 **Objetivo:** RF-13 e a segunda metade da Decisão de UX nº 3 — quem trabalha em volume precisa
@@ -382,20 +397,20 @@ comparar campos lado a lado.
 **Entregar:** visão tabela alternando com a galeria; preferência lembrada no navegador.
 
 **Aceite:**
-- [ ] A galeria é o padrão na primeira visita.
-- [ ] A preferência sobrevive ao recarregamento; valor inválido no armazenamento cai no padrão
+- [x] A galeria é o padrão na primeira visita.
+- [x] A preferência sobrevive ao recarregamento; valor inválido no armazenamento cai no padrão
       sem quebrar (§8.5).
-- [ ] Nenhum dado pessoal e nenhum dado de carta vão para `localStorage` — só a preferência
+- [x] Nenhum dado pessoal e nenhum dado de carta vão para `localStorage` — só a preferência
       (§8.7).
-- [ ] A tabela rola no próprio eixo; a página não rola na horizontal (RNF-04).
-- [ ] `table` com `th` e escopo correto; a tabela é navegável por teclado.
-- [ ] Alternar a visão não refaz a requisição — é o mesmo dado, outra apresentação.
+- [x] A tabela rola no próprio eixo; a página não rola na horizontal (RNF-04).
+- [x] `table` com `th` e escopo correto; a tabela é navegável por teclado.
+- [x] Alternar a visão não refaz a requisição — é o mesmo dado, outra apresentação.
 
 **Verificação:** inspeção em 360px; alternância com o console aberto.
 
 ---
 
-# Épico 8 — Cadastro de cartas · 12 pontos · 08/09
+# Épico 8 — Cadastro de cartas · 12 pontos · 07/09
 
 > **É o épico que decide a entrega.** F-030 é o requisito que o desafio detalhou em quatro
 > subitens; F-033 é a Decisão de UX nº 2. Se faltar tempo, cai tudo antes destes dois.
@@ -415,18 +430,18 @@ select em cascata, **um só**, usado pelas duas pontas — uma segunda implement
 e a raridade passaria a aceitar o que a edição recusa.
 
 **Aceite:**
-- [ ] Edição e Raridade iniciam **desabilitadas** (RF-20, RF-27).
-- [ ] Selecionar o jogo dispara as duas requisições (RF-21).
-- [ ] Durante a requisição o campo mostra **carregando** e permanece desabilitado (RF-22).
-- [ ] Concluída, o `select` é populado e habilitado (RF-23).
-- [ ] Trocar o jogo **recarrega** a lista e **reseta** a seleção anterior (RF-24).
-- [ ] **RF-25 — o requisito invisível:** trocar Magic → Pokémon → Yu-Gi-Oh! em sequência
+- [x] Edição e Raridade iniciam **desabilitadas** (RF-20, RF-27).
+- [x] Selecionar o jogo dispara as duas requisições (RF-21).
+- [x] Durante a requisição o campo mostra **carregando** e permanece desabilitado (RF-22).
+- [x] Concluída, o `select` é populado e habilitado (RF-23).
+- [x] Trocar o jogo **recarrega** a lista e **reseta** a seleção anterior (RF-24).
+- [x] **RF-25 — o requisito invisível:** trocar Magic → Pokémon → Yu-Gi-Oh! em sequência
       rápida nunca deixa a lista errada na tela. Toda requisição em voo é **abortada** quando
       outra começa; resposta atrasada de jogo já trocado é **descartada**, mesmo que chegue.
-- [ ] Falha mostra estado de erro com "tentar novamente", sem travar o formulário (RF-26).
-- [ ] Limpar o jogo devolve os dois campos ao estado inicial desabilitado.
-- [ ] Catálogo com cache longo, mas a troca de jogo nunca serve lista de outro jogo.
-- [ ] O componente devolve função de limpeza que aborta o que estiver em voo.
+- [x] Falha mostra estado de erro com "tentar novamente", sem travar o formulário (RF-26).
+- [x] Limpar o jogo devolve os dois campos ao estado inicial desabilitado.
+- [x] Catálogo com cache longo, mas a troca de jogo nunca serve lista de outro jogo.
+- [x] O componente devolve função de limpeza que aborta o que estiver em voo.
 
 **Testes:** a guarda de corrida isolada da UI — dado um token de requisição por seleção, a
 resposta cujo token não é o corrente é descartada; abortar não vira erro exibido ao usuário.
@@ -446,19 +461,19 @@ que as requisições anteriores aparecem canceladas.
 `PUT /api/cards/{id}`; ancoragem de `errors` por campo; fluxo de duplicidade.
 
 **Aceite:**
-- [ ] `nameEn` obrigatório; `namePt` **opcional** — ausente ou nulo é válido (RN-03).
-- [ ] O corpo é montado campo a campo; `id`, `createdBy` e `createdAt` nunca são enviados.
-- [ ] `errors` do servidor ancora a mensagem no input certo, com `aria-invalid` e
+- [x] `nameEn` obrigatório; `namePt` **opcional** — ausente ou nulo é válido (RN-03).
+- [x] O corpo é montado campo a campo; `id`, `createdBy` e `createdAt` nunca são enviados.
+- [x] `errors` do servidor ancora a mensagem no input certo, com `aria-invalid` e
       `aria-describedby`.
-- [ ] Validação no cliente é feedback rápido, não barreira — a validação real é a do servidor
+- [x] Validação no cliente é feedback rápido, não barreira — a validação real é a do servidor
       (§8.5).
-- [ ] **Duplicidade avisa, não bloqueia** (RN-04): `409` mostra a carta existente e oferece
+- [x] **Duplicidade avisa, não bloqueia** (RN-04): `409` mostra a carta existente e oferece
       "cadastrar mesmo assim", que reenvia com `confirmDuplicate: true`.
-- [ ] Editar carrega os valores atuais e dispara a cascata já com jogo, edição e raridade
+- [x] Editar carrega os valores atuais e dispara a cascata já com jogo, edição e raridade
       selecionados.
-- [ ] Envio duplo por clique repetido é impossível.
-- [ ] Sair com alterações não salvas avisa antes de descartar.
-- [ ] Após salvar, o cache da listagem é invalidado no escopo mínimo.
+- [x] Envio duplo por clique repetido é impossível.
+- [x] Sair com alterações não salvas avisa antes de descartar.
+- [x] Após salvar, o cache da listagem é invalidado no escopo mínimo.
 
 **Verificação:** cadastrar duas cartas de mesmo nome na mesma edição e confirmar a segunda;
 editar carta trocando o jogo e conferir que edição e raridade resetam.
@@ -476,19 +491,19 @@ transferir trabalho de engenharia para o usuário.
 pré-visualização; envio da `reference` devolvida no corpo da carta.
 
 **Aceite:**
-- [ ] Pré-visualização aparece **antes** de salvar a carta, nas duas formas.
-- [ ] Tipo e tamanho conferidos no cliente para feedback rápido, e novamente no servidor
+- [x] Pré-visualização aparece **antes** de salvar a carta, nas duas formas.
+- [x] Tipo e tamanho conferidos no cliente para feedback rápido, e novamente no servidor
       (RF-32). O cliente é conveniência; o servidor é a autoridade.
-- [ ] SVG recusado com mensagem clara; `415` do servidor tratado.
-- [ ] `413` mostra o limite em texto legível, não o número cru.
-- [ ] URL aceita apenas `http` e `https` (RF-33), por `isSafeUrl`.
-- [ ] O nome do arquivo enviado é tratado como dado hostil ao exibir — vai por `textContent`
+- [x] SVG recusado com mensagem clara; `415` do servidor tratado.
+- [x] `413` mostra o limite em texto legível, não o número cru.
+- [x] URL aceita apenas `http` e `https` (RF-33), por `isSafeUrl`.
+- [x] O nome do arquivo enviado é tratado como dado hostil ao exibir — vai por `textContent`
       (§8.5).
-- [ ] A URL de objeto criada para a pré-visualização é revogada ao trocar de arquivo e ao
+- [x] A URL de objeto criada para a pré-visualização é revogada ao trocar de arquivo e ao
       desmontar (§12.4).
-- [ ] Trocar de upload para URL, e vice-versa, limpa a forma anterior — a carta tem uma imagem
+- [x] Trocar de upload para URL, e vice-versa, limpa a forma anterior — a carta tem uma imagem
       só.
-- [ ] Sem imagem é válido: a carta salva e a listagem mostra o espaço reservado (RF-34).
+- [x] Sem imagem é válido: a carta salva e a listagem mostra o espaço reservado (RF-34).
 
 **Verificação:** subir um `.jpg` cujo conteúdo é PHP e conferir a recusa; subir acima do
 limite; informar `javascript:alert(1)` no campo de URL.
@@ -506,15 +521,15 @@ reversibilidade. Erro humano é inevitável; o que se projeta é quanto ele cust
 `POST /api/cards/{id}/restore`.
 
 **Aceite:**
-- [ ] O modal diz *"Excluir **Black Lotus** de Dominaria?"* — nunca "Tem certeza?".
-- [ ] O nome da carta no modal vai por `textContent`.
-- [ ] A carta some da listagem imediatamente após a exclusão (RN-05).
-- [ ] Desfazer restaura e a carta reaparece na mesma posição de leitura.
-- [ ] O prazo do desfazer vem de constante nomeada, não de número solto.
-- [ ] Sair da tela cancela o timer do desfazer (§12.4).
-- [ ] `409` ao restaurar carta que não está excluída é tratado com mensagem, não com erro cru.
-- [ ] O modal cumpre as regras de foco de F-011.
-- [ ] O botão de excluir não aparece para `VIEWER` — e o servidor recusa de qualquer forma.
+- [x] O modal diz *"Excluir **Black Lotus** de Dominaria?"* — nunca "Tem certeza?".
+- [x] O nome da carta no modal vai por `textContent`.
+- [x] A carta some da listagem imediatamente após a exclusão (RN-05).
+- [x] Desfazer restaura e a carta reaparece na mesma posição de leitura.
+- [x] O prazo do desfazer vem de constante nomeada, não de número solto.
+- [x] Sair da tela cancela o timer do desfazer (§12.4).
+- [x] `409` ao restaurar carta que não está excluída é tratado com mensagem, não com erro cru.
+- [x] O modal cumpre as regras de foco de F-011.
+- [x] O botão de excluir não aparece para `VIEWER` — e o servidor recusa de qualquer forma.
 
 **Verificação:** excluir e desfazer; excluir, sair da tela e voltar; excluir e deixar o prazo
 vencer.
@@ -529,22 +544,22 @@ vencer.
 **Entregar:** painel de histórico consumindo `GET /api/cards/{id}/history` (`EDITOR`).
 
 **Aceite:**
-- [ ] Mostra ação, autor, horário e o `changes` já apresentável — o backend não manda id
+- [x] Mostra ação, autor, horário e o `changes` já apresentável — o backend não manda id
       interno.
-- [ ] Data formatada por `Intl`, nunca por biblioteca ou concatenação manual (§8.6).
-- [ ] Carta sem histórico mostra estado vazio, não erro.
-- [ ] `VIEWER` não vê o painel; `403` é tratado como "sem permissão" na própria tela.
-- [ ] Carregado sob demanda, não junto da listagem (§12.2).
+- [x] Data formatada por `Intl`, nunca por biblioteca ou concatenação manual (§8.6).
+- [x] Carta sem histórico mostra estado vazio, não erro.
+- [x] `VIEWER` não vê o painel; `403` é tratado como "sem permissão" na própria tela.
+- [x] Carregado sob demanda, não junto da listagem (§12.2).
 
 **Verificação:** editar uma carta duas vezes e conferir que só os campos alterados aparecem.
 
 ---
 
-# Épico 9 — Catálogos pela interface · 3 pontos · 08/09
+# Épico 9 — Catálogos pela interface · 3 pontos · 07/09 (o F-041 em 11/09)
 
 ---
 
-### F-040 · Administração de jogos, edições e raridades · 3 pontos ✂ *segundo a cair*
+### F-040 · Administração de jogos, edições e raridades · 3 pontos ✂ *segundo a cair — não caiu*
 **Depende de:** F-030
 
 **Objetivo:** RF-40 a RF-43, pela UI. Sem esta tarefa os catálogos continuam administráveis
@@ -559,18 +574,18 @@ pela API — é por isso que ela é a segunda a cair, não a primeira.
 > estado pior do que não ter o botão. São seis rotas — três de edição, três de raridade.
 
 **Aceite:**
-- [ ] A tela inteira só aparece para `ADMIN`; `EDITOR` que chega pela URL vê "sem permissão",
+- [x] A tela inteira só aparece para `ADMIN`; `EDITOR` que chega pela URL vê "sem permissão",
       não uma tela quebrada.
-- [ ] `code` de edição e raridade é **imutável** na edição — o campo nem é oferecido.
-- [ ] `409` de código duplicado no mesmo jogo mostra mensagem clara; o mesmo código em
+- [x] `code` de edição e raridade é **imutável** na edição — o campo nem é oferecido.
+- [x] `409` de código duplicado no mesmo jogo mostra mensagem clara; o mesmo código em
       jogos diferentes é aceito.
-- [ ] `DELETE` **desativa e nunca falha**: devolve `wasInUse`, e a tela usa isso para dizer
+- [x] `DELETE` **desativa e nunca falha**: devolve `wasInUse`, e a tela usa isso para dizer
       que as cartas que usam o item continuam como estão (RF-43).
-- [ ] Reativar é um `PUT` com o registro inteiro — mandar só `active` devolve `400`.
-- [ ] Item desativado some dos cadastros novos e continua exibido nas cartas que já o usam.
-- [ ] Alterar um catálogo invalida o cache da cascata — o formulário não pode seguir
+- [x] Reativar é um `PUT` com o registro inteiro — mandar só `active` devolve `400`.
+- [x] Item desativado some dos cadastros novos e continua exibido nas cartas que já o usam.
+- [x] Alterar um catálogo invalida o cache da cascata — o formulário não pode seguir
       oferecendo uma edição recém-desativada.
-- [ ] Os cinco estados desenhados.
+- [x] Os cinco estados desenhados.
 
 **Verificação:** com o perfil `EDITOR`, tentar alcançar a rota pela URL; desativar uma edição
 em uso e conferir a carta que a usa.
@@ -601,7 +616,7 @@ cor no formulário da raridade e o **Editar** por linha no painel de catálogo.
 
 ---
 
-# Épico 10 — Acabamento e entrega · 5 pontos · 09–10/09
+# Épico 10 — Acabamento e entrega · 5 pontos · 08 e 09/09
 
 ---
 
@@ -611,17 +626,18 @@ cor no formulário da raridade e o **Editar** por linha no painel de catálogo.
 **Objetivo:** RNF-04 e RNF-06 verificados, não presumidos.
 
 **Entregar:** passagem de acessibilidade em toda tela; ajuste de densidade por breakpoint;
-correções de contraste que a medição de F-002 não pegou nos componentes.
+correções de contraste que a medição de F-002 não pegou nos componentes. **Mudou:** o ajuste por
+ponto de quebra saiu em 10/09, com o layout em primitivas (F-060).
 
 **Aceite:**
-- [ ] A aplicação inteira é operável só pelo teclado; a ordem de foco segue a ordem visual.
-- [ ] Nenhuma rolagem horizontal em 360, 768 e 1440px.
-- [ ] Zoom de 200% sem perda de conteúdo.
-- [ ] Hierarquia de cabeçalhos correta; `nav`, `main` e regiões nomeadas.
-- [ ] Nenhum status depende só de cor — sempre cor **mais** rótulo, ícone ou forma (§9.4).
-- [ ] Toda imagem informativa com `alt` descritivo; decorativa com `alt=""`.
-- [ ] Nada abaixo de 12px; alvo de 44px na base mobile.
-- [ ] Mudança dinâmica importante anunciada por região viva.
+- [x] A aplicação inteira é operável só pelo teclado; a ordem de foco segue a ordem visual.
+- [x] Nenhuma rolagem horizontal em 360, 768 e 1440px.
+- [x] Zoom de 200% sem perda de conteúdo.
+- [x] Hierarquia de cabeçalhos correta; `nav`, `main` e regiões nomeadas.
+- [x] Nenhum status depende só de cor — sempre cor **mais** rótulo, ícone ou forma (§9.4).
+- [x] Toda imagem informativa com `alt` descritivo; decorativa com `alt=""`.
+- [x] Nada abaixo de 12px; alvo de 44px na base mobile.
+- [x] Mudança dinâmica importante anunciada por região viva.
 
 **Verificação:** percorrer o roteiro inteiro sem mouse; inspeção nas três larguras.
 
@@ -637,21 +653,110 @@ auditoria `full` de qualidade e segurança do frontend, com relatório datado em
 e as linhas `CRITICAL`/`HIGH` refletidas em `open-findings.md`; README de entrega completo.
 
 **Aceite:**
-- [ ] CSP ativa, sem `unsafe-inline` e sem `unsafe-eval`; nenhuma tela quebra com ela ligada
+- [x] CSP ativa, sem `unsafe-inline` e sem `unsafe-eval`; nenhuma tela quebra com ela ligada
       (RNF-08).
-- [ ] Busca por `react|vue|jquery|bootstrap|tailwind|vendor/|node_modules/` no repositório
+- [x] Busca por `react|vue|jquery|bootstrap|tailwind|vendor/|node_modules/` no repositório
       volta vazia (RNF-01).
-- [ ] Nenhum erro no console do navegador em nenhum fluxo (RNF-03).
-- [ ] `php bin/validate.php` verde; runner de F-004 verde.
-- [ ] Nenhum achado `CRITICAL` aberto.
-- [ ] README com: como rodar, credenciais dos três perfis, as cinco decisões de produto
+- [x] Nenhum erro no console do navegador em nenhum fluxo (RNF-03).
+- [x] `php bin/validate.php` verde; runner de F-004 verde.
+- [x] Nenhum achado `CRITICAL` aberto.
+- [x] README com: como rodar, credenciais dos três perfis, as cinco decisões de produto
       justificadas, roteiro de teste manual e o que ficou fora com o motivo.
-- [ ] O roteiro cobre, no mínimo: os três perfis, os cinco estados de cada tela, a cascata com
+- [x] O roteiro cobre, no mínimo: os três perfis, os cinco estados de cada tela, a cascata com
       troca rápida (RF-25), o desfazer da exclusão e os dois temas (ADR-004).
-- [ ] `docs/audits/open-findings.md` deixa de dizer "projeto em fase de fundação".
+- [x] `docs/audits/open-findings.md` deixa de dizer "projeto em fase de fundação".
 
 **Verificação:** um avaliador clona, roda `docker compose up`, abre o navegador e loga — sem
 nenhum passo manual adicional (RNF-02).
+
+---
+
+# Épico 11 — Refinamento · 10 a 14/09 · retroativo
+
+> Registrado em 14/09, depois de implementado. O escopo planejado fechou com o Épico 10; o que
+> segue foi refinamento, com teste antes onde o ADR-004 manda e verificação na tela.
+
+---
+
+### F-052 · Correções da auditoria de entrega (OF-002 a OF-005) · retroativa
+**Entregue em:** 09/09 e 12/09.
+
+- **OF-002:** cinco leituras remotas sem cancelamento. Hoje toda leitura recebe o `signal` do
+  escopo da tela, e nenhuma sobrevive a ela.
+- **OF-003:** a galeria só abria carta com mouse. O cartão ficou focável, e Enter e Espaço abrem.
+- **OF-004:** o campo de imagem ficava inutilizável no desktop, pela trilha `auto` da grade.
+  Achado na tela pelo autor.
+- **OF-005:** "Excluir" rachava ao meio na visão tabela, por `overflow-wrap: anywhere` herdado da
+  célula. Achado na tela pelo autor.
+
+**Aceite:**
+- [x] Cada correção entrou com o teste que reproduz o defeito (ADR-004).
+- [x] As quatro passaram a `verified` no ledger em 14/09.
+
+---
+
+### F-060 · Layout em primitivas, sem media query de largura · retroativa
+**Entregue em:** 10/09.
+
+**Objetivo:** cada componente decide pela largura dele, não pela da janela — a lição do OF-004
+(`design.md` §9).
+
+**Entregue:** as primitivas `.stack`, `.cluster`, `.sidebar` e `.switcher` em `utilities.css`;
+`@container` onde o componente muda os próprios filhos; `overflow-wrap: anywhere` escopado ao
+texto de fora; e a rede de geometria (`layout-geometry.test.js`), que mede as telas em larguras
+que cercam cada ponto de quebra, também com a fonte da raiz dobrada.
+
+**Aceite:**
+- [x] Nenhuma `@media (min-width…)` em `components.css`.
+- [x] Toda tela entra na rede afirmando o estado com dado.
+- [x] Verificado na tela: 360, 500, 752 e 1424px, e fonte em 200%.
+
+---
+
+### F-061 · A tela `/paleta` · retroativa
+**Entregue em:** 10/09.
+
+**Objetivo:** avaliar uma mudança de paleta medindo, não olhando.
+
+**Entregue:** `pages/palette/`, fora do menu: lê o `tokens.css` carregado, mostra os dois temas
+lado a lado e mede cada par pela fórmula da WCAG, com os pares de foco a 3:1.
+
+**Aceite:**
+- [x] Toda tinta é medida contra as superfícies em que aparece, nos dois temas.
+- [x] Os selos de raridade são medidos sobre o próprio fundo.
+
+---
+
+### F-062 · A paleta do molde novo da Liga · retroativa
+**Entregue em:** 10/09.
+
+**Entregue:** a paleta lida da LigaPokemon, com a identidade violeta — a ação em violeta, a marca
+num lugar só, os estados como pedras e o escuro como noite (`design.md` §2).
+
+**Aceite:**
+- [x] Todo texto a 4,5:1 nos dois temas, e a tabela da `design.md` §3 conferida contra o
+      `tokens.css` em 14/09.
+- [x] Borda de campo e anel de foco a 3:1.
+
+---
+
+### F-070 · Identidade visual · retroativa
+**Entregue em:** 12 e 13/09 · **Detalhe:** `docs/visual-identity-checklist.md`.
+
+**Entregue:** sete peças — a marca no cabeçalho e na entrada (P1), o ícone da aba (P2), o verso
+da carta no lugar de "sem imagem" (P3), a cena e a virada da tela de entrada (P4), as
+ilustrações dos estados vazios (P5), cinco ícones de traço (P6) e a carta no modal de exclusão
+(P7).
+
+**Aceite:**
+- [x] Todo endereço de imagem é token (`--image-*`), e todo desenho SVG é pintado por token, pela
+      máscara.
+- [x] As imagens raster da entrada existem nos dois temas.
+- [x] A virada acontece só depois da resposta do servidor, e com movimento reduzido sobra o
+      esmaecimento.
+- [x] As telas novas entraram na rede de geometria.
+- [x] Verificado na tela pelo autor: a virada com sessão, o arranjo largo e o ícone nas abas.
+- [ ] Alto contraste do Windows — não conferido; ficou fora desta entrega por decisão do autor.
 
 ---
 
@@ -683,13 +788,16 @@ corta-se F-022 e F-040 na hora, não no fim do dia.
 Antes de declarar a entrega pronta, rodar a auditoria contra estas dez perguntas
 (`PADROES-ENGENHARIA.md` §17.1 e §19):
 
-- [ ] Existe algum dado externo virando HTML? `innerHTML`, `insertAdjacentHTML`, `eval`?
-- [ ] Existe alguma chamada de rede fora do cliente único, ou URL de API literal?
-- [ ] Existe alguma decisão de permissão tomada no cliente que não seja mostrar/esconder?
-- [ ] Existe algum `role === "…"` ou nível numérico comparado fora de `hasLevel()`?
-- [ ] Existe algum listener, timer ou requisição sem cancelamento?
-- [ ] Existe alguma tela sem os cinco estados?
-- [ ] Existe algum valor visual fora de `tokens.css`, ou token que só existe em um tema?
-- [ ] Existe alguma leitura remota sem política de validade declarada?
-- [ ] Existe alguma mensagem técnica alcançável pelo usuário?
-- [ ] Existe algum segredo, token ou dado pessoal em `localStorage`, URL ou log?
+**Respondidas em 09/09 e 14/09** pelas auditorias de qualidade e de segurança, sem nenhuma
+resposta que reprove.
+
+- [x] Existe algum dado externo virando HTML? `innerHTML`, `insertAdjacentHTML`, `eval`?
+- [x] Existe alguma chamada de rede fora do cliente único, ou URL de API literal?
+- [x] Existe alguma decisão de permissão tomada no cliente que não seja mostrar/esconder?
+- [x] Existe algum `role === "…"` ou nível numérico comparado fora de `hasLevel()`?
+- [x] Existe algum listener, timer ou requisição sem cancelamento?
+- [x] Existe alguma tela sem os cinco estados?
+- [x] Existe algum valor visual fora de `tokens.css`, ou token que só existe em um tema?
+- [x] Existe alguma leitura remota sem política de validade declarada?
+- [x] Existe alguma mensagem técnica alcançável pelo usuário?
+- [x] Existe algum segredo, token ou dado pessoal em `localStorage`, URL ou log?

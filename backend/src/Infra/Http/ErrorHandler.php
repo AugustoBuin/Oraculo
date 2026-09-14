@@ -11,9 +11,9 @@ use App\Shared\Observability\Logger;
 /**
  * O ÚNICO tradutor erro -> status do sistema.
  *
- * Esta classe existe por causa de um incidente concreto (PADROES.md §4): quando
- * cada rota escolhia o próprio status, a API acabou com dois envelopes de erro
- * divergentes e o cliente recebia 400 para tudo. Centralizar resolve — mas só
+ * Esta classe existe porque, quando cada rota escolhe o próprio status, a API
+ * acaba com dois envelopes de erro divergentes e o cliente recebe 400 para tudo
+ * (PADROES.md §4). Centralizar resolve — mas só
  * funciona se a outra metade da regra for cumprida: **as exceções cruas
  * precisam ser convertidas para a classe de domínio certa** lá onde nascem.
  *

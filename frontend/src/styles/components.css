@@ -1325,8 +1325,9 @@
  *
  * A caixa reserva a proporção da carta e guarda `--space-2` de respiro para a
  * imagem de verdade, que entra por `object-fit: contain`. O verso é outra
- * coisa: ele É a caixa. Sem cancelar o respiro, a máscara esticaria numa
- * proporção 4% diferente da carta, e a moldura sairia achatada.
+ * coisa: ele É a caixa. Sem cancelar o respiro, a caixa do verso ficaria numa
+ * proporção 4% diferente da carta, e a moldura — que o SVG mantém em 488:680,
+ * sem esticar — ficaria centrada, sem encostar nas bordas.
  *
  * Margem negativa, e não `:has()` na caixa: o projeto não usa `:has()` em
  * lugar nenhum, e uma dependência de seletor novo por causa de 8px seria cara

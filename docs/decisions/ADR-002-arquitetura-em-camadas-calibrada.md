@@ -12,8 +12,8 @@ e histórico de incidentes: quatro camadas, dispatcher de eventos, observabilida
 e Debug Mode por canal expirável, `traceId`, ledger de achados, métricas de auditoria em
 JSONL append-only e três agentes especializados.
 
-Este projeto é uma entrega de **cinco dias úteis, feita por uma pessoa**, com escopo de um
-portal administrativo: 5 features (User/Session, Game, Edition, Rarity, Card) e 24 rotas.
+Este projeto é uma entrega de **dez dias, feita por uma pessoa**, com escopo de um
+portal administrativo: 5 features (User/Session, Game, Edition, Rarity, Card) e 22 rotas.
 
 O próprio documento oferece o critério para calibrar isso, no §1.3:
 
@@ -60,7 +60,7 @@ opera o sistema em produção** (reduzido ao útil aqui).
 | Observabilidade (§6) | `traceId` + logger injetado + sink em `stderr`, coletado pelo Docker | Sink em tabela `system_log` gravado em lote, canais múltiplos e Debug Mode por canal com expiração automática resolvem problemas de operação contínua que este projeto não tem |
 | Ledger de achados (§14) | `docs/audits/open-findings.md` com o contrato de colunas do §14.1 | O `audit-metrics.jsonl` append-only serve para análise de tendência ao longo de meses |
 | Eventos de domínio (§2.4) | Dispatcher mínimo (~40 linhas), 4 eventos de carta, 1 handler | Ver ADR-005: entra porque a trilha de auditoria justifica, não porque o documento manda |
-| Agentes de IA (§15) | Existem localmente, fora do repositório | Ver ADR-009 |
+| Agentes de IA (§15) | Três auditores e as travas de comando, com o uso declarado no README e em `docs/PROCESSO.md` | Ver ADR-009 |
 
 ### O verificador de fronteiras
 
@@ -73,9 +73,10 @@ pede uma explicação que a reescrita torna desnecessária.
 
 ## Consequências
 
-- O dia 04 inteiro é fundação: esqueleto de camadas, autoloader, router, middleware,
-  ErrorHandler, PDO, migrations, seed, micro-runner e verificador de fronteiras. Nenhuma
-  feature. **Isso é intencional** — o custo de retrofit da fundação no dia 3 seria maior.
+- O primeiro dia de código, 05/09, começa pela fundação: esqueleto de camadas, autoloader,
+  router, middleware, ErrorHandler, PDO, migrations, seed, micro-runner e verificador de
+  fronteiras. Nenhuma feature entra antes dela. **Isso é intencional** — o custo de
+  retrofit da fundação depois seria maior.
 - Um leitor que conhece o `PADROES.md` vai notar as ausências. Elas estão aqui documentadas,
   com o motivo — que é a diferença entre poda e esquecimento.
 
