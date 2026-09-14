@@ -24,7 +24,7 @@ ser resolvida **antes** da implementação — não descoberta no meio dela.
 | Média | Comportamento de componente |
 | Baixa | Detalhe de implementação interna — *"quase sempre não deve ser testado"* |
 
-Somando: cinco dias úteis, uma pessoa, e a exigência do próprio §10.1 de que a exceção seja
+Somando: dez dias, uma pessoa, e a exigência do próprio §10.1 de que a exceção seja
 *"combinada com um humano antes"*. É o que este ADR faz.
 
 ## Opções consideradas
@@ -32,7 +32,7 @@ Somando: cinco dias úteis, uma pessoa, e a exigência do próprio §10.1 de que
 **A. TDD estrito em 100% do código.** Coerente com o §10.1. Testar repositório PDO exige
 banco de teste, fixtures e limpeza entre casos; testar renderização de DOM sem biblioteca
 exige montar um harness próprio. É meio dia de infraestrutura de teste por camada, num
-cronograma que tem cinco dias no total.
+cronograma que tem dez dias no total.
 
 **B. Sem testes automatizados.** O usuário já descartou, e com razão: o anúncio da vaga pede
 "preocupação com qualidade e boas práticas", e teste é a evidência disso.
@@ -62,7 +62,7 @@ regra de autorização, e o efeito colateral que não pode ocorrer quando o aces
 | Alvo | Por quê | Como é verificado |
 |---|---|---|
 | Repositórios PDO | Exigem banco; seriam teste de integração, não unitário | Exercitados de ponta a ponta pelo roteiro manual |
-| Fiação de rota e middleware | Testar o roteador testa o roteador | Mapa de rotas do `api-contract.md` §9 conferido rota a rota |
+| Fiação de rota e middleware | Ao testarmos as rotas, testamos o roteador | Mapa de rotas do `api-contract.md` §9 conferido rota a rota |
 | Renderização de DOM | Sem biblioteca, o harness custa mais que o valor que entrega | Roteiro manual com console aberto |
 
 O roteiro de testes manuais vai no README e cobre, no mínimo: os três perfis de permissão,
