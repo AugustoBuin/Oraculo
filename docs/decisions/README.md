@@ -23,4 +23,4 @@ em silêncio, não.
 | [008](ADR-008-imagem-upload-e-url.md) | Imagem por upload (padrão) ou URL, via Strategy | — |
 | [009](ADR-009-ferramental-de-ia-fora-do-repositorio.md) | `.claude/` e `CLAUDE.md` fora do repositório entregue | — |
 | [010](ADR-010-fluxo-git-reduzido.md) | GitFlow reduzido a `main`, `development` e `feature-*` | ✅ Sim — `PADROES.md` §13.1 |
-| [011](ADR-011-padroes-de-referencia-fora-do-repositorio.md) | Documentos de padrões de referência fora do repositório | — |
+| [011](ADR-011-padroes-de-referencia-anonimizados.md) | Documentos de padrões de referência versionados depois de anonimizados | — |
