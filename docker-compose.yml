@@ -1,0 +1,67 @@
+# Ambiente de desenvolvimento do Oráculo.
+#
+# Os valores de banco abaixo são de desenvolvimento local e não são segredo: o
+# MySQL não é publicado para fora da rede do compose. Em qualquer outro ambiente
+# as mesmas variáveis vêm de um .env fora do document root (ver .env.example), e
+# a aplicação falha ao subir se faltar alguma — não existe valor default no
+# código (docs/ENGENHARIA.md §2).
+
+# Nome do projeto fixado: sem isto o compose usa o nome do diretório, que ainda
+# é Portal-da-Liga no clone local.
+name: oraculo
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: oraculo-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: oraculo
+      MYSQL_USER: oraculo
+      MYSQL_PASSWORD: oraculo
+    # utf8mb4 no servidor: o utf8 do MySQL tem 3 bytes e trunca acentuação de
+    # nome de carta. Vale aqui, nas tabelas e na conexão.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql
+    # O app espera o banco aceitar conexão, não apenas o contêiner existir.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/app/Dockerfile
+    container_name: oraculo-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      APP_ENV: local
+      APP_URL: http://localhost:8080
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: oraculo
+      DB_USER: oraculo
+      DB_PASS: oraculo
+      SESSION_TTL_SECONDS: "43200"
+      UPLOAD_MAX_BYTES: "3145728"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/var/www/backend
+      - ./frontend:/var/www/frontend
+      # Imagens enviadas sobrevivem ao ciclo de vida do contêiner.
+      - uploads:/var/www/backend/storage/uploads
+
+volumes:
+  db-data:
+  uploads:

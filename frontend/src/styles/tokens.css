@@ -1,0 +1,480 @@
+/*
+ * O design system inteiro começa aqui.
+ *
+ * Nenhum valor visual é escrito fora deste arquivo (PADROES-ENGENHARIA.md
+ * §10.1). Cor, tipografia, espaço, raio, sombra, duração e curva só existem
+ * como token, consumidos por nome.
+ *
+ * TODO CONTRASTE FOI MEDIDO, NÃO ESTIMADO. A tabela par a par, nos dois temas,
+ * está em `docs/design.md` (RNF-05). A paleta do Anexo D do documento de
+ * padrões foi o ponto de partida e reprovou em seis pares — as correções estão
+ * anotadas em cada token abaixo e explicadas no design.md.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * Cor — papel semântico, nunca aparência.
+   *
+   * O tema claro é o padrão do arquivo. O escuro sobrescreve as MESMAS
+   * variáveis mais abaixo: todo token de cor existe nos dois temas ou não
+   * existe (§10.5).
+   * ------------------------------------------------------------------- */
+
+  /*
+   * A base é a do molde novo da Liga — o da LigaPokemon, lido do próprio
+   * site em 10/09/2026: página cinza, superfície branca, texto neutro. O
+   * corpo `#4a4a4a` é o mesmo de todos os portais da Liga (`docs/design.md`
+   * §2).
+   *
+   * O cinza leva uma névoa do violeta da ação: o mesmo matiz, com croma
+   * quase nulo. Não se lê como cor — lê-se como parte do mesmo lugar.
+   */
+  --color-bg: #f0eff5;
+  --color-surface: #ffffff;
+
+  --color-ink: #1b1c1c;    /* texto primário  — 14,94:1 no fundo */
+  --color-body: #4a4a4a;   /* texto corrente  —  7,75:1 no fundo */
+  --color-muted: #67686b;  /* metadado        —  4,87:1 no fundo */
+
+  --color-line: #dcdbe1;
+
+  /*
+   * O traço de ARTE DECORATIVA — hoje, o verso da carta.
+   *
+   * Papel que nenhum token cobria: ele desenha, e não separa. Com os tokens
+   * de antes, a mesma linha dava 1,20 no claro e 1,57 no escuro — apagada num
+   * tema e marcada no outro. Aqui são 1,34:1 e 1,36:1 sobre o fundo, de
+   * propósito: o verso precisa ficar ABAIXO de qualquer arte real, para não
+   * disputar com a carta que tem imagem.
+   *
+   * Não se mede a 4,5:1, e a `/paleta` sabe disso: a família `--color-line`
+   * inteira fica fora das tintas (`shared/theme/palette.js`).
+   */
+  --color-line-art: #d1cfdf;
+
+  /*
+   * O mesmo papel, um degrau mais forte: 2,07:1 no claro e 2,06:1 no escuro.
+   *
+   * O tom acima foi calibrado para ficar ATRÁS de texto (o nome da carta, no
+   * verso). A ilustração de estado está sozinha e na frente, e naquele tom
+   * ela vira fantasma no claro. Dois tons e não um: quem está atrás de texto
+   * e quem está sozinho não podem ter o mesmo peso.
+   */
+  --color-line-art-strong: #a9a6bd;
+
+  /*
+   * A borda de campo de formulário — o limite que IDENTIFICA um controle.
+   *
+   * A linha acima é decorativa (divisória, borda de cartão) e pode ser leve.
+   * Um campo branco dentro de um cartão branco só existe pela borda, e a
+   * WCAG 1.4.11 pede 3:1 para ela; a linha dava 1,38:1. Esta dá 3,96:1 na
+   * superfície e 3,46:1 no fundo.
+   */
+  --color-border: #807f87;
+
+  /*
+   * A marca: violeta profundo, e SÓ no logotipo.
+   *
+   * O mesmo matiz da ação, mais escuro — a identidade do Oráculo é o
+   * violeta, e o logotipo é onde ela assina. Veio no lugar do vermelho da
+   * LigaPokemon, que no escuro ficava a um passo do vermelho de perigo:
+   * agora vermelho na tela quer dizer uma coisa só.
+   */
+  --color-brand: #492c9b;
+
+  /*
+   * A voz única de ação. Ocupa no máximo ~10% da tela e marca UMA ação
+   * primária por contexto — a raridade é o mecanismo que faz o usuário saber
+   * onde apertar sem ler (§10.2).
+   *
+   * VIOLETA, a cor do oráculo — a escolha que dá identidade ao produto, e
+   * não uma herdada de biblioteca. O azul do molde (#0062cc) caía no mesmo
+   * matiz dos azuis-padrão (257° em OKLCH; Tailwind 263°, Bootstrap 260°).
+   * Foi girado para 290° com a mesma luminosidade e o mesmo croma, fora da
+   * faixa do "blurple" de SaaS (270–280°) e longe do roxo da LigaYuGiOh
+   * (317°). Aceita branco a 6,11:1 e serve como texto sobre o fundo, a 5,35:1.
+   *
+   * E segue longe do perigo: o terracota antigo era quase o vermelho de
+   * "Excluir", e o sinal de perigo precisa ser só dele.
+   */
+  --color-accent: #6a4bc6;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #e7e6f6;
+
+  /*
+   * Estados. Cada matiz tem um significado registrado e não é reaproveitado
+   * fora dele (§10.2). Todos são a versão TINTA: passam sobre o fundo e sobre
+   * a superfície. O par `-soft` é o preenchimento de etiqueta, medido com a
+   * própria tinta em cima.
+   *
+   * São as pedras do oráculo, sem sair da convenção: rubi para perigo,
+   * topázio para atenção, jade para sucesso, safira para informação — e
+   * ametista, a ação. O informativo é o azul que a ação deixou livre.
+   */
+  --color-success: #0b7643;
+  --color-success-soft: #ddf6e4;
+  --color-attention: #915b00;
+  --color-attention-soft: #ffebd5;
+  --color-danger: #c30010;
+  --color-danger-soft: #fde7e7;
+  --color-info: #0062cc;
+  --color-info-soft: #ddeaf6;
+
+  /* O anel de foco nunca é removido; só substituído por um visível (§9.2).
+     É a cor da ação: foco e ação são o mesmo convite a interagir. */
+  --color-focus: #6a4bc6;
+
+  /*
+   * Os selos de raridade: dez materiais, cada um um par de fundo e tinta,
+   * como a ação (`--color-accent` / `--color-on-accent`). Os estados são as
+   * pedras do oráculo; as raridades são metais e minerais, com os matizes nos
+   * vãos entre os estados — um "Ouro" não pode ser lido como atenção.
+   * A chave é a de `App\Shared\Enum\RarityColor`; a tinta passa de 4,6:1 sobre o
+   * próprio fundo nos dois temas (`docs/design.md` §3). Grafite é o selo
+   * neutro de antes da paleta, e o padrão.
+   */
+  --color-rarity-graphite: #e9e9ed;
+  --color-on-rarity-graphite: #38373e;
+  --color-rarity-silver: #e3eaf3;
+  --color-on-rarity-silver: #5c6979;
+  --color-rarity-copper: #ffe3d6;
+  --color-on-rarity-copper: #a94a14;
+  --color-rarity-gold: #ffe8a4;
+  --color-on-rarity-gold: #7d6500;
+  --color-rarity-olivine: #dcf2c8;
+  --color-on-rarity-olivine: #517227;
+  --color-rarity-patina: #c9f4ee;
+  --color-on-rarity-patina: #00766e;
+  --color-rarity-aquamarine: #caf1ff;
+  --color-on-rarity-aquamarine: #00718d;
+  --color-rarity-tourmaline: #fbdeff;
+  --color-on-rarity-tourmaline: #93499e;
+  --color-rarity-rose-quartz: #ffe0ea;
+  --color-on-rarity-rose-quartz: #a4476e;
+  --color-rarity-obsidian: #242232;
+  --color-on-rarity-obsidian: #e7e5fb;
+
+  /* ---------------------------------------------------------------------
+   * Tipografia — escala fechada. Não se inventa valor intermediário (§10.3).
+   *
+   * Sem fonte remota: nenhum CDN, nenhum Google Fonts (RNF-01). A pilha do
+   * sistema é o que o navegador já tem, e não custa uma requisição.
+   * ------------------------------------------------------------------- */
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+
+  --text-xs: 0.75rem;    /* 12px — piso absoluto (§9.5) */
+  --text-sm: 0.8125rem;  /* 13px */
+  --text-md: 0.875rem;   /* 14px */
+  --text-lg: 1rem;       /* 16px */
+  --text-xl: 1.125rem;   /* 18px */
+  --text-2xl: 1.5625rem; /* 25px */
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+
+  /* ---------------------------------------------------------------------
+   * Espaço, raio, profundidade
+   * ------------------------------------------------------------------- */
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-pill: 999px;
+
+  /*
+   * Profundidade vem de tom e borda. Sombra é reservada ao que flutua de
+   * verdade — modal, popover, menu. Cartão em repouso não tem sombra (§10.4).
+   *
+   * Três camadas, a do que flutua no molde novo da Liga: uma sombra curta e
+   * marcada junto da borda, e duas longas e fracas que dão a distância. Uma
+   * sombra só, larga, lê como mancha.
+   *
+   * A cor é um violeta quase preto, e não preto puro: a sombra pertence ao
+   * mesmo lugar. No escuro, a camada longa vira uma aura violeta fraca — é
+   * o que faz o modal existir sobre a noite.
+   */
+  --shadow-overlay: 0 3px 6px -4px rgb(42 24 96 / 0.14), 0 6px 16px rgb(42 24 96 / 0.09),
+    0 9px 28px 8px rgb(42 24 96 / 0.06);
+
+  /* Alvo de toque mínimo na base mobile (§9.5). */
+  --target-min: 2.75rem; /* 44px */
+
+  /* ---------------------------------------------------------------------
+   * Imagem — endereço de arquivo também é valor visual
+   *
+   * Nenhum `url()` de imagem é escrito fora deste arquivo (§10.1): trocar o
+   * desenho é trocar um token. O caminho é absoluto a partir da raiz, e não
+   * relativo, porque endereço dentro de variável se resolve contra a folha em
+   * que a variável é USADA, não contra esta.
+   *
+   * Estes dois não mudam com o tema: são máscara, e quem muda é a cor que os
+   * pinta (`--color-brand`). A versão com o sigilo vale de 64px em diante — a
+   * 48px as facetas da gema se fundem (medido em 11/09).
+   * ------------------------------------------------------------------- */
+
+  --image-brand-mark: url("/src/assets/brand/symbol.svg");
+  --image-brand-mark-sigil: url("/src/assets/brand/symbol-sigil.svg");
+
+  /*
+   * O verso da carta, em duas camadas: a moldura em lapidação esmeralda e a
+   * gema acima dela. Dois arquivos e não um, porque o CSS posiciona a gema em
+   * porcentagem — e porque sem texto (a miniatura do modal) ela vai ao centro
+   * e cresce, o que um desenho só não permitiria.
+   */
+  --image-card-back-frame: url("/src/assets/card-back/frame.svg");
+  --image-card-back-gem: url("/src/assets/card-back/gem.svg");
+
+  /*
+   * As ilustrações de estado. A busca sem resultado não tem arquivo: ela
+   * reusa a gema do verso, menor — o estado é frequente, e já traz a ação de
+   * limpar os filtros.
+   */
+  --image-state-not-found: url("/src/assets/states/not-found.svg");
+  --image-state-empty-catalog: url("/src/assets/states/empty-catalog.svg");
+
+  /*
+   * A cena da entrada, em duas camadas e uma por tema.
+   *
+   * Cena única não serviria: a mesa cresce com a JANELA e o cartão do
+   * formulário cresce com a FONTE, então com a fonte em 200% as cartas de uma
+   * foto só ficariam debaixo do cartão. Em camadas, a carta deitada tem
+   * tamanho em `rem` e acompanha o cartão.
+   *
+   * Uma imagem por tema, e não uma só esmaecida: a virada do login revela a
+   * aplicação, e revelar um tema com a cena do outro é o defeito que a troca
+   * por token evita.
+   */
+  --image-login-table: url("/src/assets/login/table-light.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-light.webp") 1x,
+    url("/src/assets/login/card-light@2x.webp") 2x
+  );
+
+  /*
+   * Os ícones de traço. Um arquivo por desenho, e nenhum por cor: quem pinta
+   * é `currentColor`, então o mesmo aviso serve ao vermelho do erro e à tinta
+   * do resto.
+   */
+  --image-icon-warning: url("/src/assets/icons/warning.svg");
+  --image-icon-lock: url("/src/assets/icons/lock.svg");
+  --image-icon-theme-system: url("/src/assets/icons/theme-system.svg");
+  --image-icon-theme-light: url("/src/assets/icons/theme-light.svg");
+  --image-icon-theme-dark: url("/src/assets/icons/theme-dark.svg");
+
+  /* ---------------------------------------------------------------------
+   * Movimento — nada acima de 400ms, exceto progresso (§11.2)
+   * ------------------------------------------------------------------- */
+
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+
+  /*
+   * A curva de quem sai do repouso e volta ao repouso.
+   *
+   * `--ease-out` desacelera no fim, e é o certo para o que ENTRA: a coisa
+   * chega e assenta. Para um objeto que GIRA, ela desperdiça o movimento —
+   * medido na virada da entrada, a carta chegava a 80° (já de perfil, já
+   * invisível) com 51% do tempo, e os 156ms restantes eram tela parada. Com a
+   * curva simétrica, o mesmo ponto cai em 77% do tempo.
+   */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* Diz ao navegador quais esquemas a página sabe pintar. */
+  color-scheme: light dark;
+}
+
+/*
+ * A escolha explícita também escolhe o esquema dos controles nativos.
+ *
+ * Com `light dark`, rádio, `<select>` e barra de rolagem seguem o SISTEMA, não
+ * o `[data-theme]`. Com o Windows no escuro e o tema claro escolhido, o rádio
+ * desmarcado saía como um disco escuro cheio — o desenho de "marcado" — numa
+ * página clara. O escuro explícito declara o seu no próprio bloco, abaixo.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/*
+ * Tema escuro.
+ *
+ * Aplicado por dois caminhos, e a ordem importa:
+ *
+ *   1. Preferência do sistema, sem atributo nenhum. É o padrão, e não depende
+ *      de JavaScript — por isso não existe piscada de tema no carregamento
+ *      para quem não escolheu nada, que é a maioria.
+ *   2. Escolha explícita do usuário, por `[data-theme]`, que vence a
+ *      preferência do sistema nos dois sentidos.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /* Noite: índigo muito escuro, de croma baixo. O conteúdo da tela é arte
+       de carta, e um entorno muito tingido mudaria a cor que o olho percebe
+       nas imagens. */
+    --color-bg: #0f0f16;
+    --color-surface: #1e1e25;
+
+    --color-ink: #e4e4ea;   /* 15,07:1 no fundo */
+    --color-body: #c5c9cf;  /* 11,48:1 no fundo */
+    --color-muted: #9aa0a8; /*  6,29:1 na superfície */
+
+    --color-line: #35353e;
+    --color-line-art: #2b293f; /* 1,36:1 no fundo — o traço do verso */
+    --color-line-art-strong: #474461; /* 2,06:1 — a ilustração sozinha */
+
+    --image-login-table: url("/src/assets/login/table-dark.webp");
+    --image-login-card: image-set(
+      url("/src/assets/login/card-dark.webp") 1x,
+      url("/src/assets/login/card-dark@2x.webp") 2x
+    );
+    --color-border: #74737c;
+
+    --color-brand: #bab3ff;
+
+    /*
+     * ESTE É O PAR QUE O §10.2 DESCREVE E QUE MAIS REPROVA.
+     *
+     * A superfície de acento clareia no tema escuro, e branco fixo em cima
+     * dela cai para 2,66:1. A tinta troca junto com a superfície: aqui ela é
+     * escura, a 7,12:1. Branco não é tinta — é uma cor como outra qualquer.
+     */
+    --color-accent: #a290fa;
+    --color-on-accent: #110f1e;
+    --color-accent-soft: #292440;
+
+    --color-success: #42cb80;
+    --color-success-soft: #152f1f;
+    --color-attention: #d9a514;
+    --color-attention-soft: #33270c;
+    --color-danger: #ff6b6b;
+    --color-danger-soft: #401d1c;
+    --color-info: #5ea4ff;
+    --color-info-soft: #182941;
+
+    --color-focus: #bcb2fc;
+
+    --color-rarity-graphite: #303034;
+    --color-on-rarity-graphite: #dedde3;
+    --color-rarity-silver: #2b3138;
+    --color-on-rarity-silver: #959fae;
+    --color-rarity-copper: #472718;
+    --color-on-rarity-copper: #d88762;
+    --color-rarity-gold: #3a2f0a;
+    --color-on-rarity-gold: #b49d55;
+    --color-rarity-olivine: #29351c;
+    --color-on-rarity-olivine: #8caa6f;
+    --color-rarity-patina: #153733;
+    --color-on-rarity-patina: #67ada5;
+    --color-rarity-aquamarine: #123541;
+    --color-on-rarity-aquamarine: #62aac2;
+    --color-rarity-tourmaline: #3d2641;
+    --color-on-rarity-tourmaline: #c184cb;
+    --color-rarity-rose-quartz: #432631;
+    --color-on-rarity-rose-quartz: #d283a0;
+    --color-rarity-obsidian: #07060f;
+    --color-on-rarity-obsidian: #d0cbf6;
+
+    /* A sombra precisa ser mais densa para existir sobre fundo escuro. */
+    --shadow-overlay: 0 3px 6px -4px rgb(6 3 18 / 0.5), 0 6px 16px rgb(6 3 18 / 0.34),
+      0 9px 28px 8px rgb(90 64 200 / 0.16);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-bg: #0f0f16;
+  --color-surface: #1e1e25;
+
+  --color-ink: #e4e4ea;
+  --color-body: #c5c9cf;
+  --color-muted: #9aa0a8;
+
+  --color-line: #35353e;
+  --color-line-art: #2b293f;
+  --color-line-art-strong: #474461;
+  --color-border: #74737c;
+
+  --image-login-table: url("/src/assets/login/table-dark.webp");
+  --image-login-card: image-set(
+    url("/src/assets/login/card-dark.webp") 1x,
+    url("/src/assets/login/card-dark@2x.webp") 2x
+  );
+
+  --color-brand: #bab3ff;
+
+  --color-accent: #a290fa;
+  --color-on-accent: #110f1e;
+  --color-accent-soft: #292440;
+
+  --color-success: #42cb80;
+  --color-success-soft: #152f1f;
+  --color-attention: #d9a514;
+  --color-attention-soft: #33270c;
+  --color-danger: #ff6b6b;
+  --color-danger-soft: #401d1c;
+  --color-info: #5ea4ff;
+  --color-info-soft: #182941;
+
+  --color-focus: #bcb2fc;
+
+  --color-rarity-graphite: #303034;
+  --color-on-rarity-graphite: #dedde3;
+  --color-rarity-silver: #2b3138;
+  --color-on-rarity-silver: #959fae;
+  --color-rarity-copper: #472718;
+  --color-on-rarity-copper: #d88762;
+  --color-rarity-gold: #3a2f0a;
+  --color-on-rarity-gold: #b49d55;
+  --color-rarity-olivine: #29351c;
+  --color-on-rarity-olivine: #8caa6f;
+  --color-rarity-patina: #153733;
+  --color-on-rarity-patina: #67ada5;
+  --color-rarity-aquamarine: #123541;
+  --color-on-rarity-aquamarine: #62aac2;
+  --color-rarity-tourmaline: #3d2641;
+  --color-on-rarity-tourmaline: #c184cb;
+  --color-rarity-rose-quartz: #432631;
+  --color-on-rarity-rose-quartz: #d283a0;
+  --color-rarity-obsidian: #07060f;
+  --color-on-rarity-obsidian: #d0cbf6;
+
+  --shadow-overlay: 0 3px 6px -4px rgb(6 3 18 / 0.5), 0 6px 16px rgb(6 3 18 / 0.34),
+    0 9px 28px 8px rgb(90 64 200 / 0.16);
+}
+
+/*
+ * Movimento reduzido pede MENOS MOVIMENTO, NÃO MENOS INFORMAÇÃO (§11.3).
+ *
+ * Mudança de cor, opacidade e sombra não é movimento: é o retorno que confirma
+ * o clique. Matá-la trocaria um problema de acessibilidade por outro. O que se
+ * desliga é deslocamento, escala e altura.
+ *
+ * `animation-duration: 1ms` e não `0`: o evento de fim de animação ainda
+ * dispara, então quem espera por ele não trava.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: color, background-color, border-color, outline-color,
+      opacity, box-shadow !important;
+    transition-duration: var(--duration-fast) !important;
+  }
+}

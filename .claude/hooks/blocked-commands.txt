@@ -1,0 +1,121 @@
+# ============================================================
+# Blocklist de comandos — hook "block-commands" (PreToolUse)
+# Projeto: Oráculo (PADROES.md §15.5)
+# ============================================================
+# Uma linha = um padrão. O hook BLOQUEIA qualquer comando de shell
+# cujo texto corresponda a algum padrao abaixo.
+#
+# COMO ESCREVER UM PADRAO
+#   - Linha comecando com "#" = comentario (ignorada).
+#   - Linha em branco = ignorada.
+#   - Texto simples = "contem". Ex.: a linha
+#         git push
+#     bloqueia QUALQUER comando que contenha "git push"
+#     (inclusive "git commit && git push").
+#   - Voce tambem pode usar regex. Ex.: rm\s+-rf\s+/
+#   - A comparacao: ignora maiusc./minusc., colapsa espacos e remove
+#     ".exe" — entao "git.exe    push" tambem e pego.
+#
+# CUIDADO COM MAIUSC./MINUSC.
+#   - A comparacao e CASE-INSENSITIVE. Efeito colateral no git: nao da
+#     pra separar "-D" de "-d". Por isso "git branch -D" fica como
+#     exemplo, nao ativo.
+#
+# COMO LIBERAR UM COMANDO
+#   - Apague a linha, ou comente-a com "#" na frente.
+#
+# ATENCAO: este hook roda ANTES das permissoes allow/deny e vence todas
+# elas. Um padrao amplo demais pode bloquear uso legitimo. Prefira
+# padroes especificos (PADROES.md §15.5).
+# ============================================================
+
+# ------------------------------------------------------------
+# GIT — envio ao remoto
+# ------------------------------------------------------------
+# O push e SEMPRE humano neste projeto. As linhas de "--force" abaixo
+# sao redundantes enquanto esta estiver ativa, mas ficam para o caso de
+# voce um dia liberar o push normal e querer manter o forcado bloqueado.
+git push
+git push\s+.*--force
+git push\s+.*-f\b
+git push\s+.*--delete
+git push\s+.*--mirror
+
+# ------------------------------------------------------------
+# GIT — reescrita de historico / perda de dados (destrutivo)
+# ------------------------------------------------------------
+# Descarta working tree + index (alteracoes nao commitadas somem):
+git reset --hard
+# Apaga arquivos NAO rastreados de forma permanente (irrecuperavel):
+git clean\s+.*-{1,2}\w*f
+# Remove stashes de forma permanente:
+git stash clear
+git stash drop
+# Reescrita em massa do historico:
+git filter-branch
+git filter-repo
+# Destroi a rede de seguranca (reflog) e torna commits perdidos irrecuperaveis:
+git reflog expire
+git reflog delete
+git gc\s+.*--prune=now
+# Apaga refs diretamente:
+git update-ref\s+.*-d
+
+# ------------------------------------------------------------
+# BANCO — operacoes destrutivas (MySQL)
+# ------------------------------------------------------------
+# Nunca edite uma migration ja aplicada; corrija com uma nova.
+# Recriar o banco do zero apaga o que foi cadastrado entre reinicios.
+migrate\.php\s+.*--fresh
+migrate\.php\s+.*--reset
+DROP\s+DATABASE
+DROP\s+TABLE
+TRUNCATE\s+TABLE
+# Restaurar dump por cima do banco errado:
+mysql\s+.*<.*dump
+
+# ------------------------------------------------------------
+# DOCKER — apagar o volume apaga o banco
+# ------------------------------------------------------------
+# "docker compose down -v" remove o volume do MySQL: perde a massa
+# cadastrada. Para reiniciar, use "docker compose restart" ou
+# "docker compose down" SEM o -v.
+docker compose down\s+.*-v\b
+docker compose down\s+.*--volumes
+docker volume rm
+docker volume prune
+docker system prune
+
+# ------------------------------------------------------------
+# DEPENDENCIAS — o requisito central da entrega (ADR-001)
+# ------------------------------------------------------------
+# Este projeto nao tem Composer, npm nem vendor/. Instalar qualquer
+# coisa quebra o requisito de codigo 100% autoral. Se precisar de algo,
+# escreva. As permissoes ja negam os binarios; o hook pega tambem a
+# forma "docker compose exec app composer require ...".
+composer require
+composer install
+composer update
+npm install
+npm i\b
+yarn add
+pnpm add
+
+# ============================================================
+# EXEMPLOS desativados (descomente para ativar)
+# ============================================================
+# --- Dual-use: uteis no dia a dia, podem atrapalhar se bloqueados ---
+# git branch -D            # forca exclusao de branch (pega tambem '-d')
+# git checkout --          # descarta alteracoes do working tree
+# git checkout \.          # idem, todos os arquivos ("git checkout .")
+# git restore\b            # descarta alteracoes ('--staged' e seguro)
+# git rm\s+.*-r            # remove arquivos rastreados do disco
+# git rebase               # reescreve historico (recuperavel via reflog)
+# git commit --amend       # reescreve o ultimo commit
+
+# --- Filesystem ---
+# rm\s+-rf\s+/             # remocao recursiva forcada na raiz
+# Remove-Item .* -Recurse .* -Force
+
+# --- Storage: apagar upload apaga imagem de carta cadastrada ---
+# rm\s+.*storage/uploads

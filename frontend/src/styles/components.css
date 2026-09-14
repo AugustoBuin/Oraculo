@@ -1,0 +1,1657 @@
+/*
+ * Estilo dos componentes globais.
+ *
+ * Todo valor vem de `tokens.css`. Nenhuma cor, tamanho, raio ou duração é
+ * escrito cru aqui — se algo falta, a discussão é sobre mudar a escala, não
+ * sobre um valor arbitrário neste arquivo (§10.1, §10.3).
+ */
+
+/* --- Texto que veio de fora ---------------------------------------------- */
+
+/*
+ * Onde a quebra em qualquer ponto vale — e só aqui.
+ *
+ * A lista é curta de propósito e cada linha responde à mesma pergunta: este
+ * texto pode chegar sem um espaço onde quebrar? Nome de carta e de edição vêm
+ * do banco; código de catálogo é um slug inteiro; a mensagem de erro carrega
+ * nome de arquivo enviado; o estado vazio repete o termo que a pessoa buscou.
+ * Rótulo escrito por nós fica de fora: ele tem espaço, e o piso de min-content
+ * é o que impede a coluna dele de colapsar (ver `base.css`).
+ *
+ * **Toda linha desta lista mira o TEXTO, nunca o contêiner dele.** `.card-table
+ * td` já esteve aqui, e `overflow-wrap` é herdado: a regra descia para o botão
+ * "Excluir" que mora na célula de ações, zerava o min-content dele, e a coluna
+ * colapsava até a palavra rachar ao meio. As células de dado da tabela pedem a
+ * quebra pelo utilitário, uma a uma.
+ */
+.card-name,
+.card-name-pt,
+.card-meta,
+.card-image-empty-text,
+.catalog-name,
+.catalog-code,
+.notification-text,
+.field-error,
+.field-hint,
+.inline-message,
+.state-title,
+.state p {
+  overflow-wrap: anywhere;
+}
+
+/* --- Botão --------------------------------------------------------------- */
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-default);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  transition: background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/*
+ * A voz única de ação. UMA por contexto: se duas coisas clicáveis na mesma
+ * tela estão assim, uma está errada (§10.2).
+ *
+ * A tinta vem do token que troca de tema junto com a superfície — branco fixo
+ * aqui reprovaria no contraste do tema escuro, que é o erro documentado em
+ * docs/design.md §2.
+ */
+.button-primary {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.button-secondary {
+  background-color: var(--color-surface);
+  border-color: var(--color-line);
+  color: var(--color-ink);
+}
+
+.button-ghost {
+  background-color: transparent;
+  color: var(--color-body);
+}
+
+.button-danger {
+  background-color: transparent;
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.button-secondary:hover:not(:disabled),
+.button-ghost:hover:not(:disabled) {
+  background-color: var(--color-bg);
+}
+
+.button-danger:hover:not(:disabled) {
+  background-color: var(--color-danger-soft);
+}
+
+/* --- Campo --------------------------------------------------------------- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field-label {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.field-hint {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.field-input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface);
+  /* A borda identifica o campo, então é a de controle (3:1, WCAG 1.4.11),
+     e não a linha decorativa — que some num campo branco sobre cartão branco. */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-default);
+  color: var(--color-ink);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.field-input:hover:not(:disabled) {
+  border-color: var(--color-muted);
+}
+
+/* A busca é pílula, como no molde novo da Liga: é o campo mais usado da
+   listagem, e a forma o distingue dos filtros ao lado sem precisar de cor. */
+.field-input[type="search"] {
+  border-radius: var(--radius-pill);
+  padding-inline: var(--space-4);
+}
+
+/*
+ * Erro por DOIS SINAIS: a borda muda de cor e a mensagem aparece em texto
+ * (§9.4). Só a borda vermelha excluiria daltônicos e não anunciaria nada para
+ * leitor de tela — é por isso que `aria-invalid` acompanha, em field.js.
+ */
+.field-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+/* --- Estados obrigatórios ------------------------------------------------ */
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.state-title {
+  color: var(--color-ink);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+}
+
+.state-icon {
+  margin-right: var(--space-2);
+}
+
+/*
+ * A ilustração do estado vazio.
+ *
+ * Tom mais forte que o do verso: ali o traço fica ATRÁS do nome da carta;
+ * aqui ele está sozinho e na frente, e no tom do verso viraria fantasma no
+ * claro (`design.md` §3).
+ *
+ * A proporção vem do `viewBox` de cada desenho e é declarada aqui para a
+ * caixa existir antes de a máscara carregar — estado vazio que salta é pior
+ * que estado vazio, porque a pessoa já está procurando o que fazer.
+ */
+.state-image {
+  background-color: var(--color-line-art-strong);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* `min(12rem, 100%)` e não 12rem: em tela estreita, a largura fixa estouraria
+   a coluna em vez de encolher com ela. */
+.state-image-not-found,
+.state-image-empty-catalog {
+  inline-size: min(12rem, 100%);
+}
+
+.state-image-not-found {
+  aspect-ratio: 197.33 / 172.33;
+  mask-image: var(--image-state-not-found);
+}
+
+.state-image-empty-catalog {
+  aspect-ratio: 116 / 156;
+  mask-image: var(--image-state-empty-catalog);
+}
+
+/* A busca sem resultado é o estado frequente: símbolo pequeno, não cena. */
+.state-image-search {
+  block-size: 4rem;
+  aspect-ratio: 16 / 22;
+  mask-image: var(--image-card-back-gem);
+}
+
+/* Mesma dívida da máscara do verso: sem isto o alto contraste do Windows
+   apaga a ilustração junto com o fundo forçado. */
+@media (forced-colors: active) {
+  .state-image {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+}
+
+.state-failure .state-title {
+  color: var(--color-danger);
+}
+
+/*
+ * O indicador de progresso é a exceção prevista para movimento infinito
+ * (§11.2, WCAG 2.2.2). A animação anima só transformação, que é barata, e
+ * termina em estado visível — uma que terminasse oculta desapareceria de vez
+ * com o movimento reduzido ligado (§11.3).
+ */
+.spinner {
+  width: var(--space-5);
+  height: var(--space-5);
+  border: 2px solid var(--color-line);
+  border-top-color: var(--color-accent);
+  border-radius: var(--radius-pill);
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Mensagem inline ----------------------------------------------------- */
+
+.inline-message {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-default);
+  font-size: var(--text-sm);
+}
+
+.inline-message-danger {
+  background-color: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+
+.inline-message-success {
+  background-color: var(--color-success-soft);
+  color: var(--color-success);
+}
+
+.inline-message-attention {
+  background-color: var(--color-attention-soft);
+  color: var(--color-attention);
+}
+
+/* --- Tela de entrada ----------------------------------------------------- */
+
+/*
+ * A ENTRADA É UMA CENA, e ela tem três camadas.
+ *
+ * A mesa é o fundo do layout; a carta em pé é o próprio cartão do formulário
+ * — o verso está à vista e o formulário está sobre ele —; e as duas deitadas
+ * ficam ao lado, "na mesa". Uma foto única não serviria: a mesa cresce com a
+ * JANELA e o cartão cresce com a FONTE, então a 200% as cartas de uma cena só
+ * ficariam debaixo do formulário.
+ *
+ * `min-height: 100svh` e não `100vh`: no celular, a barra do navegador entra
+ * na conta do `vh` e a tela ganha uma rolagem que não existe. `svh` é a altura
+ * pequena, a que sobra com a barra visível.
+ */
+.login-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100svh;
+  padding: var(--space-4);
+  background-color: var(--color-bg);
+  background-image: var(--image-login-table);
+  background-size: cover;
+  background-position: center;
+}
+
+/*
+ * O palco é quem responde a consulta de contêiner: as cartas deitadas
+ * aparecem quando CABEM, e quem sabe disso é a largura dele, não a da janela
+ * (`design.md` §9).
+ */
+.login-stage {
+  container: login / inline-size;
+  /*
+   * A profundidade mora no palco, não na carta. Sem perspectiva, o `rotateY`
+   * da virada é um achatamento horizontal — a carta encolhe em vez de girar.
+   */
+  perspective: 60rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 24rem;
+  /*
+   * O respiro nunca come mais de 9% da largura.
+   *
+   * A 320px com a fonte do navegador em 200%, `--space-5` vira 48px de cada
+   * lado e sobram 158px para o conteúdo — menos do que a palavra "Oráculo"
+   * mede naquele tamanho (184px). O cartão ficava com o próprio título
+   * rachado ao meio. Acima de ~267px de cartão o `min()` escolhe o token, e
+   * nada muda.
+   */
+  padding: min(var(--space-5), 9%);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+}
+
+/*
+ * A carta em pé é o cartão, e o verso está nele: a mesma moldura do P3, pelo
+ * mesmo token. A gema do verso NÃO entra — a marca com o sigilo já está no
+ * topo do cartão, no lugar dela.
+ */
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-line-art);
+  mask-image: var(--image-card-back-frame);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  pointer-events: none;
+}
+
+/*
+ * O formulário fica POR CIMA da moldura.
+ *
+ * Pseudoelemento posicionado pinta acima de conteúdo estático, então sem isto
+ * a moldura cruza o título e os campos — o verso passa na frente da carta em
+ * vez de ficar atrás dela. Mesmo motivo do texto sobre o verso na galeria.
+ */
+.login-card > * {
+  position: relative;
+}
+
+/*
+ * A VIRADA — depois da resposta do servidor, e só depois dela.
+ *
+ * A carta que a pessoa acabou de preencher vira, e a aplicação entra atrás
+ * dela. Virar antes da resposta seria prometer uma entrada que o 401 ainda
+ * pode desmentir.
+ *
+ * **Meia volta, não uma inteira:** a 90° a carta já está de perfil e some
+ * sozinha. A volta completa mostraria o formulário espelhado, porque esta
+ * carta não tem uma segunda face desenhada — a face que ela revela é a
+ * aplicação.
+ *
+ * Enquanto vira, ela não recebe mais clique: já não é o assunto.
+ */
+.login-card[data-state="turning"] {
+  animation: leave-flip var(--duration-slow) var(--ease-in-out) forwards;
+  pointer-events: none;
+}
+
+/*
+ * O nome descreve o PAPEL — sair virando —, não o primeiro consumidor (§11.2):
+ * é a irmã de `enter-up`.
+ *
+ * **É a única animação do projeto que termina invisível**, e a exceção tem
+ * motivo: é o fim dela que troca a tela, então o estado final dura um quadro e
+ * o elemento sai junto. Com movimento reduzido a virada dura 1ms e sobra o
+ * esmaecimento da entrada, que é transição e sobrevive (§11.3).
+ */
+@keyframes leave-flip {
+  from {
+    transform: rotateY(0);
+  }
+  to {
+    transform: rotateY(90deg);
+  }
+}
+
+/*
+ * As cartas deitadas: a MESMA imagem dos dois lados, a da direita espelhada.
+ * Largura em `rem` para crescerem com a fonte, como o cartão ao lado.
+ *
+ * Elas nascem fora da tela e só entram quando cabem inteiras: carta cortada
+ * pela borda é pior que carta nenhuma, e a rede de geometria acusaria.
+ */
+.login-side {
+  display: none;
+  flex: none;
+  inline-size: 14rem;
+  aspect-ratio: 4 / 3;
+  background-image: var(--image-login-card);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* "Na mesa": um pouco abaixo do cartão, como se estivessem deitadas à
+     frente dele. */
+  align-self: flex-end;
+  margin-block-end: var(--space-6);
+}
+
+.login-side-mirrored {
+  scale: -1 1;
+}
+
+/*
+ * 64rem é onde as três cartas cabem lado a lado com folga: 24rem do cartão
+ * mais duas de 14rem mais os dois vãos. Abaixo disso, o formulário fica
+ * sozinho — e continua inteiro, que é o que importa.
+ */
+@container login (min-width: 64rem) {
+  .login-side {
+    display: block;
+  }
+}
+
+/*
+ * Altura baixa — celular deitado tem menos de 400px: a cena não pode empurrar
+ * o formulário para fora da tela. A mesa continua; as cartas saem.
+ */
+@media (max-height: 32rem) {
+  .login-side {
+    display: none;
+  }
+
+  .login-layout {
+    align-items: flex-start;
+  }
+}
+
+/*
+ * Na entrada, a marca grande fica acima do formulário e centrada. É um `<span>`
+ * de tamanho fixo, então `block` mais margem automática — e não um contêiner a
+ * mais só para centralizar.
+ */
+.login-card .brand-mark {
+  display: block;
+  margin-inline: auto;
+  margin-block-end: var(--space-4);
+}
+
+.login-form .button {
+  width: 100%;
+  margin-top: var(--space-2);
+}
+
+/* Vazio quando não há aviso: sem altura reservada, o formulário não desloca
+   ao aparecer e sumir a mensagem. */
+.form-alert:empty {
+  display: none;
+}
+
+/* --- Ícones --------------------------------------------------------------- */
+
+/*
+ * UM CARACTERE, e não uma caixa flex.
+ *
+ * A mensagem de erro quebra em duas linhas, e o ícone tem de ficar preso ao
+ * começo do texto: num contêiner flex centrado ele subiria para o meio das
+ * duas linhas, longe da primeira palavra. `inline-block` de `1em` com
+ * `vertical-align: -0.125em` o trata como o caractere que ele substituiu —
+ * escala junto com a fonte, inclusive a 200%.
+ *
+ * `currentColor`: o ícone tem a cor do texto ao lado. É o que dispensa um
+ * arquivo por cor e faz o aviso sair vermelho dentro do erro sem nenhuma
+ * regra a mais.
+ */
+.icon {
+  display: inline-block;
+  inline-size: 1em;
+  block-size: 1em;
+  vertical-align: -0.125em;
+  background-color: currentcolor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+.icon-warning {
+  mask-image: var(--image-icon-warning);
+}
+
+.icon-lock {
+  mask-image: var(--image-icon-lock);
+}
+
+.icon-theme-system {
+  mask-image: var(--image-icon-theme-system);
+}
+
+.icon-theme-light {
+  mask-image: var(--image-icon-theme-light);
+}
+
+.icon-theme-dark {
+  mask-image: var(--image-icon-theme-dark);
+}
+
+/*
+ * No alto contraste, `currentColor` já é a cor de sistema do texto ao lado —
+ * o que falta é o fundo não ser forçado para a cor da tela.
+ */
+@media (forced-colors: active) {
+  .icon {
+    forced-color-adjust: none;
+  }
+}
+
+/* --- A marca ------------------------------------------------------------- */
+
+/*
+ * O desenho entra por MÁSCARA, não por `<img>`: o elemento é pintado com a cor
+ * da marca e o SVG recorta o que se vê. É o que faz a marca seguir o BOTÃO de
+ * tema e não só o sistema operacional — um `<picture>` com
+ * `prefers-color-scheme` obedeceria ao sistema e ignoraria a escolha do
+ * usuário. O arquivo em si não tem cor: serve aos dois temas.
+ *
+ * Longhands, sem o atalho `mask`: as quatro existem sem prefixo desde o Safari
+ * 15.4, e o atalho só a partir do 17.2 — e o iOS está em jogo (o ícone da tela
+ * inicial).
+ *
+ * O tamanho é em `rem`, não em `em`: 24px ao lado do nome de 18px, e 48px
+ * quando a fonte do navegador vai a 200%, porque a raiz dobra junto. Em `em`
+ * dependeria do tamanho de quem contém, que na entrada é outro.
+ */
+.brand-mark {
+  flex: none;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  background-color: var(--color-brand);
+  mask-image: var(--image-brand-mark);
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+
+/* De 64px em diante a gema se lê; abaixo, as facetas se fundem. */
+.brand-mark-sigil {
+  inline-size: 4rem;
+  block-size: 4rem;
+  mask-image: var(--image-brand-mark-sigil);
+}
+
+/*
+ * No alto contraste do Windows, o sistema força TODA cor de fundo para a da
+ * tela, e a marca simplesmente desapareceria. `forced-color-adjust: none`
+ * devolve o controle deste elemento, e a cor volta a ser do sistema — nunca a
+ * da paleta, que é o que o modo existe para substituir.
+ */
+@media (forced-colors: active) {
+  .brand-mark {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+
+  /* No cabeçalho a marca está DENTRO do link, e acompanha a cor de link. */
+  .app-brand .brand-mark {
+    background-color: LinkText;
+  }
+}
+
+/* --- Cabeçalho e navegação ----------------------------------------------- */
+
+.app-header {
+  border-bottom: 1px solid var(--color-line);
+  background-color: var(--color-surface);
+}
+
+/* Arranjo pelo `.cluster`; aqui fica só o que é do cabeçalho. */
+.app-header-inner {
+  padding-block: var(--space-3);
+}
+
+/*
+ * A cor da marca vive em dois lugares, e nos dois ela É a marca: aqui, no nome,
+ * e no `.brand-mark` acima, no desenho. Em nenhum outro (`design.md` §4).
+ */
+.app-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+}
+
+.app-nav {
+  --cluster-gap: var(--space-1);
+}
+
+.nav-link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-default);
+  color: var(--color-body);
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/*
+ * "Você está aqui" por DOIS SINAIS: o tom de fundo mais o `aria-current="page"`
+ * que o app-header.js escreve. Só a cor deixaria a informação invisível para
+ * quem usa leitor de tela e para quem não distingue os tons (§9.4).
+ */
+.nav-link-current {
+  background-color: var(--color-accent-soft);
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+/* As ações vão para a direita; em tela pequena, quebram para a linha de baixo
+   em vez de espremer a navegação. A quebra ENTRE elas — sem a qual "Sair" saía
+   como "S / ai / r" a 200% — agora é garantia da primitiva, não desta regra. */
+.app-actions {
+  --cluster-gap: var(--space-2);
+
+  margin-left: auto;
+}
+
+.app-main {
+  padding-block: var(--space-5);
+}
+
+/* --- Modal --------------------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background-color: rgb(0 0 0 / 0.5);
+}
+
+/* Sombra só para o que flutua de verdade — e um modal flutua (§10.4). */
+.modal {
+  width: 100%;
+  max-width: 28rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+}
+
+.modal-title {
+  margin-bottom: var(--space-3);
+}
+
+.modal-actions {
+  --cluster-gap: var(--space-2);
+
+  margin-top: var(--space-5);
+}
+
+.modal-actions:empty {
+  display: none;
+}
+
+/* --- Avisos -------------------------------------------------------------- */
+
+.notifications {
+  position: fixed;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: min(24rem, calc(100vw - var(--space-6)));
+}
+
+.notification {
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-left-width: var(--space-1);
+  border-radius: var(--radius-default);
+  box-shadow: var(--shadow-overlay);
+  font-size: var(--text-sm);
+  animation: enter-up var(--duration-base) var(--ease-out);
+}
+
+/*
+ * `min-width: 0` porque `flex: 1` não basta: item de flex nasce com mínimo
+ * `auto`, que é o min-content do texto. Sem zerar, uma mensagem sem espaço —
+ * o nome de um arquivo enviado, por exemplo — empurra o aviso para fora da
+ * faixa em vez de quebrar dentro dela.
+ */
+.notification-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-ink);
+}
+
+.notification-success { border-left-color: var(--color-success); }
+.notification-attention { border-left-color: var(--color-attention); }
+.notification-danger { border-left-color: var(--color-danger); }
+.notification-info { border-left-color: var(--color-info); }
+
+/*
+ * O nome do keyframe descreve o PAPEL, não o primeiro consumidor: `enter-up`
+ * sobrevive à migração; `notification-in` morreria na primeira reutilização
+ * (§11.2). E a animação termina em estado visível — uma que terminasse oculta
+ * desapareceria de vez com o movimento reduzido ligado.
+ */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Cartão e a tela de conta -------------------------------------------- */
+
+/* Profundidade por tom e borda. Cartão em repouso NÃO tem sombra — ela fica
+   reservada ao que flutua de verdade (§10.4). */
+.card {
+  padding: var(--space-5);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+/*
+ * Os dois cartões da conta, num `.switcher`.
+ *
+ * O limiar é o mesmo 48rem da media query que este arranjo substituiu — o que
+ * mudou é o que ele mede: a largura desta faixa, não a da janela. A tela de
+ * conta é a que mais expõe a diferença, porque o e-mail do usuário é a cadeia
+ * longa sem espaço mais comum do portal e é a coluna estreita que o quebra.
+ */
+.account-layout {
+  --switcher-threshold: 48rem;
+
+  /* Cada cartão vale a própria altura; esticar o menor até o maior deixaria um
+     bloco de superfície vazia embaixo dos dados da conta. */
+  align-items: flex-start;
+}
+
+/*
+ * A proporção 1 : 1.5 que as trilhas de grade declaravam, agora em `flex-grow`
+ * — com base zero, crescer 1 e 1,5 divide a sobra exatamente como `1fr 1.5fr`
+ * dividia a linha. O formulário de senha é o trabalho da tela e fica com a
+ * parte maior; o cartão de dados é referência.
+ */
+.account-layout > :last-child {
+  flex-grow: 1.5;
+}
+
+/* --- Galeria de cartas --------------------------------------------------- */
+
+/*
+ * Mobile-first: uma coluna na base, e a grade adensa sozinha conforme cabe.
+ * `auto-fill` com `minmax` evita breakpoint escrito à mão para cada largura —
+ * e nenhuma regra depende de pixel fixo (§10.5).
+ *
+ * O `min(…, 100%)` é o que impede a coluna de ficar MAIOR que o contêiner.
+ * `11rem` acompanha o tamanho do texto: com a fonte a 200%, a coluna mínima
+ * passa de 176 para 352px e não cabe mais numa tela de 360. Sem o `min()` a
+ * grade estoura, e como a página não rola na horizontal, o excedente é
+ * cortado — perda de conteúdo, não inconveniência (RNF-06, WCAG 1.4.4).
+ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(11rem, 100%), 1fr));
+  gap: var(--space-4);
+}
+
+/* Cartão em repouso não tem sombra: profundidade vem de tom e borda (§10.4). */
+.card-tile {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  transition: border-color var(--duration-fast) var(--ease-out);
+}
+
+.card-tile:hover {
+  border-color: var(--color-muted);
+}
+
+/*
+ * A proporção é reservada ANTES de a imagem chegar. Junto com os atributos
+ * width/height do `img`, é o que impede a grade de dar um salto a cada imagem
+ * que carrega (§12.2).
+ */
+.card-media {
+  aspect-ratio: 488 / 680;
+  background-color: var(--color-bg);
+}
+
+.card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/*
+ * O espaço reservado do RF-34: legível, com o nome da carta — nunca o ícone de
+ * imagem quebrada do navegador.
+ *
+ * E agora desenhado: o VERSO DA CARTA. "Sem imagem" é a carta de costas, não
+ * uma caixa vazia — a face existe, só não está à vista. A moldura repete a
+ * lapidação do logo, com a gema acima e o nome embaixo, em área lisa.
+ *
+ * Duas camadas de máscara sobre o fundo do próprio elemento, e nenhum nó a
+ * mais no DOM. O tom é `--color-line-art`, mais apagado que qualquer arte
+ * real: o verso não pode disputar com a carta que tem imagem ao lado. O
+ * acento suave ficaria errado aqui — ele significa seleção, e um verso
+ * violeta na grade seria lido como carta selecionada (`design.md` §4).
+ *
+ * A pré-visualização vazia do formulário divide a regra: é o mesmo estado, e
+ * dois desenhos para o mesmo significado seriam dois lugares para consertar.
+ */
+.card-image-empty,
+.image-preview-empty {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Em porcentagem, não em token de espaço: a moldura é desenho, e o nome
+     precisa cair na mesma área lisa em 176px e em 735px. */
+  padding: 17% 16%;
+  background-color: var(--color-bg);
+}
+
+/* A divisória é do CARTÃO da grade, não do verso: no modal ele é miniatura, e
+   uma linha solta embaixo dela não separa nada. */
+.card-media .card-image-empty {
+  border-bottom: 1px solid var(--color-line);
+}
+
+/*
+ * Sem texto, a gema vai ao centro e cresce.
+ *
+ * `:empty` e não uma classe modificadora: a diferença entre os dois versos é
+ * literalmente haver ou não conteúdo embaixo da gema, e é isso que o seletor
+ * diz. O `cardBack` sem nome não monta nem um `<span>` vazio — há um teste
+ * para isso, porque um filho invisível desligaria esta regra em silêncio.
+ */
+.card-image-empty:empty::after {
+  inset-block-start: 50%;
+  inline-size: 40%;
+}
+
+/* Ela é `<p>` dentro de uma caixa que centraliza: sem esticar, o verso teria
+   a altura do texto. */
+.image-preview-empty {
+  flex: 1;
+  align-self: stretch;
+}
+
+.card-image-empty::before,
+.card-image-empty::after,
+.image-preview-empty::before,
+.image-preview-empty::after {
+  content: "";
+  position: absolute;
+  background-color: var(--color-line-art);
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+/* A moldura ocupa a caixa inteira: o desenho já traz a margem dentro dele. */
+.card-image-empty::before,
+.image-preview-empty::before {
+  inset: 0;
+  mask-image: var(--image-card-back-frame);
+}
+
+/*
+ * A gema fica ACIMA do nome, e não atrás dele: texto sobre o traço cairia
+ * abaixo de 4,5:1, e a saída não é clarear o traço — é não sobrepor.
+ */
+.card-image-empty::after,
+.image-preview-empty::after {
+  inset-block-start: 37%;
+  inset-inline-start: 50%;
+  width: 34%;
+  aspect-ratio: 16 / 22;
+  translate: -50% -50%;
+  mask-image: var(--image-card-back-gem);
+}
+
+/*
+ * O texto por cima das duas camadas. Pseudoelemento posicionado pinta acima de
+ * conteúdo estático, então sem isto o nome sairia por baixo da gema.
+ */
+.card-image-empty-text,
+.image-preview-empty {
+  position: relative;
+  z-index: 1;
+}
+
+.card-image-empty-text {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/*
+ * No alto contraste do Windows as duas camadas sumiriam junto com o fundo
+ * forçado. `GrayText` e não a cor da paleta: é a cor que o sistema reserva ao
+ * que é secundário, e o verso é exatamente isso.
+ */
+@media (forced-colors: active) {
+  .card-image-empty::before,
+  .card-image-empty::after,
+  .image-preview-empty::before,
+  .image-preview-empty::after {
+    forced-color-adjust: none;
+    background-color: GrayText;
+  }
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+}
+
+.card-name {
+  font-size: var(--text-md);
+}
+
+.card-name-pt {
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.card-meta {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.card-body .badge {
+  align-self: flex-start;
+  margin-top: var(--space-1);
+}
+
+/* --- Selo de raridade --------------------------------------------------- */
+
+/*
+ * O fundo e a tinta do material (tokens.css), e uma marca redonda que os
+ * selos de estado não têm: é a forma que diz "raridade", não a cor. A classe
+ * do material só aponta as duas variáveis; o desenho é um só.
+ */
+.rarity-badge {
+  background-color: var(--rarity-fill, var(--color-rarity-graphite));
+  color: var(--rarity-ink, var(--color-on-rarity-graphite));
+}
+
+.rarity-mark {
+  flex: none;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: var(--radius-pill);
+  background-color: currentColor;
+}
+
+.rarity-graphite {
+  --rarity-fill: var(--color-rarity-graphite);
+  --rarity-ink: var(--color-on-rarity-graphite);
+}
+
+.rarity-silver {
+  --rarity-fill: var(--color-rarity-silver);
+  --rarity-ink: var(--color-on-rarity-silver);
+}
+
+.rarity-copper {
+  --rarity-fill: var(--color-rarity-copper);
+  --rarity-ink: var(--color-on-rarity-copper);
+}
+
+.rarity-gold {
+  --rarity-fill: var(--color-rarity-gold);
+  --rarity-ink: var(--color-on-rarity-gold);
+}
+
+.rarity-olivine {
+  --rarity-fill: var(--color-rarity-olivine);
+  --rarity-ink: var(--color-on-rarity-olivine);
+}
+
+.rarity-patina {
+  --rarity-fill: var(--color-rarity-patina);
+  --rarity-ink: var(--color-on-rarity-patina);
+}
+
+.rarity-aquamarine {
+  --rarity-fill: var(--color-rarity-aquamarine);
+  --rarity-ink: var(--color-on-rarity-aquamarine);
+}
+
+.rarity-tourmaline {
+  --rarity-fill: var(--color-rarity-tourmaline);
+  --rarity-ink: var(--color-on-rarity-tourmaline);
+}
+
+.rarity-rose-quartz {
+  --rarity-fill: var(--color-rarity-rose-quartz);
+  --rarity-ink: var(--color-on-rarity-rose-quartz);
+}
+
+.rarity-obsidian {
+  --rarity-fill: var(--color-rarity-obsidian);
+  --rarity-ink: var(--color-on-rarity-obsidian);
+}
+
+/* --- Seletor de cor da raridade ----------------------------------------- */
+
+/*
+ * Um grupo de rádio nativo, uma opção por material. A grade reflui pela
+ * largura do painel, e cada opção é o rádio e o próprio selo: quem escolhe vê
+ * o que a carta vai mostrar.
+ *
+ * **Sem moldura em volta do selo.** O selo já é uma caixa, com padding
+ * próprio; borda e padding em volta dele eram moldura dupla, e custavam 33px
+ * com a fonte em 200% — o bastante para "Obsidiana" empurrar o painel para
+ * fora da tela de 320px.
+ *
+ * A opção marcada tem dois sinais — o círculo preenchido do rádio, que é do
+ * navegador, e o contorno do selo na cor da ação. Contorno e não sombra: ele
+ * não ocupa espaço, e continua de pé no modo de alto contraste, que apaga
+ * sombras. O anel de foco é o de sempre, no próprio rádio (base.css).
+ */
+/* Só as margens laterais do navegador saem: a de cima é a do `.stack` que monta
+   o formulário, e zerá-la colava a legenda no campo de cima. */
+.rarity-color-field {
+  margin-inline: 0;
+  padding: 0;
+  border: 0;
+}
+
+.rarity-color-field legend {
+  padding: 0;
+}
+
+.rarity-color-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(9.5rem, 100%), 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/*
+ * A opção ocupa a largura do rádio e do selo, e não a célula: sem moldura, o
+ * vazio à direita não mostra que é clicável, e não deve escolher nada. O alvo
+ * de 44px fica na altura do rótulo inteiro.
+ */
+.rarity-option {
+  display: flex;
+  align-items: center;
+  justify-self: start;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  cursor: pointer;
+}
+
+.rarity-option input {
+  flex: none;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.rarity-option input:checked + .rarity-badge {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* --- Paginação ----------------------------------------------------------- */
+
+.pagination-status {
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+/* --- Busca e filtros ----------------------------------------------------- */
+
+/*
+ * Mobile-first: uma coluna na base, e os campos se acomodam conforme cabe.
+ * Sem breakpoint escrito à mão e sem largura fixa em pixel (§10.5).
+ */
+.filters {
+  /*
+   * A barra é o contêiner de consulta dos próprios campos.
+   *
+   * É o que permite à regra abaixo perguntar a largura DELA, e não a da
+   * janela. `inline-size` contém só o eixo horizontal: a altura continua vindo
+   * do conteúdo, que é o que a barra precisa quando um campo em cascata troca
+   * de estado e ganha uma linha de dica.
+   */
+  container: filters / inline-size;
+
+  display: grid;
+  /* `min(…, 100%)` pelo mesmo motivo de `.card-grid`: a coluna mínima nunca
+     pode ser maior que o espaço disponível. */
+  grid-template-columns: repeat(auto-fit, minmax(min(12rem, 100%), 1fr));
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+/* A busca ocupa a linha inteira em tela estreita: é o campo mais usado. */
+.filters .field:first-child {
+  grid-column: 1 / -1;
+}
+
+/*
+ * Larga o bastante, a busca vale por dois campos em vez da linha inteira.
+ *
+ * Era uma `@media (min-width: 48rem)`, e a diferença não é cosmética: com a
+ * janela larga e a barra estreita, `span 2` pedia duas trilhas a uma grade que
+ * o `auto-fit` tinha resolvido com UMA. A segunda nascia implícita, dimensionada
+ * por `auto`, e a barra inteira passava da borda do contêiner. A pergunta certa
+ * sempre foi a largura da barra.
+ */
+@container filters (min-width: 48rem) {
+  .filters .field:first-child {
+    grid-column: span 2;
+  }
+}
+
+/*
+ * Campo em cascata desabilitado precisa PARECER desabilitado. Um select
+ * habilitado e vazio convida ao clique e não explica nada (RF-20, RF-22).
+ */
+.field-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Estado de falha da cascata: dois sinais — a borda e o texto do status. */
+.field[data-error="true"] .field-input {
+  border-color: var(--color-danger);
+}
+
+.field[data-state="failed"] .field-hint {
+  color: var(--color-danger);
+}
+
+.field[data-state="loading"] .field-hint {
+  color: var(--color-body);
+}
+
+/* --- Cabeçalho de página e alternador de visão --------------------------- */
+
+.segmented {
+  display: inline-flex;
+  /* As opções passam para a linha de baixo quando não cabem lado a lado —
+     duas etiquetas de texto com a fonte em 200% não cabem em 360px, e sem a
+     quebra o controle inteiro empurrava o formulário para fora da tela. */
+  flex-wrap: wrap;
+  padding: var(--space-1);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.segmented-option {
+  padding: var(--space-1) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background-color: transparent;
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+/*
+ * Dois sinais: o fundo destaca a opção ativa E o `aria-pressed` a anuncia. Só
+ * a cor deixaria a informação invisível para quem não a enxerga (§9.4).
+ */
+.segmented-active {
+  background-color: var(--color-accent-soft);
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+/* --- Tabela de cartas ---------------------------------------------------- */
+
+.card-table-wrapper {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+.card-table {
+  min-width: 40rem;
+  font-size: var(--text-sm);
+}
+
+.card-table th,
+.card-table td {
+  padding: var(--space-3);
+  text-align: left;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.card-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.card-table td {
+  color: var(--color-body);
+}
+
+.card-table td:first-child {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+}
+
+.card-row:hover {
+  background-color: var(--color-bg);
+}
+
+/* Rodapé do campo: a dica e a ação de tentar de novo dividem a linha. */
+/*
+ * A dica e a ação de tentar de novo dividem a linha — e quebram quando não
+ * couberem. Antes esta linha não quebrava: com a fonte em 200%, a dica da
+ * cascata e "Tentar novamente" disputavam a mesma faixa estreita.
+ */
+.field-footer {
+  --cluster-gap: var(--space-2);
+
+  min-height: 1.25rem;
+}
+
+.field-footer .button {
+  padding: 0 var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-accent);
+}
+
+/* --- Formulário de carta ------------------------------------------------- */
+
+.form-layout {
+  max-width: 40rem;
+}
+
+.form-actions {
+  --cluster-gap: var(--space-2);
+
+  margin-top: var(--space-4);
+}
+
+/* A pré-visualização reserva o espaço desde o início: sem isso o formulário
+   pula quando a imagem chega (§12.2). */
+.image-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Nenhuma largura declarada aqui: ela é a barra do `.sidebar`, e quem
+     dimensiona a barra é o `flex-basis` da primitiva. Uma largura própria
+     brigaria com o eixo principal do flex e reintroduziria a divergência
+     entre o que a trilha reserva e o que o item pinta — que é o OF-004. */
+  aspect-ratio: 488 / 680;
+  padding: var(--space-2);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+  overflow: hidden;
+}
+
+.image-preview-media {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.image-preview-empty {
+  font-size: var(--text-xs);
+  text-align: center;
+}
+
+/*
+ * O verso preenche a caixa inteira, respiro incluído.
+ *
+ * A caixa reserva a proporção da carta e guarda `--space-2` de respiro para a
+ * imagem de verdade, que entra por `object-fit: contain`. O verso é outra
+ * coisa: ele É a caixa. Sem cancelar o respiro, a caixa do verso ficaria numa
+ * proporção 4% diferente da carta, e a moldura — que o SVG mantém em 488:680,
+ * sem esticar — ficaria centrada, sem encostar nas bordas.
+ *
+ * Margem negativa, e não `:has()` na caixa: o projeto não usa `:has()` em
+ * lugar nenhum, e uma dependência de seletor novo por causa de 8px seria cara
+ * demais pelo que entrega.
+ */
+.image-preview-empty {
+  margin: calc(var(--space-2) * -1);
+}
+
+.inline-message-attention .button {
+  margin-top: var(--space-2);
+}
+
+/*
+ * A miniatura do modal de exclusão.
+ *
+ * 4rem de largura — 128px com a fonte em 200% —, e a proporção declarada em
+ * CSS para o espaço existir antes de a imagem chegar: um modal que salta com
+ * ele já aberto move o botão debaixo do dedo de quem ia clicar.
+ */
+.delete-card-preview {
+  --sidebar-side: 4rem;
+  --sidebar-content-min: 14rem;
+}
+
+.card-thumb {
+  display: block;
+  inline-size: 100%;
+  aspect-ratio: 488 / 680;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Campo de imagem ----------------------------------------------------- */
+
+.image-field {
+  padding: var(--space-4);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-default);
+}
+
+/*
+ * O arranjo é um `.sidebar`, e ele mora num elemento próprio DENTRO do
+ * `fieldset` — não no `fieldset`.
+ *
+ * `<legend>` não é um filho comum: o navegador o trata como a legenda da
+ * caixa, e o que ele faz quando o `fieldset` vira contêiner flex varia. Um
+ * elemento intermediário tira a dúvida do caminho em vez de compensá-la com
+ * uma regra de posicionamento que só funciona onde foi testada.
+ *
+ * As duas medidas são o contrato da barra: 8rem é a miniatura, 20rem é o piso
+ * abaixo do qual os controles deixam de ser utilizáveis e a barra desce. As
+ * duas em `rem`, para escalarem junto com a fonte do navegador (F-050).
+ */
+.image-field-body {
+  --sidebar-side: 8rem;
+  --sidebar-content-min: 20rem;
+
+  margin-top: var(--space-3);
+}
+
+.image-field-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.file-input {
+  padding: var(--space-2);
+}
+
+.file-input::file-selector-button {
+  margin-right: var(--space-3);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* A exclusão é discreta no cartão: ela não disputa a atenção com a ação
+   primária da tela, e a cor de perigo já a distingue (§10.2). */
+.card-delete {
+  align-self: flex-start;
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+}
+
+/* --- Histórico ----------------------------------------------------------- */
+
+.history-summary {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+  cursor: pointer;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: var(--space-4) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Profundidade por borda, não por sombra: a linha do tempo é conteúdo em
+   repouso (§10.4). */
+.history-entry {
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-line);
+}
+
+.history-header {
+  --cluster-gap: var(--space-2);
+
+  color: var(--color-body);
+  font-size: var(--text-sm);
+}
+
+.history-changes {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-change {
+  --cluster-gap: var(--space-2);
+
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+
+/*
+ * A coluna do nome do campo tem largura mínima para os valores alinharem — e
+ * `min(…, 100%)` para que esse mínimo ceda quando o contêiner for menor que
+ * ele. Um piso em `rem` sozinho vira 288px com a fonte em 200% e estoura a
+ * linha do histórico numa tela de 320.
+ */
+.history-field {
+  color: var(--color-muted);
+  min-width: min(9rem, 100%);
+}
+
+/* --- Administração de catálogos ------------------------------------------ */
+
+.catalog-game-picker {
+  max-width: 20rem;
+}
+
+/*
+ * Edições e raridades, num `.switcher` de colunas iguais.
+ *
+ * Mesmo limiar de antes, 56rem, medido agora na faixa dos painéis. Os dois
+ * painéis têm o mesmo peso — nenhum é o principal —, então nenhum declara
+ * `flex-grow` próprio.
+ */
+.catalog-panels {
+  --switcher-threshold: 56rem;
+
+  align-items: flex-start;
+}
+
+.catalog-list {
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+.catalog-row {
+  --cluster-gap: var(--space-2);
+
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.catalog-row:last-child {
+  border-bottom: 0;
+}
+
+/*
+ * Dois sinais para o item desativado: o tom esmaecido E a etiqueta escrita
+ * "Desativada". Só o esmaecimento excluiria quem não distingue tons (§9.4).
+ */
+.catalog-row-inactive .catalog-name,
+.catalog-row-inactive .catalog-code {
+  color: var(--color-muted);
+}
+
+.catalog-row-main,
+.catalog-row-actions {
+  --cluster-gap: var(--space-2);
+}
+
+.catalog-name {
+  color: var(--color-ink);
+}
+
+.catalog-code {
+  padding: var(--space-1) var(--space-2);
+  background-color: var(--color-bg);
+  border-radius: var(--radius-sm);
+  color: var(--color-muted);
+  font-size: var(--text-xs);
+}
+
+.catalog-form {
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-line);
+}
+
+/* A linha em edição ganha ar: é um formulário, não uma linha de lista. */
+.catalog-row-editing {
+  padding: var(--space-4) 0;
+}
+
+.catalog-edit-code {
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+/* --- Paleta (/paleta) ---------------------------------------------------- */
+
+/*
+ * A tela que mostra os tokens. As cores das amostras não vêm daqui: são
+ * pintadas por CSSOM com o valor lido do `tokens.css` (ver `palette-page.js`).
+ * O que mora aqui é só a moldura, e ela usa os tokens como qualquer outra.
+ */
+.palette-table {
+  font-size: var(--text-sm);
+}
+
+/* Célula sem quebra: amostra, valor e veredito leem numa linha só. A tabela
+   passa a rolar no próprio `.scroll-x` quando não couber (RNF-04). */
+.palette-table th,
+.palette-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-line);
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.palette-table tbody th {
+  font-weight: var(--weight-regular);
+}
+
+.palette-table tbody tr:last-child th,
+.palette-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* A borda existe para a amostra não sumir quando a cor dela é a do fundo em
+   que ela está — a superfície branca dentro de um cartão branco. */
+.palette-swatch {
+  display: inline-block;
+  width: var(--space-6);
+  height: var(--space-5);
+  margin-right: var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  vertical-align: middle;
+}
+
+.palette-sample {
+  display: inline-block;
+  margin-right: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  font-weight: var(--weight-bold);
+}
+
+.palette-verdict {
+  margin-left: var(--space-2);
+  font-weight: var(--weight-medium);
+}
+
+.palette-verdict-pass { color: var(--color-success); }
+.palette-verdict-fail { color: var(--color-danger); }
+.palette-verdict-none { color: var(--color-muted); }
+
+.palette-shapes {
+  --cluster-gap: var(--space-5);
+
+  align-items: flex-start;
+}
+
+/* `max-width: 100%` no item e na caixa: com a fonte em 200%, 6rem de caixa
+   mais o respiro do palco passam de uma coluna de 320px. O palco mantém o
+   respiro e a caixa é quem cede. */
+.palette-shape-item {
+  max-width: 100%;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+/* Nome de token é uma palavra só, sem espaço onde quebrar — o mesmo critério
+   da lista do topo deste arquivo, aplicado aqui para a legenda caber no item
+   que encolheu. */
+.palette-shape-item figcaption {
+  margin-top: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+.palette-shape {
+  width: 6rem;
+  max-width: 100%;
+  height: 4rem;
+  border: 1px solid var(--color-muted);
+}
+
+/* Preenchimento e contorno que se destacam do cartão nos dois temas: a
+   amostra de raio existe para mostrar o canto, e caixa da cor do cartão com
+   linha fraca some justamente no escuro. */
+.palette-radius {
+  background-color: var(--color-bg);
+}
+
+/* O palco pinta o fundo do tema, para a sombra aparecer como aparece na tela
+   de verdade — sombra sobre branco e sombra sobre quase-preto são outra conta. */
+.palette-stage {
+  padding: var(--space-5);
+  border-radius: var(--radius-default);
+}

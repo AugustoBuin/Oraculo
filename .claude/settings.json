@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(git clean:*)",
+      "Bash(git commit --amend:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git stash clear:*)",
+      "Bash(git stash drop:*)",
+      "Bash(gh:*)",
+      "Bash(composer:*)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(yarn:*)",
+      "Bash(pnpm:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(rm -rf:*)",
+      "Read(./.env)",
+      "Read(./**/.env)"
+    ],
+    "ask": [
+      "Bash(curl:*)",
+      "Bash(docker compose down:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/block-commands.js\""
+          }
+        ]
+      }
+    ]
+  }
+}

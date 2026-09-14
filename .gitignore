@@ -1,0 +1,30 @@
+# --- Camada de IA: versionada (ADR-009), menos as permissões locais, que liberam
+#     ferramentas sem pedir confirmação. As travas ficam em .claude/settings.json. ---
+/.claude/settings.local.json
+
+# --- Segredos: nunca versionados; só o exemplo entra ---
+.env
+.env.*
+!.env.example
+
+# --- Artefatos de execução ---
+/backend/storage/uploads/*
+!/backend/storage/uploads/.gitkeep
+/backend/storage/sessions/*
+!/backend/storage/sessions/.gitkeep
+*.log
+
+# --- Investigação de deploy fica fora do Git: carrega segredo em texto claro.
+#     Relatório de auditoria e ledger são versionados, em docs/audits/. ---
+/docs/investigations/
+
+# --- Dependências: não usamos Composer (ADR-001). A regra fica como guarda
+#     para que um vendor/ acidental nunca seja commitado. ---
+/vendor/
+/node_modules/
+
+# --- Sistema operacional / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

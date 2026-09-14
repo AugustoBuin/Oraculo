@@ -1,0 +1,179 @@
+/*
+ * Reset enxuto e padrões de elemento.
+ *
+ * Só o que corrige comportamento herdado ruim do navegador. Estilo de
+ * componente mora com o componente; utilitário mora em `utilities.css`.
+ *
+ * Nenhum valor cru aqui: tudo vem de `tokens.css` (§10.1).
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * `hidden` precisa vencer qualquer `display` de classe.
+ *
+ * A regra do navegador para `[hidden]` é `display: none`, e qualquer classe
+ * que declare `display` — `.button { display: inline-flex }` — tem
+ * especificidade maior e a sobrepõe. O elemento fica visível com o atributo
+ * marcado, e o defeito não dá erro nenhum: só aparece na tela.
+ *
+ * Como os do bloco de movimento reduzido em `tokens.css`, este `!important`
+ * existe para **reforçar** um comportamento padrão que outra regra sobrepõe —
+ * não para contornar a cascata. São os únicos casos do projeto.
+ */
+[hidden] {
+  display: none !important;
+}
+
+html {
+  /* Nenhum tamanho de fonte fixado na raiz: o rem passa a respeitar a
+     configuração de tamanho de fonte do navegador, que é o que faz o zoom de
+     200% funcionar sem perda de conteúdo (§9.5). */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-body);
+  font-family: var(--font-sans);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+
+  /* A página nunca rola na horizontal; quem rola é o contêiner, no próprio
+     eixo (§10.5, RNF-04). */
+  overflow-x: hidden;
+}
+
+/*
+ * `overflow-wrap: anywhere` NÃO mora aqui, e a ausência é deliberada.
+ *
+ * Ele já morou: a regra global resolvia o e-mail e o "Administração de
+ * catálogos" que passavam da tela com a fonte do navegador em 200%. O preço só
+ * apareceu no OF-004. `anywhere` — diferente de `break-word` — zera a
+ * contribuição de min-content de TODO texto que o herda, e essa contribuição é
+ * a proteção natural do navegador contra o colapso de coluna: é ela que faz
+ * uma trilha de grade ou um item de flex se recusarem a ficar menores que a
+ * maior palavra que precisam mostrar. Com ela zerada em toda a página, o
+ * mínimo de qualquer coluna passa a ser UM CARACTERE — e foi assim que
+ * "Remover imagem" saiu uma letra por linha ao lado de um buraco de 379px.
+ *
+ * A quebra continua existindo, onde ela é a resposta certa: no texto que vem
+ * de fora e pode não ter espaço nenhum — endereço, código de catálogo, nome de
+ * carta, dado do usuário. Esses lugares estão declarados em `components.css`,
+ * e o utilitário `.wrap-anywhere` atende quem não tem classe própria. O resto
+ * da interface volta a ter o piso de legibilidade de volta.
+ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  color: var(--color-ink);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4, h5, h6 { font-size: var(--text-md); }
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration-thickness: max(1px, 0.0625em);
+  text-underline-offset: 0.15em;
+}
+
+img {
+  /* Imagem nunca estoura o contêiner, e o espaço reservado herda o tom da
+     superfície em vez de mostrar o ícone de imagem quebrada (RF-34). */
+  max-width: 100%;
+  height: auto;
+  background-color: var(--color-line);
+}
+
+/* Controles herdam a tipografia da página em vez da do sistema. */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/*
+ * `fieldset` nasce com `min-width: min-content` na folha do navegador, e essa
+ * regra não vem de nenhum CSS do projeto — é herança do próprio agente. O
+ * efeito é um grupo de campos que se recusa a encolher: com a fonte em 200%,
+ * o agrupamento de imagem ficava mais largo que a tela e o excedente sumia no
+ * `overflow-x: hidden` do `body`. Zerar devolve o `fieldset` ao fluxo normal.
+ */
+fieldset {
+  min-width: 0;
+}
+
+/*
+ * Mesmo problema do `fieldset`, em outra roupa: `input` calcula uma largura
+ * intrínseca a partir do atributo `size`, e com a fonte em 200% isso vira 366
+ * pixels que o campo se recusa a ceder. A caixa que o contém — item de grade,
+ * com `min-width: auto` — herda o piso e passa da tela. A largura de verdade
+ * vem de `.field-input`, que ocupa 100% do contêiner.
+ */
+input,
+select,
+textarea {
+  min-width: 0;
+}
+
+/*
+ * O anel de foco NUNCA é removido — só substituído por um visível (§9.2).
+ *
+ * `:focus-visible` e não `:focus`: quem clica com o mouse não vê o anel, quem
+ * navega por teclado vê. Remover o `:focus` do navegador sem colocar nada no
+ * lugar é o erro que torna a aplicação inoperável sem mouse.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Alvo de toque na base mobile; densidade maior só a partir do ponteiro fino
+   (§9.5). */
+@media (pointer: coarse) {
+  button,
+  [role="button"],
+  a,
+  input,
+  select {
+    min-height: var(--target-min);
+  }
+}
+
+/* Tabelas rolam no próprio eixo — a página não (§10.5). */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th {
+  color: var(--color-ink);
+  font-weight: var(--weight-medium);
+  text-align: left;
+}

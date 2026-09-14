@@ -1,2 +1,43 @@
-# Auto detect text files and perform LF normalization
+# Normalização de fim de linha.
+#
+# Por padrão o Git detecta arquivo de texto e normaliza para LF no repositório,
+# entregando CRLF no working tree em Windows. Isso é correto para documentação,
+# e QUEBRA tudo que é consumido por Linux dentro do contêiner:
+# um script com CRLF falha com "bad interpreter: /bin/sh^M", e o Apache recusa
+# diretiva com retorno de carro no fim da linha.
+#
+# As regras abaixo forçam LF nos arquivos que atravessam a fronteira do
+# contêiner, independentemente do sistema operacional de quem clona.
+
 * text=auto
+
+# --- Consumidos pelo Linux dentro do contêiner: LF obrigatório ---
+*.sh            text eol=lf
+*.php           text eol=lf
+*.sql           text eol=lf
+*.ini           text eol=lf
+*.conf          text eol=lf
+*.yml           text eol=lf
+*.yaml          text eol=lf
+Dockerfile      text eol=lf
+.env.example    text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
+
+# --- Servidos ao navegador: LF por consistência ---
+*.html          text eol=lf
+*.css           text eol=lf
+*.js            text eol=lf
+*.json          text eol=lf
+*.svg           text eol=lf
+
+# --- Binários: nunca normalizar ---
+*.pdf           binary
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.webp          binary
+*.gif           binary
+*.ico           binary
+*.woff          binary
+*.woff2         binary
