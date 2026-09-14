@@ -26,7 +26,7 @@ E duas restrições do `PADROES.md` §5.4, que precisam ser cumpridas literalmen
 
 **A. JWT em cookie ou header.** Sem estado no servidor, escala trivialmente. Mas revogação
 exige uma blocklist consultada a cada requisição — ou seja, estado no servidor de novo, com
-passos extras. E "token de longa duração sem revogação" é achado do próprio §5.4. Reprova.
+passos extras. E "token de longa duração sem revogação" é achado do próprio §5.4, então Reprova.
 
 **B. Sessão nativa do PHP em arquivo.** É o padrão, custa zero. Mas a sessão vive no disco de
 um contêiner: some no restart, não escala para múltiplas instâncias e, principalmente,
