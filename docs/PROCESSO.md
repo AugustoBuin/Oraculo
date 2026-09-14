@@ -113,9 +113,9 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 |---|---|---|
 | 09/09 | **OF-004.** O campo de imagem ficou inutilizável no desktop, numa regressão do próprio acabamento. | Eu, na tela. As três auditorias completas tinham passado por ele. |
 | 11/09 | O agente começou uma terceira rodada de variantes do logo, por gosto próprio, sem me mostrar. | Eu. A regra passou a ser mostrar o rascunho e perguntar. |
-| 12/09 | **Dois testes que não mediam nada.** A rede de testes de geometria montava a galeria e a paginação do jeito errado e media uma caixa vazia desde 10/09: os testes passavam sem verificar. | O próprio agente, ao escrever o teste seguinte (`8d4a6f2`). |
+| 12/09 | **Dois testes que não mediam nada.** A rede de testes de geometria montava a galeria e a paginação do jeito errado e media uma caixa vazia desde 10/09: os testes passavam sem verificar. | O próprio agente, ao escrever o teste seguinte (`6f343cd`). |
 | 12/09 | **OF-005.** O botão "Excluir" quebrava ao meio na visão tabela. A rede de geometria não alcançava tabelas. | Eu, na tela. |
-| 14/09 | **OF-006 (A-1).** O seed, que roda a cada boot, desfazia o nome e a ordem que o ADMIN editasse em edições e raridades — alcançável pela interface desde que o editar entrou, em 11/09. | A auditoria do que mudou. Corrigido com teste antes do merge (`6031e05`). |
+| 14/09 | **OF-006 (A-1).** O seed, que roda a cada boot, desfazia o nome e a ordem que o ADMIN editasse em edições e raridades — alcançável pela interface desde que o editar entrou, em 11/09. | A auditoria do que mudou. Corrigido com teste antes do merge (`ae882c5`). |
 | 14/09 | **Uma premissa errada.** O registro tratava a moldura do cartão de entrada como esticada, e havia uma decisão pendente sobre isso. Medido o cartão real, ela não esticava: ficava centrada. | A medição, antes que a decisão fosse tomada sobre o problema errado. |
 
 ## 7. O histórico do Git
@@ -124,7 +124,7 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 - Em **08/09**, seguindo a primeira versão do ADR-009, reescrevi o histórico para retirar essa
   linha. Por isso os commits de 04 a 08/09, até `4dcca3c`, não a têm. O trabalho desses dias
   foi feito da mesma forma que o dos seguintes.
-- A partir de **09/09** (`1c59eab`), a linha ficou.
+- A partir de **09/09** (`b80502f`), a linha ficou.
 
 ## 8. O que fica fora do repositório
 

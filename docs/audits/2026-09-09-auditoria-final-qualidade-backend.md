@@ -1,6 +1,6 @@
 # Oráculo · Backend — Relatório de Auditoria de Qualidade
 
-**Data:** 09/09/2026 | **Branch:** `development` | **Commit:** `88f76ce` | **Escopo:** full
+**Data:** 09/09/2026 | **Branch:** `development` | **Commit:** `b7034fe` | **Escopo:** full
 **Auditor:** backend-quality-auditor
 **Ocasião:** auditoria de fechamento da entrega (F-051), agendada em
 `docs/audits/open-findings.md` como "09/09, antes da entrega".

@@ -1,6 +1,6 @@
 # Oráculo — Relatório de Auditoria de Segurança (SAST)
 
-**Data:** 09/09/2026 | **Branch:** `development` | **Commit:** `88f76ce` | **Escopo:** `full`
+**Data:** 09/09/2026 | **Branch:** `development` | **Commit:** `b7034fe` | **Escopo:** `full`
 **Auditor:** security-auditor
 **Método:** análise estática + revisão arquitetural. Nenhum código executado ou alterado.
 **Ocasião:** auditoria de fechamento da entrega (F-051), agendada em

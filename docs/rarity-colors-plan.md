@@ -2,7 +2,7 @@
 
 > **Estado:** aprovado em 10/09/2026 e **executado** na `feature-cores-de-raridade`, com
 > backend (B-022) e frontend (F-041) completos e verificados na tela em 11/09. As cores foram
-> medidas contra a paleta que foi para `development` em `ed0785d`. **Onde a execução divergiu
+> medidas contra a paleta que foi para `development` em `d1800c6`. **Onde a execução divergiu
 > do plano: §11.**
 
 ---
@@ -286,6 +286,6 @@ cerca de 3h. Documentos e verificação na tela, cerca de 1h. **Seis a sete hora
   de cima e os controles nativos no esquema do sistema em vez do tema escolhido — este,
   anterior à branch.
 - **Os commits** não seguiram a lista do §8 um a um: os testes do B-021 entraram com o
-  refactor que eles cobrem (`437dd3e`), a paleta e o selo subiram para `shared/` num commit
-  próprio (`1281116`), e o seletor, o painel e as duas correções da tela saíram em quatro
-  (`6029661`, `fd8960f`, `0816198`, `eea0502`).
+  refactor que eles cobrem (`e1f2c69`), a paleta e o selo subiram para `shared/` num commit
+  próprio (`347c76a`), e o seletor, o painel e as duas correções da tela saíram em quatro
+  (`48c7d8f`, `477e1c2`, `60385a2`, `e01fd7b`).

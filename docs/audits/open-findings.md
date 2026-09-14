@@ -123,7 +123,7 @@ independente: a invariante da palavra inteira pula quem computa `anywhere`, e a 
 é herdada, então a exceção alcançava o botão. Fechada por uma quarta invariante — nenhum
 controle pode computar `anywhere` —, que é a regra do `design.md` §9 virada em teste. Com o
 ramo aberto, a rede acusou o defeito sozinha, em `[tabela · 320px]`, antes da correção; e
-não acusou mais nada em nenhuma outra tela. Corrigido em `3eedd36`, na branch
+não acusou mais nada em nenhuma outra tela. Corrigido em `b715f2b`, na branch
 `feature-identidade-visual`.
 
 **OF-004 é o achado que as auditorias NÃO pegaram, e vale registrar por quê.** Os dois
@@ -199,18 +199,18 @@ ledger por convenção.
 apareceram ao planejar a cor da raridade, todas no código que ela mexe, e todas `MEDIUM` ou
 abaixo — por isso notas, e não linhas:
 
-- **M-3 da auditoria de backend, fechado** (`0712f19`). A escrita de edição e a de raridade se
+- **M-3 da auditoria de backend, fechado** (`726ca54`). A escrita de edição e a de raridade se
   separaram; `SaveCatalogItemInput` e seus dois campos mortos saíram com o caminho genérico.
-- **Reativar zerava a ordem — corrigido** (`50ac781`). A tela mandava `sortOrder: 0` porque a
+- **Reativar zerava a ordem — corrigido** (`b7eb04f`). A tela mandava `sortOrder: 0` porque a
   listagem da administração não devolvia a ordem; a "Mítica" reativada pulava para o topo da
   cascata. A listagem passou a devolver `sortOrder` (e `color`), e o PUT leva o registro
   inteiro. Coberto pelos testes do corpo do PUT, e **verificado na tela em 11/09**: a
   "Mítica" desativada e reativada continuou em 4º, no painel e na listagem pública, e manteve
   o cobre.
 - **A escrita de catálogo não tinha teste nenhum, e o apresentador de carta também não**, apesar
-  do B-021 e do ADR-004. Ganharam (`437dd3e`, `0b3f9d9`).
+  do B-021 e do ADR-004. Ganharam (`e1f2c69`, `5dd179b`).
 - **RF-41 e RF-42 pedem "editar", e a tela de catálogos nunca ofereceu** — só criar, desativar e
-  reativar. **Fechado** (`fd8960f`): cada linha tem Editar, na própria linha, com o nome e, na
+  reativar. **Fechado** (`477e1c2`): cada linha tem Editar, na própria linha, com o nome e, na
   raridade, a cor. Verificado na tela em 11/09, só pelo teclado: Enter no Editar, Tab até o
   grupo de rádio, setas, Salvar, e o foco de volta ao Editar; Esc fecha sem ir à rede.
 
@@ -218,10 +218,10 @@ abaixo — por isso notas, e não linhas:
 de geometria, que mede estouro, palavra inteira e corte — por isso notas, e por isso a
 verificação em tela continua obrigatória:
 
-- **A legenda do seletor colada no campo de cima** (`0816198`). O `margin: 0` que tirava as
+- **A legenda do seletor colada no campo de cima** (`60385a2`). O `margin: 0` que tirava as
   margens laterais do `fieldset` zerava também a do `.stack`, de mesma especificidade e folha
   posterior. `LOW`.
-- **Controles nativos no esquema do sistema, não no do tema escolhido** (`eea0502`). A raiz
+- **Controles nativos no esquema do sistema, não no do tema escolhido** (`e01fd7b`). A raiz
   declara `color-scheme: light dark`, e o `[data-theme]` não o trocava: com o Windows no escuro
   e o tema claro escolhido, o rádio desmarcado saía como um disco escuro cheio — o desenho de
   "marcado". Vinha do F-002; o seletor só o tornou visível. `MEDIUM`, porque um estado de
@@ -235,6 +235,6 @@ verificação em tela continua obrigatória:
 | Ao fim do Épico 3 (cartas) | `diff` |
 | 09/09, antes da entrega | `full` — qualidade **e** segurança. `CRITICAL` bloqueia a entrega |
 
-**Realizada em 09/09**, no commit `88f76ce`, em três relatórios: qualidade de backend
+**Realizada em 09/09**, no commit `b7034fe`, em três relatórios: qualidade de backend
 (0C · 1H · 6M · 8L), qualidade de frontend (0C · 2H · 4M · 7L) e segurança
 (0C · 0H · 3M · 2L, marcador `CLEAN`). **Nenhum `CRITICAL`: a entrega não está bloqueada.**

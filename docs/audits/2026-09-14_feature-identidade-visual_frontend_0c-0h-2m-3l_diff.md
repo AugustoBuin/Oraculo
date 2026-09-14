@@ -1,9 +1,9 @@
 # Oráculo · Frontend — Relatório de Auditoria de Qualidade
 
-**Data:** 2026-09-14 | **Branch:** `feature-identidade-visual` | **Commit:** `0460fa7` | **Escopo:** diff contra `88f76ce`
+**Data:** 2026-09-14 | **Branch:** `feature-identidade-visual` | **Commit:** `ae28d94` | **Escopo:** diff contra `b7034fe`
 **Auditor:** frontend-quality-auditor
 
-**Conjunto auditado:** `git diff --name-only 88f76ce...HEAD -- frontend/`, com 80 arquivos: 55 em
+**Conjunto auditado:** `git diff --name-only b7034fe...HEAD -- frontend/`, com 80 arquivos: 55 em
 `frontend/src`, 21 em `frontend/tests` e 4 em `frontend/public`. **Raio de alcance incluído:** as
 páginas que compõem os componentes compartilhados alterados (`feedback`, `modal`, `notifications`,
 `pagination`, `cascade-select`, `app-header`, `theme-toggle`), e as suítes que os cobrem.

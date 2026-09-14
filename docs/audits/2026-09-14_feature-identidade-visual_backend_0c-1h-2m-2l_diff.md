@@ -1,6 +1,6 @@
 # Oráculo · Backend — Relatório de Auditoria de Qualidade
 
-**Data:** 14/09/2026 | **Branch:** `feature-identidade-visual` | **Commit:** `0460fa7` | **Escopo:** diff contra `88f76ce`
+**Data:** 14/09/2026 | **Branch:** `feature-identidade-visual` | **Commit:** `ae28d94` | **Escopo:** diff contra `b7034fe`
 **Auditor:** backend-quality-auditor
 
 > **Nome, ledger e métrica.** Três auditores rodaram em paralelo nesta data, e por isso o nome
@@ -8,7 +8,7 @@
 > `docs/audits/audit-metrics.jsonl`: as linhas vão na seção **"Para consolidar"**, no fim, e a
 > consolidação é feita em série por quem conduz a entrega.
 
-**Conjunto auditado:** `git diff --name-only 88f76ce...HEAD -- backend/`, com **45 arquivos**:
+**Conjunto auditado:** `git diff --name-only b7034fe...HEAD -- backend/`, com **45 arquivos**:
 32 de produção (`bin/seed.php`, as migrations `0011` e `0012`, e 29 arquivos de `src/`, dos
 quais 3 foram removidos e 2 renomeados) e 13 de teste. Nada não commitado em `backend/`.
 
@@ -63,7 +63,7 @@ cada boot, a edição de nome e ordem que o ADMIN faz nas edições e raridades 
 | `SELECT *` / leitura sem limite (§4.5) | **0.** As três leituras de carta passam por `CardRepositoryPdo::COLUMNS`, que ganhou `r.color` (listagem na linha 84, `fetchOne` na 203, e `findDuplicate`, que usa `fetchOne`). Nenhuma leitura monta `Rarity` sem a coluna |
 | N+1 | **0.** A cor vem pelo `JOIN` que já existia |
 | Caso de uso chamando caso de uso (§4.10) | **0.** `CatalogItemRules` é regra de domínio compartilhada, não um caso de uso |
-| Migration aplicada editada (§5) | **0.** `git diff --diff-filter=MDR 88f76ce...HEAD -- backend/migrations/` e `git log --diff-filter=M -- backend/migrations/` voltam vazios. `0011` e `0012` são novas e ficaram separadas, com o motivo escrito no arquivo |
+| Migration aplicada editada (§5) | **0.** `git diff --diff-filter=MDR b7034fe...HEAD -- backend/migrations/` e `git log --diff-filter=M -- backend/migrations/` voltam vazios. `0011` e `0012` são novas e ficaram separadas, com o motivo escrito no arquivo |
 | Seed reescrevendo senha/permissão | **0** para usuários. **Para catálogo, veja A-1** |
 | `throw new \Exception` cru / valor mágico de permissão / `pathinfo` / `json_encode` fora de apresentador / depuração | **0** em cada um |
 | `declare(strict_types=1);` | **42/42** arquivos PHP presentes no diff |
@@ -140,7 +140,7 @@ Nenhum.
   php /var/www/backend/bin/seed.php
   ```
 
-  O que a tela alcança. É o editor que entrou em `fd8960f` (11/09, dentro deste diff), em
+  O que a tela alcança. É o editor que entrou em `477e1c2` (11/09, dentro deste diff), em
   `frontend/src/features/catalogs/components/catalog-panel.js:302-307`:
   ```js
   await api.update(item.ref, {
@@ -304,7 +304,7 @@ Nenhum.
 - **Problema:** são duas falhas no mesmo campo.
   1. **Ausente vira 0.** O diff fez o servidor recusar cor ausente no `PUT` para que um cliente
      esquecido não repinte nada em silêncio, e cita como motivo "o mesmo defeito que já zerava a
-     ordem". Mas **esse** defeito, o da ordem, foi corrigido só no cliente (`50ac781`): o servidor
+     ordem". Mas **esse** defeito, o da ordem, foi corrigido só no cliente (`b7eb04f`): o servidor
      continua transformando `sortOrder` ausente, ou `"sortOrder": "4"`, em `0`. O cabeçalho do
      próprio `ColorField` descreve a armadilha ("tratar como ausente esconderia o erro do
      cliente"), e ela ficou aberta para a ordem.
@@ -457,14 +457,14 @@ Nenhum achado.
 **Linha nova:**
 
 ```markdown
-| OF-NOVO-1 | HIGH | — | O seed reaplica a massa sobre edições e raridades que já existem (`ON DUPLICATE KEY UPDATE name = VALUES(name), sort_order = VALUES(sort_order)`) e roda a cada boot: o nome e a ordem editados pelo ADMIN (RF-41/RF-42, editor de `fd8960f`) voltam ao valor do seed no próximo `docker compose up`, sem erro nem log. A cor, na mesma instrução, foi deixada de fora exatamente por esse motivo, escrito no comentário ao lado | `backend/bin/seed.php:135`, `backend/bin/seed.php:185` | `2026-09-14_feature-identidade-visual_backend_0c-1h-2m-2l_diff.md` | open | | 2026-09-14 | |
+| OF-NOVO-1 | HIGH | — | O seed reaplica a massa sobre edições e raridades que já existem (`ON DUPLICATE KEY UPDATE name = VALUES(name), sort_order = VALUES(sort_order)`) e roda a cada boot: o nome e a ordem editados pelo ADMIN (RF-41/RF-42, editor de `477e1c2`) voltam ao valor do seed no próximo `docker compose up`, sem erro nem log. A cor, na mesma instrução, foi deixada de fora exatamente por esse motivo, escrito no comentário ao lado | `backend/bin/seed.php:135`, `backend/bin/seed.php:185` | `2026-09-14_feature-identidade-visual_backend_0c-1h-2m-2l_diff.md` | open | | 2026-09-14 | |
 ```
 
 **Atualização de linha existente:**
 
 - **OF-001**: `Status` de `fixed` para `verified`. Acrescentar à coluna `Origem`
   `2026-09-14_feature-identidade-visual_backend_0c-1h-2m-2l_diff.md` (verificação).
-  Nota sugerida: *"OF-001 verificado em 14/09 pela auditoria de backend (diff contra `88f76ce`):
+  Nota sugerida: *"OF-001 verificado em 14/09 pela auditoria de backend (diff contra `b7034fe`):
   `onlyStrings()` em `Request.php:89` e `:91`, três testes em `RequestTest`, e cinco requisições
   anônimas (`/api/games?a[]=1`, `/api/cards?page[]=1`, `/api/cards?search[]=x`, `/api/games`,
   `Cookie: ORACULOSID[a]=b`) respondendo `401`, nenhuma `500`."*

@@ -1,6 +1,6 @@
 # Oráculo — Relatório de Auditoria de Segurança (SAST)
 
-**Data:** 14/09/2026 | **Branch:** `feature-documentacao` | **Commit:** `177d08d` | **Escopo:** `diff` contra `88f76ce`
+**Data:** 14/09/2026 | **Branch:** `feature-documentacao` | **Commit:** `13e16d6` | **Escopo:** `diff` contra `b7034fe`
 **Auditor:** security-auditor
 **Método:** análise estática + revisão arquitetural. Nenhum código executado ou alterado.
 
@@ -27,7 +27,7 @@
 
 ## Conjunto auditado
 
-`git diff --name-only 88f76ce...HEAD`: **72 commits**. Fora de `docs/`, **128 arquivos**:
+`git diff --name-only b7034fe...HEAD`: **72 commits**. Fora de `docs/`, **128 arquivos**:
 
 | Grupo | Arquivos | O que entrou |
 |---|---|---|
@@ -43,9 +43,9 @@ padrão de `{id}`; `shared/dom/elements.js`, `shared/components/notifications.js
 `docker/app/apache.conf`, `docker/app/php.ini` e `docker-compose.yml`, para o estado dos achados
 de plataforma de 09/09; `Shared/Observability/StderrLogger.php`, para o item a mais.
 
-**Nada de plataforma mudou.** `git diff --name-only 88f76ce...HEAD -- docker docker-compose.yml
+**Nada de plataforma mudou.** `git diff --name-only b7034fe...HEAD -- docker docker-compose.yml
 .env.example backend/public .gitattributes` volta vazio, e
-`git diff --stat 88f76ce...HEAD -- backend/src/Infra/Http/Middleware backend/src/Infra/Http/Guard.php
+`git diff --stat b7034fe...HEAD -- backend/src/Infra/Http/Middleware backend/src/Infra/Http/Guard.php
 backend/public/index.php backend/src/UseCases/Auth docker/app` também. **As dimensões A e B
 continuam em `diff`**: o conjunto não toca nenhum dos gatilhos de retorno a `full`. A exceção de
 alcance é `Request::fromGlobals()`, que roda antes do pipeline em **toda** requisição. A correção
@@ -309,7 +309,7 @@ sobre os WebP (EXIF, XMP e C2PA), que em arte gerada por ferramenta costumam vir
 ## Persistentes de 09/09, no estado do código atual
 
 Não entram na contagem, porque não são novos. Nenhum arquivo que os sustenta mudou desde a base
-(`git diff --stat 88f76ce...HEAD` vazio para `UseCases/Auth`, `docker-compose.yml`, `docker/app`,
+(`git diff --stat b7034fe...HEAD` vazio para `UseCases/Auth`, `docker-compose.yml`, `docker/app`,
 `Middleware`, `Guard.php` e `public/index.php`).
 
 | Achado de 09/09 | Estado | Evidência atual |

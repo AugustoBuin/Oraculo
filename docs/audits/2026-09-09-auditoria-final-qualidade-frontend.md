@@ -1,6 +1,6 @@
 # Oráculo · Frontend — Relatório de Auditoria de Qualidade
 
-**Data:** 2026-09-09 | **Branch:** `development` | **Commit:** `88f76ce` | **Escopo:** full
+**Data:** 2026-09-09 | **Branch:** `development` | **Commit:** `b7034fe` | **Escopo:** full
 **Auditor:** frontend-quality-auditor
 **Contexto:** auditoria de fechamento da entrega (F-051), com o Épico 10 recém-integrado.
 
