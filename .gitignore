@@ -2,10 +2,8 @@
 /.claude/
 /CLAUDE.md
 
-# --- Padrões de engenharia de referência: NÃO versionados (ADR-011).
-#     Contêm o nome do empregador atual e o histórico de incidentes de segurança
-#     dele. Servem de referência local para a construção; o que este projeto
-#     precisa expor está em docs/ENGENHARIA.md e docs/decisions/. ---
+# --- Padrões de engenharia de referência: versionados depois de anonimizados
+#     (ADR-011). Até a revisão integral terminar, ficam de fora. ---
 /backend/PADROES.md
 /frontend/PADROES-ENGENHARIA.md
 
