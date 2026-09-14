@@ -51,7 +51,7 @@ citação sequer.
    pessoal ou histórico de incidente de terceiro. Publicação é irreversível; a conferência
    custa segundos.
 
-Até a revisão terminar, os dois arquivos continuam no `.gitignore`.
+A revisão terminou em 14/09, e os dois arquivos entraram no repositório.
 
 ## Consequências
 
