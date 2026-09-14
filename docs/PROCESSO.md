@@ -96,7 +96,7 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
 | Data | Escopo | Backend | Frontend | Segurança |
 |---|---|---|---|---|
 | 09/09 | Completo | 0 C · 1 A · 6 M · 8 B | 0 C · 2 A · 4 M · 7 B | 0 C · 0 A · 3 M · 2 B |
-| 14/09 | O que mudou desde 09/09 | 0 C · 1 A · 2 M · 2 B | 0 C · 0 A · 2 M · 3 B | **interrompida** |
+| 14/09 | O que mudou desde 09/09 | 0 C · 1 A · 2 M · 2 B | 0 C · 0 A · 2 M · 3 B | 0 C · 0 A · 0 M · 0 B |
 
 *C: crítico · A: alto · M: médio · B: baixo.*
 
@@ -104,8 +104,8 @@ segurança, esta com os achados pontuados em CVSS v3.1. Cada um grava um relató
   achados por outro agente. Foram corrigidos no mesmo dia, cada um com o teste antes.
 - O alto de 14/09, o A-1 do relatório de backend, virou o OF-006 e foi corrigido antes do
   merge — ver a seção 6.
-- **A auditoria de segurança de 14/09 foi interrompida** por limite de uso da ferramenta. Não
-  houve revisão de segurança do que entrou depois de 09/09.
+- **A auditoria de segurança de 14/09 foi interrompida** por limite de uso da ferramenta e
+  refeita no mesmo dia, quando o limite renovou: nenhum achado.
 - Auditoria feita por agente não substitui olhar a aplicação: nenhuma das três de 09/09 pegou o
   OF-004.
 
