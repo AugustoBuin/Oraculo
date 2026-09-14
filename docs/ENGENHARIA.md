@@ -187,6 +187,8 @@ Comentário explica **por quê**, nunca **o quê**.
 - `docs/api-contract.md` — todos os endpoints, envelopes e códigos de erro.
 - `docs/database-schema.md` — tabelas, índices e massa inicial.
 - `docs/backlog-backend.md` — as tarefas com critério de aceite.
+- `docs/PROCESSO.md` — como o projeto foi construído: ferramentas, quem decidiu o quê e a
+  linha do tempo.
 - `docs/decisions/` — **por que não foi feito do jeito óbvio.** Leia antes de propor
   mudança estrutural.
 - `docs/audits/open-findings.md` — achados abertos. Leia antes de começar qualquer
