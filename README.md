@@ -1,4 +1,6 @@
-# Oráculo
+# O Oráculo
+
+### Que vai revelar sua próxima carta!
 
 > Portal de gestão de catálogo multi-TCG.
 
